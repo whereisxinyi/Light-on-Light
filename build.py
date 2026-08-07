@@ -1209,7 +1209,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const model = process.env.GEMINI_MODEL || "gemini-flash-latest";
     const r = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/" +
         model + ":generateContent",
@@ -1321,7 +1321,7 @@ vercel env add GEMINI_API_KEY production
 vercel --prod
 ```
 
-(`GEMINI_MODEL` optionally overrides the default `gemini-2.5-flash`.)
+(`GEMINI_MODEL` optionally overrides the default `gemini-flash-latest`.)
 The function has a per-instance rate limit and returns only sanitized SVG.
 
 ## Use it with your own Claude (no API key)

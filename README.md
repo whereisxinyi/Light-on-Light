@@ -50,7 +50,7 @@ vercel env add GEMINI_API_KEY production
 vercel --prod
 ```
 
-(`GEMINI_MODEL` optionally overrides the default `gemini-2.5-flash`.)
+(`GEMINI_MODEL` optionally overrides the default `gemini-flash-latest`.)
 The function has a per-instance rate limit and returns only sanitized SVG.
 
 ## Use it with your own Claude (no API key)
