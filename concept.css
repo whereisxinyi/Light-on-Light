@@ -1,0 +1,430 @@
+/* SOURCE FILE — concept.html is a single self-contained page and does not link
+ * this stylesheet; it embeds a copy. Edit here, then run `python3 build.py`.
+ *
+ * Hallmark · macrostructure: Manifesto (bones only — poster costume rejected)
+ * nav: masthead (was N9; the brand is now the page's H1 at display size, per
+ *   the owner's hierarchy note, so the micro-mono bar no longer applies)
+ * footer: Ft2 Inline rule single line
+ * cta: fixed bottom-right pill — the invitation stays reachable from anywhere
+ *   on the page, and its section is left as pure whitespace.
+ * theme: custom (inherited from layer 01, unchanged)
+ *
+ * HIERARCHY — size, colour, and family do the work. Instrument Serif ships a
+ *   single weight (400), so weight contrast is not available on the display
+ *   face; the steps are H1 wordmark → statement → lede → mono label, carried by
+ *   font-size, colour depth (ink → ink-2 → muted), and the serif/mono split.
+ *
+ * LIGHT NARRATIVE — the page's spine, not decoration:
+ *   storm   paper   thoughts arrive, lit
+ *   lost    ink     the feed takes them; a dense field of them in the dark
+ *   turn    ink     one question, lit amber, over blurred floating plates
+ *   idea    paper   the light returns
+ *   give    paper   pure whitespace; the invitation floats bottom-right
+ *
+ * motion: flash · sink · plate-drift  (3 primitives)
+ *   No scroll-triggered reveals anywhere.
+ * emphasis: accent colour + drawn underline, once. NOT italic — gate 38a.
+ * pre-emit critique: P5 H5 E4 S5 R5 V4
+ * contrast: pass (40–41) · mobile: pass (34, 49, 50–57) · tokens: pass (48)
+ * v1.2.0
+ */
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { overflow-x: clip; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  overflow-x: clip;
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-wordmark);
+  -webkit-font-smoothing: antialiased;
+  /* Clears the fixed invitation so it can never cover the colophon. */
+  padding-block-end: var(--cta-clearance);
+}
+
+h1, h2, p { margin: 0; font-weight: 400; }
+
+.filters { position: absolute; width: 0; height: 0; }
+
+.skip {
+  position: absolute;
+  inset-inline-start: -9999px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+.skip:focus-visible {
+  inset-inline-start: var(--page-gutter);
+  inset-block-start: var(--space-md);
+  z-index: var(--z-toast);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  padding: var(--space-xs) var(--space-sm);
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
+
+/* ============================================================
+   Masthead · the brand is the page's H1, at display size.
+   ============================================================ */
+
+.mast {
+  position: relative;
+  z-index: var(--z-raised);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-sm) var(--space-lg);
+  padding: var(--space-2xl) var(--page-gutter) 0;
+}
+
+.mast__h {
+  font-size: var(--text-wordmark);
+  line-height: 1.02;
+  letter-spacing: -0.008em;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+}
+.mast__h a {
+  color: var(--color-ink);
+  text-decoration: none;
+  transition: color var(--dur-short) var(--ease-out);
+}
+.mast__h a:hover { color: var(--color-ink-2); }
+
+.mast__layer {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.24em;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Storm · thoughts flashing up at random and going.
+   Motion primitive 1 · flash.
+   ============================================================ */
+
+.storm {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  min-block-size: clamp(28rem, 66dvh, 44rem);
+  display: grid;
+  align-content: end;
+  padding: var(--space-2xl) var(--page-gutter) var(--space-3xl);
+}
+
+.storm__field,
+.swarm-dark {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-base);
+  pointer-events: none;
+  overflow: clip;
+}
+
+/* Outer level drifts; inner level flashes. One property each, so the two
+   animations can never collide on `transform`. */
+.pop {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  inline-size: max-content;
+  max-inline-size: min(21rem, 62vw);
+  animation: pop-drift var(--t1) var(--ease-in-out) var(--d1) infinite alternate;
+}
+.pop__t {
+  display: block;
+  opacity: 0;
+  font-family: var(--font-wordmark);
+  font-size: var(--s);
+  line-height: 1.24;
+  color: var(--c);
+  filter: blur(var(--bl));
+  animation: pop-flash var(--t2) var(--ease-out) var(--d2) infinite;
+}
+
+@keyframes pop-drift { to { transform: translate(var(--dx), var(--dy)); } }
+
+/* Appear quickly, hold, leave. The long tail of zero is the wait before the
+   thought comes round again — that dead time is what keeps the field from
+   reading as a marquee. */
+@keyframes pop-flash {
+  0%   { opacity: 0; transform: translateY(0.5em) scale(0.94); }
+  6%   { opacity: var(--o); transform: none; }
+  30%  { opacity: var(--o); transform: none; }
+  42%  { opacity: 0; transform: translateY(-0.3em) scale(1.02); }
+  100% { opacity: 0; transform: translateY(-0.3em) scale(1.02); }
+}
+
+.storm__note {
+  position: relative;
+  z-index: var(--z-raised);
+  max-inline-size: 30ch;
+  font-size: var(--text-md);
+  line-height: 1.55;
+  color: var(--color-ink-2);
+  margin-inline-start: clamp(0rem, 6vw, var(--space-3xl));
+}
+
+/* ============================================================
+   Beats · one fold each, hard surface changes between.
+   ============================================================ */
+
+.beat {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  display: grid;
+  align-content: center;
+  gap: var(--space-2xl);
+  padding-block: clamp(var(--space-3xl), 17vh, var(--space-4xl));
+  padding-inline: var(--page-gutter);
+  min-block-size: clamp(28rem, 76dvh, 50rem);
+}
+
+/* The copy must out-paint the fields behind it. Those are positioned with a
+   z-index, so static flow content would otherwise sit underneath them. */
+.beat > :not(.swarm-dark):not(.plates) {
+  position: relative;
+  z-index: var(--z-raised);
+}
+
+.beat--dark {
+  background: var(--color-ink);
+  color: var(--color-ink-paper);
+}
+.beat--light { background: var(--color-paper); color: var(--color-ink); }
+
+.beat__lede {
+  max-inline-size: 46ch;
+  font-size: var(--text-lede);
+  line-height: 1.5;
+  color: var(--color-ink-paper);
+  margin-inline-start: clamp(0rem, 6vw, var(--space-3xl));
+}
+
+.beat__turn {
+  max-inline-size: 19ch;
+  font-size: var(--text-turn);
+  line-height: 1.14;
+  letter-spacing: -0.012em;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+  margin-inline-start: clamp(0rem, 11vw, var(--space-4xl));
+}
+
+.beat__ask {
+  max-inline-size: 20ch;
+  font-size: var(--text-turn);
+  line-height: 1.14;
+  letter-spacing: -0.012em;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+  margin-inline-start: clamp(0rem, 6vw, var(--space-3xl));
+}
+
+/* ============================================================
+   Emphasis — accent + a drawn underline. Never italic (gate 38a),
+   and Instrument Serif has one weight, so weight is unavailable too.
+   ============================================================ */
+
+.lit {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 2px;
+  /* em-relative, not px: at display sizes a fixed 1–2px offset sits inside
+     the letterforms. skip-ink clears the descenders. */
+  text-underline-offset: 0.08em;
+  text-decoration-skip-ink: auto;
+}
+
+/* ============================================================
+   Motion primitive 2 · sink
+   The dark field. The same voice as the storm, but buried — drifting
+   down and dimming. The pain said in motion rather than in more copy.
+   ============================================================ */
+
+.sunk__t {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  max-inline-size: min(24rem, 66vw);
+  font-family: var(--font-wordmark);
+  font-size: var(--s);
+  line-height: 1.24;
+  color: var(--color-ink-paper);
+  opacity: 0;
+  filter: blur(var(--bl));
+  animation: sink var(--t1) var(--ease-in-out) var(--d1) infinite;
+}
+@keyframes sink {
+  0%   { opacity: 0;        transform: translateY(-2.5vh); }
+  20%  { opacity: var(--o); transform: translateY(0); }
+  68%  { opacity: 0;        transform: translateY(7vh); }
+  100% { opacity: 0;        transform: translateY(7vh); }
+}
+
+/* ============================================================
+   Motion primitive 3 · plates
+   Floating, heavily blurred photographs behind the turn.
+
+   These are SWAPPABLE SLOTS. Each plate takes its picture from --img;
+   with no --img set it falls back to a soft two-stop field, which at
+   this blur radius is what a photograph looks like anyway. Drop a real
+   image in (`--img: url(...)`) and nothing else needs to change.
+
+   Restraint is enforced structurally, not by eye: opacity is capped low,
+   saturation is pulled down, and the blur floor is high enough that no
+   plate can ever resolve into a subject that competes with the question.
+   ============================================================ */
+
+.plates {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-base);
+  pointer-events: none;
+  overflow: clip;
+}
+
+.plate {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  inline-size: var(--w);
+  aspect-ratio: var(--ar);
+  border-radius: var(--radius-plate);
+  background-image: var(--img);
+  background-size: cover;
+  background-position: center;
+  filter: blur(var(--bl)) saturate(0.55);
+  opacity: var(--o);
+  animation: plate-drift var(--t) var(--ease-in-out) var(--d) infinite alternate;
+}
+@keyframes plate-drift {
+  to { transform: translate(var(--dx), var(--dy)) scale(var(--sc)); }
+}
+
+/* ============================================================
+   Give · pure whitespace. The invitation itself is fixed to the
+   viewport, bottom-right, so this fold is left empty on purpose.
+   ============================================================ */
+
+.give {
+  min-block-size: clamp(18rem, 42dvh, 28rem);
+}
+
+.cta {
+  position: fixed;
+  inset-block-end: var(--space-xl);
+  inset-inline-end: var(--page-gutter);
+  z-index: var(--z-sticky);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-block-size: 52px;
+  padding: var(--space-md) var(--space-xl);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-family: var(--font-wordmark);
+  font-size: var(--text-lg);
+  line-height: 1;
+  letter-spacing: 0.005em;
+  text-decoration: none;
+  white-space: nowrap;
+  border: var(--rule-hair) solid transparent;
+  border-radius: var(--radius-pill);
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    transform 110ms var(--ease-out);
+}
+.cta::after {
+  content: "";
+  inline-size: 0.6em;
+  block-size: 0.6em;
+  border-inline-end: 2px solid currentColor;
+  border-block-start: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--dur-short) var(--ease-out);
+}
+.cta:hover,
+.cta:focus-visible { background: var(--color-focus); }
+.cta:hover::after,
+.cta:focus-visible::after { transform: rotate(45deg) translate(2px, -2px); }
+.cta:active { transform: translateY(1px); }
+
+/* ============================================================
+   Footer · Ft2. One line, a hairline above it, nothing else.
+   ============================================================ */
+
+.colophon {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-lg);
+  align-items: baseline;
+  margin-inline: var(--page-gutter);
+  padding-block: var(--space-lg) var(--space-2xl);
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+}
+.colophon__sep { color: var(--color-rule); }
+.colophon a {
+  color: var(--color-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  border-block-end: var(--rule-hair) solid transparent;
+  transition: color var(--dur-short) var(--ease-out),
+              border-color var(--dur-short) var(--ease-out);
+}
+.colophon a:hover { color: var(--color-ink); border-block-end-color: var(--color-rule); }
+
+/* ============================================================
+   ≤ 40rem
+   ============================================================ */
+
+@media (max-width: 40rem) {
+  .storm { min-block-size: clamp(26rem, 62dvh, 38rem); }
+  .beat  { min-block-size: auto; padding-block: var(--space-3xl); }
+  .give  { min-block-size: clamp(12rem, 30dvh, 18rem); }
+  .pop   { max-inline-size: 74vw; }
+
+  /* A fixed CTA on a full-width column will sit over body copy — that is the
+     cost of pinning it, not a bug to style away. Shrink it to roughly half the
+     area so it covers as little as possible, and keep the 44px hit target. */
+  .cta {
+    font-size: var(--text-base);
+    min-block-size: 44px;
+    padding: var(--space-sm) var(--space-lg);
+    inset-block-end: var(--space-lg);
+  }
+  .cta::after { inline-size: 0.52em; block-size: 0.52em; }
+}
+
+/* ============================================================
+   Reduced motion — the fields settle. Thoughts hold where they
+   landed, at the opacity they were dealt; nothing flashes or sinks.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .pop, .pop__t, .sunk__t, .plate {
+    animation: none !important;
+    transform: none !important;
+  }
+  .pop__t  { opacity: var(--o); }
+  .sunk__t { opacity: var(--o); }
+  .cta, .cta::after { transition: none; }
+}

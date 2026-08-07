@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Light on Light · v1（存档）</title>
+<meta name="description" content="一个念头，在被说出之前。">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;400&family=Geist+Mono:wght@400&display=swap">
+
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="styles-v1.css">
+</head>
+<body>
+
+<a class="skip" href="#entry">跳到入口</a>
+
+<!-- The grain source. Generated, greyed, and used only inside the trace. -->
+<svg class="filters" aria-hidden="true" focusable="false" width="0" height="0">
+  <filter id="grain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+</svg>
+
+<header class="nav">
+  <a class="nav__mark settle" style="--i: 0" href="./">Light on Light</a>
+  <p class="nav__layer settle" style="--i: 1">二〇二六 · 第一层</p>
+</header>
+
+<main>
+  <!-- Fold and Drift share one sticky context so the trace stays present
+       while the thought resolves. -->
+  <div class="ground">
+
+    <div class="ground__trace">
+      <figure class="trace" aria-hidden="true">
+        <span class="trace__fog"></span>
+        <span class="trace__grain"></span>
+        <svg class="trace__line" viewBox="0 0 200 200" fill="none">
+          <!-- An open arc. It does not close — that is the point. -->
+          <path d="M 34 138 C 41 61 117 30 160 71" stroke="currentColor"
+                stroke-width="1.1" stroke-linecap="round"/>
+          <path d="M 97 154 L 103 99" stroke="currentColor"
+                stroke-width="1.1" stroke-linecap="round"/>
+        </svg>
+      </figure>
+    </div>
+
+    <section class="fold">
+      <h1 class="fold__line settle" style="--i: 2">它还没有形状。</h1>
+      <p class="fold__cue settle" style="--i: 3">向下</p>
+    </section>
+
+    <section class="drift">
+      <ul class="drift__list">
+        <li class="drift__item" style="--o: .88; --x: 0">早上六点想到的那句话。</li>
+        <li class="drift__item" style="--o: .55; --x: 7ch">洗澡时突然明白的一件事。</li>
+        <li class="drift__item" style="--o: .74; --x: 3ch">地铁上一闪而过的那个比喻。</li>
+        <li class="drift__item drift__item--gone" style="--o: .22; --x: 11ch">昨天还有一个。已经想不起来了。</li>
+      </ul>
+      <h2 class="drift__lede">每天几十个。绝大多数在被说出来之前就散了。</h2>
+    </section>
+
+  </div>
+
+  <section class="entry" id="entry">
+    <h2 class="entry__q">那些没有散掉的，会去哪里？</h2>
+    <a class="entry__door" href="./concept.html">往里走</a>
+  </section>
+</main>
+
+<footer class="close">
+  <p class="close__line">光落在光上，几乎看不见。所以这页走得很慢。</p>
+  <div class="close__meta">
+    <span class="close__mark">Light on Light</span>
+    <span class="close__note">二〇二六</span>
+  </div>
+</footer>
+
+</body>
+</html>

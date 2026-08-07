@@ -1,0 +1,79 @@
+[
+  {
+    "date": "2026-08-07",
+    "macrostructure": "bespoke (two-state instrument, reverted single column)",
+    "theme": "custom",
+    "theme_axes": "light / roman-serif / chromatic-amber ~65deg",
+    "enrichment": "LLM-drawn: server.py bridges the page to `claude -p` running the real hand-drawn-quote-art skill; built-in generator demoted to offline fallback; gift is stamped DRAWN BY CLAUDE / DRAWN LOCALLY",
+    "brief": "Layer 03 — greeting small and spread full-width, placeholder sits on the ruled line, duplicate hint removed, /api/translate wired to the local claude CLI (no key, no deploy)"
+  },
+  {
+    "date": "2026-08-07",
+    "macrostructure": "bespoke — two-column instrument (write left, gift right)",
+    "theme": "custom",
+    "theme_axes": "light / roman-serif / chromatic-amber ~65deg",
+    "cta": "fixed bottom-right pill, no arrow, 1.6s left-to-right fill",
+    "brief": "Layer 03 revision to the owner's marked-up grid: two columns, greeting shrunk below the writing line, unified placeholder, footer at the true page bottom, arrows removed for a fill that reads as progress"
+  },
+  {
+    "date": "2026-08-07",
+    "macrostructure": "bespoke (a two-state instrument, not a page)",
+    "theme": "custom",
+    "theme_axes": "light / roman-serif / chromatic-amber ~65°",
+    "nav": "masthead",
+    "footer": "Ft2",
+    "cta": "fixed bottom-right pill (Export)",
+    "enrichment": "tier-A: hand-drawn-quote-art method ported to JS — anchor lookup, 3-mode priority, 8 seeded generators, canvas JPG export",
+    "brief": "Light on Light · LAYER 03 Create Your Visual Gift — input / forming / gift; no spinner; export JPG on one fixed template"
+  },
+  {
+    "date": "2026-08-07",
+    "macrostructure": "Manifesto (bones only)",
+    "theme": "custom",
+    "theme_axes": "light / roman-serif / chromatic-amber ~65°",
+    "nav": "masthead (was N9 — the brand is now the page H1 at display size)",
+    "footer": "Ft2 Inline rule single line",
+    "cta": "fixed bottom-right pill, rounded; its section left as pure whitespace",
+    "enrichment": "tier-A: storm (banded) + dense dark pop-out field + swappable blurred photo plates",
+    "brief": "Light on Light · LAYER 02 revision — owner notes: H1 per page + enlarge brand; delete the 'Every tool' claim and the 'By translating words' line; dense pop-out thoughts on the dark page; blurred floating photos behind the turn; CTA fixed bottom-right, rounded, no caption; they -> thoughts"
+  },
+  {
+    "date": "2026-08-07",
+    "macrostructure": "Manifesto (bones only — poster costume rejected)",
+    "theme": "custom",
+    "theme_axes": "light / roman-serif / chromatic-amber ~65°",
+    "vibe": "warm fog, a descent into the dark and back",
+    "nav": "N9 Edge-aligned minimal (kept, not rotated — sibling page of one system)",
+    "footer": "Ft2 Inline rule single line",
+    "cta": "Manifesto button voice — solid accent slab, the only filled element in the system",
+    "enrichment": "tier-A: JS-seeded pop-up storm (banded) + sunk field in the dark beat",
+    "brief": "Light on Light · LAYER 02 Why this project — pop-up thoughts → pain → turn → idea → Unwrap My Gift"
+  },
+  {
+    "date": "2026-08-07",
+    "macrostructure": "bespoke (one silent screen)",
+    "theme": "custom",
+    "theme_axes": "light / roman-serif / chromatic-amber ~65°",
+    "vibe": "warm fog, living field, the name come apart",
+    "enrichment": "tier-A CSS haze + JS-seeded swarm (pixel lights + letters of the wordmark), 4 randomised periods per element",
+    "brief": "Light on Light · opening screen, motion pass 2 — owner: too slow, no life. Studied two installation refs (drifting quad outlines; letters appearing/vanishing at depth). Behaviour taken, palette not."
+  },
+  {
+    "date": "2026-08-07",
+    "macrostructure": "bespoke (one silent screen)",
+    "theme": "custom",
+    "theme_axes": "light / roman-serif / chromatic-amber ~65°",
+    "vibe": "warm fog, emerging trace, breathing",
+    "enrichment": "tier-A CSS haze (3 multiply layers + screen-blend glow + page-wide grain)",
+    "brief": "Light on Light · opening screen — wordmark is the only entrance; reference video DNA: near-white field, one slow mass, growing hairline, micro-mono in a corner"
+  },
+  {
+    "date": "2026-08-07",
+    "macrostructure": "Marquee Hero",
+    "theme": "custom",
+    "theme_axes": "light / roman-serif / chromatic-amber ~65°",
+    "vibe": "warm fog, emerging trace, breathing",
+    "enrichment": "E5 Custom Illustration Centerpiece · tier-A CSS fog + hand-built SVG trace · scroll-linked",
+    "brief": "Light on Light · v1 landing (archived as index-v1.html) — fold statement + drift fragments + near-black entry"
+  }
+]

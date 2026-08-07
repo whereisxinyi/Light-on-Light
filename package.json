@@ -1,0 +1,8 @@
+{
+  "name": "light-on-light",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.116.0"
+  }
+}

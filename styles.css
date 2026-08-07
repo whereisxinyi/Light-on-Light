@@ -1,0 +1,416 @@
+/* SOURCE FILE — index.html is a single self-contained page and does not link
+ * this stylesheet; it embeds a copy. Edit here, then run `python3 build.py`
+ * to regenerate index.html. Editing index.html's <style> directly works too,
+ * but the next build will overwrite it.
+ *
+ * Hallmark · route: custom (bespoke)
+ * structure: one silent screen — a living field, a growing seam, a wordmark that is the door
+ * idea: "the name scatters into its own letters; the wordmark is where they settle"
+ * paper: oklch(96.5% 0.008 72) · accent: oklch(64% 0.14 65) · glow: oklch(99% 0.012 78)
+ * display: Instrument Serif · outlier: Geist Mono
+ * axes: light / roman-serif / chromatic-amber ~65°
+ * motion: emerge · haze · swarm · mark  (4 systems)
+ *   OVERRIDE — Hallmark bans infinite loops, caps reveals at ~500ms, and caps
+ *   a page at three motion primitives. The project owner asked for a living
+ *   installation-grade field: constant flicker, bounce, gathering, dispersal,
+ *   and genuine randomness. All four caps are overridden by instruction.
+ *   Mitigations kept: every animation touches only transform/opacity; the
+ *   fastest flicker is a 1.8s on-off cycle (~0.55 Hz, well under the 3 Hz
+ *   photosensitivity gate); the accent stays under 0.1% of the viewport;
+ *   the whole field collapses to a static scatter under reduced-motion.
+ * studied: two reference videos — (a) a black field of hand-drawn quad outlines
+ *   drifting, clustering, dispersing on independent rhythms; (b) single letters
+ *   floating at varied depth and blur, fully appearing and fully vanishing.
+ *   Behaviour and element vocabulary taken; palette deliberately not taken.
+ * pre-emit critique: P5 H4 E4 S5 R4 V5
+ * contrast: pass (40–41) · mobile: pass (34, 49, 50–57) · tokens: pass (48)
+ * nav/footer: n/a — the page has neither · slop: pass (42–45)
+ * OVERRIDDEN, not passed:
+ *   gate 29 (abstract background ≤5%, ≤2 blooms, no animation) — the haze is
+ *     4 layers, animated, and covers most of the field. It is not a background:
+ *     it is the page's subject, it is monochrome (zero accent), and the owner
+ *     specified it. Recorded as an override so an audit doesn't read it as a miss.
+ *   gate 26 (eight states) — the page's one link ships default / hover /
+ *     focus-visible / active. No :disabled: a wordmark that is never disabled
+ *     would be dead code.
+ *   gate 44a (padding-block-end ≥ 1.3× start) — n/a: there is no next section
+ *     for the hero to sit into. Asymmetry is carried by the composition instead.
+ * v1.1.0
+ */
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: clip;
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-wordmark);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, p { margin: 0; font-weight: 400; }
+
+.filters { position: absolute; width: 0; height: 0; }
+
+/* ============================================================
+   The field — one screen, nothing below it
+   ============================================================ */
+
+.field {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  min-block-size: 100dvh;
+  display: grid;
+  /* Asymmetric on both axes: the wordmark sits low and left of centre,
+     the stamp is parked in the opposite corner. Nothing is centred. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: 1fr auto auto;
+  padding:
+    calc(var(--space-xl) + env(safe-area-inset-top))
+    max(var(--page-gutter), env(safe-area-inset-right))
+    calc(var(--space-xl) + env(safe-area-inset-bottom))
+    max(var(--page-gutter), env(safe-area-inset-left));
+}
+
+/* ============================================================
+   Motion system 1 · emerge
+   Six seconds. The haze arrives first, the seam next, the name last —
+   so the page reads as something becoming visible, in that order.
+   ============================================================ */
+
+@keyframes emerge { to { opacity: 1; } }
+
+.haze, .swarm, .seam, .mark, .stamp {
+  opacity: 0;
+  animation: emerge var(--dur-emerge) var(--ease-in-out) forwards;
+}
+.haze  { animation-delay: 300ms;  }
+.swarm { animation-delay: 900ms;  }
+.seam  { animation-delay: 1600ms; }
+.stamp { animation-delay: 2200ms; }
+.mark  { animation-delay: 3000ms; }   /* the name arrives last: it is seen, not announced */
+
+/* ============================================================
+   The top line — a seam and the layer it belongs to, paired.
+   The seam is LAYER 01's own progress: it grows, recedes, and
+   never completes, because the layer isn't finished forming.
+   (That pairing is what keeps the rule from being an ornament.)
+   ============================================================ */
+
+.seam {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: start;
+  justify-self: start;
+  inline-size: min(34vw, 22rem);
+  block-size: var(--rule-hair);
+  background: var(--color-rule);
+  transform-origin: 0 50%;
+  transform: scaleX(0.34);
+}
+
+/* ============================================================
+   Motion system 2 · drift
+   The haze. Three multiply layers + one screen-blend light + grain.
+   Amplitudes are 2–5%: it should read as breathing, not floating.
+   ============================================================ */
+
+.haze {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-base);
+  pointer-events: none;
+}
+
+.haze__l,
+.haze__glow,
+.haze__grain {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+}
+
+.haze__l { mix-blend-mode: multiply; }
+
+/* The three layers are deliberately off-register and differently shaped —
+   one broad, one small and low, one stretched horizontal — so the composite
+   silhouette is a bank of mist, not a concentric blob. */
+.haze__l--a {
+  inset-block-start: 8%;   inset-inline-start: 24%;
+  inline-size: min(68vw, 54rem); aspect-ratio: 1.28;
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-paper-3) 62%, transparent), transparent 78%);
+  filter: blur(72px);
+}
+.haze__l--b {
+  inset-block-start: 40%;  inset-inline-start: 52%;
+  inline-size: min(30vw, 23rem); aspect-ratio: 0.9;
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-neutral) 12%, transparent), transparent 76%);
+  filter: blur(84px);
+}
+.haze__l--c {
+  inset-block-start: 26%;  inset-inline-start: 30%;
+  inline-size: min(46vw, 36rem); aspect-ratio: 2.1;   /* a streak, not a circle */
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-paper-3) 46%, transparent), transparent 76%);
+  filter: blur(58px);
+}
+
+/* 微光 — screen blend, so it only shows where the haze is thick.
+   Light you can find inside the mist, not light applied on top of it. */
+.haze__glow {
+  inset-block-start: 24%;  inset-inline-start: 44%;
+  inline-size: min(24vw, 19rem); aspect-ratio: 1.15;
+  background: radial-gradient(closest-side, var(--color-glow), transparent 72%);
+  filter: blur(44px);
+  mix-blend-mode: screen;
+  opacity: 1;
+}
+
+/* Grain covers the whole field, not just the haze. Two jobs, both load-bearing:
+   it is the paper's tooth (颗粒), and it dithers the 8-bit banding that
+   large-radius blur on a near-flat gradient otherwise leaves as onion rings. */
+.haze__grain {
+  inset: 0;
+  inline-size: auto;
+  border-radius: 0;
+  filter: url(#grain);
+  mix-blend-mode: multiply;
+  opacity: 0.058;
+}
+
+@keyframes drift-a { to { transform: translate3d(-6.5%, 4.5%, 0) scale(1.12); } }
+@keyframes drift-b { to { transform: translate3d(8.5%, -6%, 0)   scale(0.86); } }
+@keyframes drift-c { to { transform: translate3d(-5%, -7.5%, 0)  scale(1.16); } }
+@keyframes seam-grow { to { transform: scaleX(1); } }
+@keyframes breathe   { to { opacity: 0.72; } }
+
+.haze__l--a  { animation: drift-a var(--dur-drift-a) var(--ease-in-out) infinite alternate; }
+.haze__l--b  { animation: drift-b var(--dur-drift-b) var(--ease-in-out) infinite alternate; }
+.haze__l--c,
+.haze__glow  { animation: drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate; }
+.seam        { animation: emerge var(--dur-emerge) var(--ease-in-out) 2200ms forwards,
+                          seam-grow var(--dur-grow) var(--ease-in-out) infinite alternate; }
+
+/* ============================================================
+   Motion system 3 · swarm
+   The name, come apart. Tiny pixel lights and single letters of
+   "Light on Light" adrift over the haze — bouncing, flickering,
+   gathering, dispersing. The wordmark at the bottom is where they
+   have settled; that is what keeps this from being decoration.
+
+   Every element is generated in JS with randomised position,
+   travel, scale, opacity, blur, and FOUR independent periods —
+   so no two loads are alike and the composite never repeats.
+   Each nesting level animates exactly one property, which is why
+   there are three of them: drift / bob / flicker can't collide.
+   ============================================================ */
+
+.swarm {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-base);
+  pointer-events: none;
+  overflow: clip;
+}
+
+.mote {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  animation: mote-drift var(--t1) var(--ease-in-out) var(--d1) infinite alternate;
+}
+.mote__b {
+  display: block;
+  animation: mote-bob var(--t2) var(--e2, var(--ease-in-out)) var(--d2) infinite alternate;
+}
+.mote__d {
+  display: block;
+  opacity: 0;
+  animation: mote-flick var(--t3) var(--ease-in-out) var(--d3) infinite alternate;
+}
+
+/* pixel light — a square. Pixels have corners; that is the point. */
+.mote--px .mote__d {
+  inline-size: var(--s);
+  block-size: var(--s);
+  background: var(--c);
+}
+
+/* text fragment — one letter of the name, loose from it.
+   Varying blur reads as depth, the way the reference stages its letters. */
+.mote--ch .mote__d {
+  font-family: var(--font-wordmark);
+  font-size: var(--s);
+  line-height: 1;
+  color: var(--c);
+  filter: blur(var(--bl));
+}
+
+/* 2D transforms on purpose: animating `transform` is compositor-driven either
+   way, and translate3d would force a layer per nesting level — ~120 layers for
+   a field this size. This halves that for free. */
+@keyframes mote-drift { to { transform: translate(var(--dx), var(--dy)); } }
+@keyframes mote-bob   { to { transform: translate(0, var(--by)) scale(var(--bs)); } }
+/* --o0 is the floor. Most motes pulse down to it and hold; a third are dealt
+   --o0: 0 and disappear completely before returning. */
+@keyframes mote-flick { from { opacity: var(--o0); } to { opacity: var(--o); } }
+
+/* ============================================================
+   The wordmark — the page's only text of consequence,
+   and its only entrance.
+   ============================================================ */
+
+.mark {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  justify-self: start;
+  align-self: end;
+  z-index: var(--z-raised);
+  margin-inline-start: clamp(0rem, 8vw, var(--space-4xl));
+  margin-block-end: clamp(var(--space-xl), 14vh, var(--space-3xl));
+  line-height: 1;
+}
+
+.mark__link {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-wordmark);
+  font-weight: 400;
+  font-size: var(--text-wordmark);
+  letter-spacing: -0.005em;
+  line-height: 1.06;
+  color: var(--color-ink);
+  text-decoration: none;
+  white-space: nowrap;
+  padding-block: var(--space-sm) var(--space-xs);
+  /* Motion system 3 · mark — the name itself breathes, very slightly. */
+  animation: breathe var(--dur-breath) var(--ease-in-out) infinite alternate;
+}
+
+/* A permanent, almost-invisible underline so the page's one link is
+   findable without shouting. Hover fills it in over 1.6s — weather, not UI.
+   ONE hover signal only: the rule draws. The type itself does not move,
+   scale, or change colour. */
+.mark__link::after {
+  content: "";
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  inline-size: 100%;
+  block-size: var(--rule-hair);
+  background: var(--color-accent);
+  opacity: 0.22;
+  transform: scaleX(0.42);
+  transform-origin: 0 50%;
+  transition:
+    transform var(--dur-slow) var(--ease-in-out),
+    opacity   var(--dur-slow) var(--ease-in-out);
+}
+
+.mark__link:hover::after,
+.mark__link:focus-visible::after { opacity: 0.9; transform: scaleX(1); }
+
+/* Press. The one place this page is allowed to be quick. */
+.mark__link:active::after {
+  opacity: 1;
+  transition-duration: var(--dur-micro);
+}
+
+/* Focus is instant and never animated. */
+.mark__link:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 8px;
+}
+
+/* ============================================================
+   The stamp — one micro-mark in the opposite corner.
+   The reference parks "Loading… / 00" here; this parks the layer.
+   ============================================================ */
+
+.stamp {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  align-self: start;
+  margin-block-start: -0.5em;   /* optically align the cap-height to the seam */
+  z-index: var(--z-raised);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.24em;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   ≤ 40rem — the haze recomposes for a tall, narrow field.
+   Loops stay (they are the page), amplitudes drop further.
+   ============================================================ */
+
+@media (max-width: 40rem) {
+  /* Denser and tighter on a tall narrow field — at 375px the desktop
+     proportions wash out to nothing. */
+  .haze__l--a {
+    inset-block-start: 14%; inset-inline-start: 2%;
+    inline-size: 96vw; aspect-ratio: 1.05;
+    background: radial-gradient(closest-side,
+      color-mix(in oklch, var(--color-paper-3) 78%, transparent), transparent 78%);
+    filter: blur(52px);
+  }
+  .haze__l--b {
+    inset-block-start: 34%; inset-inline-start: 40%;
+    inline-size: 56vw; filter: blur(56px);
+    background: radial-gradient(closest-side,
+      color-mix(in oklch, var(--color-neutral) 16%, transparent), transparent 76%);
+  }
+  .haze__l--c {
+    inset-block-start: 26%; inset-inline-start: 6%;
+    inline-size: 78vw; aspect-ratio: 1.7; filter: blur(44px);
+    background: radial-gradient(closest-side,
+      color-mix(in oklch, var(--color-paper-3) 56%, transparent), transparent 76%);
+  }
+  .haze__glow {
+    inset-block-start: 26%; inset-inline-start: 30%;
+    inline-size: 46vw; filter: blur(34px);
+  }
+
+  .seam { inline-size: 40vw; }
+  .mark { margin-block-end: clamp(var(--space-xl), 12vh, var(--space-3xl)); }
+}
+
+/* ============================================================
+   Reduced motion — the page settles and stays settled.
+   No emergence, no drift, no breath. Everything simply present.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .haze, .swarm, .seam, .mark, .stamp, .mark__link,
+  .haze__l, .haze__glow,
+  .mote, .mote__b, .mote__d {
+    animation: none !important;
+    opacity: 1;
+  }
+  /* The swarm stops moving but stays scattered — the composition survives,
+     the motion doesn't. Each mote holds the opacity it was dealt. */
+  .mote__d { opacity: var(--o); }
+  .seam { transform: scaleX(0.72); }   /* the seam rests part-drawn */
+  .mark__link::after { transition: none; }
+}
+
+/* Touch has no hover — the underline sits part-drawn so it still reads
+   as a link, without becoming the loudest thing on a very quiet page. */
+@media (pointer: coarse) {
+  .mark__link::after { opacity: 0.34; transform: scaleX(0.66); }
+}

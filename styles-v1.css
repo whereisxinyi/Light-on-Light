@@ -1,0 +1,470 @@
+/* Hallmark · genre: atmospheric (light-paper variant) · macrostructure: 03 Marquee Hero
+ * H1 hero knobs: statement=short, alignment=bottom-left, divider=hard surface change
+ * enrichment: E5 Custom Illustration Centerpiece · tier-A CSS fog + hand-built SVG trace
+ *   · animation=scroll-linked · scale=dominant · polish: none
+ * nav: N9 Edge-aligned minimal · footer: Ft5 Statement
+ * theme: custom · vibe: "warm fog, emerging trace, breathing"
+ *   · paper: oklch(96.5% 0.008 72) · accent: oklch(64% 0.14 65)
+ * display: Noto Serif SC 200 · body: Noto Serif SC 400 · outlier: Geist Mono
+ * axes: light / roman-serif / chromatic-amber ~65°
+ * motion: settle · resolve · mark  (3 primitives)
+ * studied: no · context: user-provided · v1.1.0
+ */
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  overflow-x: clip;            /* clip, never hidden — preserves sticky */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: clip;
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-md);
+  line-height: 1.8;            /* CJK wants more air than the 1.65 latin ceiling */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+h1, h2 { margin: 0; font-weight: 200; }
+p, ul  { margin: 0; }
+ul     { list-style: none; padding: 0; }
+
+.filters { position: absolute; width: 0; height: 0; }
+
+.skip {
+  position: absolute;
+  inset-inline-start: -9999px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+.skip:focus-visible {
+  inset-inline-start: var(--page-gutter);
+  inset-block-start: var(--space-md);
+  z-index: var(--z-sticky);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  padding: var(--space-xs) var(--space-sm);
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+/* Focus is instant and identical everywhere. Never transitioned. */
+a:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+/* ============================================================
+   Motion primitive 1 · settle
+   One orchestrated entrance. 4 elements, 90ms stagger, then the page stops.
+   ============================================================ */
+
+.settle {
+  opacity: 0;
+  transform: translateY(6px);
+  animation: settle var(--dur-long) var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+@keyframes settle { to { opacity: 1; transform: none; } }
+
+/* ============================================================
+   Nav · N9 Edge-aligned minimal
+   Wordmark hard-left, layer marker hard-right, nothing between.
+   The absence is the design — and Marquee Hero forbids a CTA in the fold.
+   ============================================================ */
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--page-gutter) 0;
+}
+
+.nav__mark {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--dur-short) var(--ease-out);
+}
+.nav__mark:hover { color: var(--color-ink-2); }
+
+.nav__layer {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Ground · the sticky context shared by Fold + Drift
+   ============================================================ */
+
+.ground {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  padding-inline: var(--page-gutter);
+}
+
+.ground__trace { grid-column: 1; grid-row: 1; align-self: start; }
+.fold          { grid-column: 1; grid-row: 1; }
+.drift         { grid-column: 1; grid-row: 2; }
+
+/* ============================================================
+   Enrichment E5 · the thought
+   A place where the fog is thicker — not a glow, not an orb.
+   Motion primitive 2 · resolve: the only scroll-driven thing on the page.
+   ============================================================ */
+
+.trace {
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  margin-inline-start: auto;
+  inline-size: clamp(15rem, 62vw, 26rem);
+  aspect-ratio: 1;
+  color: var(--color-ink-2);
+  z-index: var(--z-base);
+  pointer-events: none;
+}
+
+.trace__fog,
+.trace__grain,
+.trace__line { position: absolute; inset: 0; display: block; }
+
+.trace__fog {
+  background:
+    radial-gradient(58% 54% at 46% 42%,
+      color-mix(in oklch, var(--color-paper-3) 94%, transparent), transparent 72%),
+    radial-gradient(44% 40% at 63% 60%,
+      color-mix(in oklch, var(--color-neutral) 20%, transparent), transparent 70%);
+  filter: blur(16px);          /* static — never animated */
+  mix-blend-mode: multiply;
+  transform: scale(1.16);
+  opacity: 1;
+}
+
+/* The grain is masked to the fog's own shape — otherwise feTurbulence fills
+   the whole box and the thought reads as a grey rectangle. */
+.trace__grain {
+  filter: url(#grain);
+  mix-blend-mode: multiply;
+  opacity: 0.11;
+  transform: scale(1.16);
+  -webkit-mask-image:
+    radial-gradient(56% 52% at 46% 42%, #000 6%, transparent 68%),
+    radial-gradient(42% 38% at 63% 60%, #000 4%, transparent 66%);
+  mask-image:
+    radial-gradient(56% 52% at 46% 42%, #000 6%, transparent 68%),
+    radial-gradient(42% 38% at 63% 60%, #000 4%, transparent 66%);
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
+}
+
+.trace__line {
+  opacity: 0;
+  transform: scale(1.05);
+  overflow: visible;
+}
+
+/* Scroll drives the resolution: the fog contracts, the trace appears.
+   Down the page = the thought acquiring form. This is the page's argument,
+   which is the specific reason a scroll-scrubbed animation is allowed here. */
+@keyframes fog-resolve  { to { opacity: 0.3; transform: scale(0.93); } }
+@keyframes grain-resolve{ to { opacity: 0.05; } }
+@keyframes line-resolve { to { opacity: 1; transform: scale(1); } }
+
+@supports (animation-timeline: scroll()) {
+  .trace__fog {
+    animation: fog-resolve linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 78vh;
+  }
+  .trace__grain {
+    animation: grain-resolve linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 78vh;
+  }
+  .trace__line {
+    animation: line-resolve linear both;
+    animation-timeline: scroll(root);
+    animation-range: 10vh 78vh;
+  }
+}
+
+/* No scroll timeline: pin at a half-resolved state so the trace still reads. */
+@supports not (animation-timeline: scroll()) {
+  .trace__fog   { opacity: 0.55; transform: scale(1.02); }
+  .trace__grain { opacity: 0.09; }
+  .trace__line  { opacity: 0.7; transform: scale(1); }
+}
+
+/* ============================================================
+   Fold · Marquee Hero. One statement, bottom-left. No CTA.
+   ============================================================ */
+
+.fold {
+  position: relative;
+  z-index: var(--z-raised);
+  min-block-size: clamp(60vh, 76dvh, 84dvh);
+  display: grid;
+  align-content: end;
+  gap: var(--space-lg);
+  /* Asymmetric: the hero sits into the page rather than floating in it. */
+  padding-block: var(--space-2xl) var(--space-3xl);
+}
+
+.fold__line {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: var(--text-display);
+  line-height: 1.15;           /* CJK display: below 1.05 the 口-radicals collide */
+  letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+  max-inline-size: 14em;
+}
+
+.fold__cue {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.22em;
+  color: var(--color-muted);
+  position: relative;
+  padding-block-end: var(--space-xl);
+}
+.fold__cue::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 2.2em;
+  inset-inline-start: 0.1em;
+  inline-size: var(--rule-hair);
+  block-size: var(--space-lg);
+  background: var(--color-rule);
+}
+
+/* ============================================================
+   Drift · thoughts at different stages of dissolving.
+   No animation. The composition already says it: varied opacity,
+   varied indent, one line nearly gone.
+   ============================================================ */
+
+.drift {
+  position: relative;
+  z-index: var(--z-raised);
+  padding-block: var(--space-2xl) var(--space-4xl);
+  display: grid;
+  gap: var(--space-3xl);
+}
+
+.drift__list { display: grid; gap: var(--space-lg); }
+
+.drift__item {
+  margin-inline-start: var(--x, 0);
+  opacity: var(--o, 1);
+  max-inline-size: 30em;
+  line-height: 1.7;
+}
+.drift__item--gone {
+  filter: blur(0.6px);
+  color: var(--color-neutral);
+}
+
+.drift__lede {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: var(--text-display-s);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  max-inline-size: 22em;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+  border-block-start: var(--rule-hair) solid var(--color-rule-2);
+  padding-block-start: var(--space-xl);
+}
+
+/* ============================================================
+   Entry · the hard surface change (Marquee Hero's divider)
+   The page's only dark block, and the only place the accent lands.
+   Light needs dark to be visible; the doorway is where that happens.
+   ============================================================ */
+
+.entry {
+  background: var(--color-ink);
+  color: var(--color-ink-paper);
+  padding: var(--space-4xl) var(--page-gutter) var(--space-3xl);
+  display: grid;
+  gap: var(--space-2xl);
+  justify-items: start;
+}
+
+.entry__q {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: var(--text-display-s);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  max-inline-size: 20em;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+}
+
+/* Motion primitive 3 · mark — the underline is drawn, not faded. */
+.entry__door {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: var(--text-lg);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-paper);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: var(--space-md) 0;
+  min-block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+  transition: color var(--dur-short) var(--ease-out);
+}
+.entry__door::after {
+  content: "";
+  position: absolute;
+  inset-block-end: var(--space-sm);
+  inset-inline-start: 0;
+  inline-size: 100%;
+  block-size: var(--rule-hair);
+  background: var(--color-accent);
+  transform: scaleX(0.18);
+  transform-origin: 0 50%;
+  transition: transform var(--dur-long) var(--ease-out);
+}
+.entry__door:hover,
+.entry__door:focus-visible { color: var(--color-accent); }
+.entry__door:hover::after,
+.entry__door:focus-visible::after { transform: scaleX(1); }
+.entry__door:active { color: var(--color-accent); }
+
+/* ============================================================
+   Footer · Ft5 Statement. One closing line, then the colophon.
+   ============================================================ */
+
+.close {
+  background: var(--color-ink);
+  color: var(--color-ink-paper);
+  padding: 0 var(--page-gutter) var(--space-2xl);
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+.close__line {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: var(--text-display-s);
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  max-inline-size: 18em;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+  color: var(--color-ink-muted);
+}
+
+.close__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  padding-block-start: var(--space-lg);
+  border-block-start: var(--rule-hair) solid var(--color-ink-rule);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  color: var(--color-ink-muted);
+}
+.close__mark { text-transform: uppercase; white-space: nowrap; }
+.close__note { white-space: nowrap; }
+
+/* ============================================================
+   ≥ 60rem — the trace moves to its own column and goes sticky,
+   staying present while the drift fragments are read.
+   ============================================================ */
+
+@media (min-width: 60rem) {
+  .ground { grid-template-columns: minmax(0, 1fr) minmax(0, 0.78fr); }
+
+  .ground__trace {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: stretch;
+  }
+  .fold  { grid-column: 1 / -1; grid-row: 1; }
+  .drift { grid-column: 1 / -1; grid-row: 2; }
+
+  .trace {
+    position: sticky;
+    inset-block-start: 14vh;
+    inline-size: clamp(16rem, 30vw, 25rem);
+    margin-inline-end: -4vw;   /* a small grid-break; html/body clip the overflow */
+  }
+
+  .fold        { padding-block: var(--space-3xl) var(--space-4xl); }
+  .fold__line  { max-inline-size: 11em; }
+  .drift__lede { margin-inline-start: 6vw; }
+}
+
+/* ============================================================
+   ≤ 40rem — no scroll-linked animation on small viewports.
+   The trace is pinned half-resolved and sits behind the statement.
+   ============================================================ */
+
+@media (max-width: 40rem) {
+  .trace { inline-size: min(72vw, 20rem); opacity: 0.85; }
+
+  .trace__fog   { animation: none; opacity: 0.6; transform: scale(1.04); }
+  .trace__grain { animation: none; opacity: 0.1; }
+  .trace__line  { animation: none; opacity: 0.6; transform: scale(1); }
+
+  .drift__item { --x: 0 !important; }
+  .drift__item:nth-child(even) { margin-inline-start: 2ch; }
+}
+
+/* ============================================================
+   Reduced motion — spatial motion collapses; the trace pins
+   half-resolved rather than disappearing.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 150ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
+  }
+  .settle { opacity: 1; transform: none; animation: none; }
+
+  .trace__fog   { animation: none !important; opacity: 0.55; transform: scale(1.02); }
+  .trace__grain { animation: none !important; opacity: 0.09; }
+  .trace__line  { animation: none !important; opacity: 0.7;  transform: scale(1); }
+
+  .entry__door::after { transition: none; }
+}
+
+/* Touch: the entry's underline can't rely on hover. */
+@media (pointer: coarse) {
+  .entry__door::after { transform: scaleX(0.5); }
+}

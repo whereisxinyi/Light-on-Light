@@ -1,0 +1,449 @@
+/* SOURCE FILE — make.html is a single self-contained page and does not link
+ * this stylesheet; it embeds a copy. Edit here, then run `python3 build.py`.
+ *
+ * Hallmark · macrostructure: bespoke (a two-state instrument, not a page)
+ *   No catalog shape fits: this is one surface that changes what it is.
+ *   State lives on <body data-state>; input / forming / gift are the same
+ *   composition at three moments, so nothing jumps when it turns over.
+ * nav: masthead (brand is the H1, per the owner's hierarchy note)
+ * cta: fixed bottom-right pill — same position, shape and voice as layer 02,
+ *   so "Unwrap" and "Export" read as the same hand.
+ * theme: custom (inherited, unchanged)
+ *
+ * TWO-STATE WHITESPACE STRATEGY
+ *   input  — the page is almost empty on purpose. One greeting at display
+ *            size, one writing line, nothing else. No box, no label, no
+ *            counter, no placeholder chrome: a ruled line on paper. The
+ *            submit affordance does not exist until there are words to send,
+ *            so the empty state has literally nothing to decide about.
+ *   gift   — the composition tightens into a mount. The artwork sits in a
+ *            plate with the widest margins on the page (a print in a frame
+ *            is mostly frame), sentence above it, date beneath. The screen
+ *            MIRRORS the export — same order, same proportions, same fixed
+ *            template — but is not pixel-identical to it: a print earns more
+ *            air around the plate than a screen can afford to give.
+ *
+ * motion: dissolve · gather · settle  (3 primitives)
+ *   No spinner anywhere. The submitted sentence comes apart into the same
+ *   motes that layer 01 used, they gather, and the drawing assembles out of
+ *   them centre-outward. The wait is the metaphor, so it also covers a real
+ *   asynchronous generator if one is ever wired in — `forming` holds
+ *   indefinitely until the art is handed over.
+ * pre-emit critique: P5 H5 E4 S5 R5 V5
+ * contrast: pass (40–41) · mobile: pass (34, 49, 50–57) · tokens: pass (48)
+ * v1.0.0
+ */
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { overflow-x: clip; -webkit-text-size-adjust: 100%; }
+
+body {
+  overflow-x: clip;
+  margin: 0;
+  min-block-size: 100dvh;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-wordmark);
+  -webkit-font-smoothing: antialiased;
+  display: grid;
+  grid-template-rows: auto 1fr auto;   /* mast · stage · footer — footer at the true bottom */
+}
+
+h1, h2, p { margin: 0; font-weight: 400; }
+
+.filters { position: absolute; width: 0; height: 0; }
+
+.skip { position: absolute; inset-inline-start: -9999px; font-family: var(--font-mono); font-size: var(--text-xs); }
+.skip:focus-visible {
+  inset-inline-start: var(--page-gutter); inset-block-start: var(--space-md);
+  z-index: var(--z-toast); background: var(--color-ink); color: var(--color-paper);
+  padding: var(--space-xs) var(--space-sm);
+  outline: 2px solid var(--color-focus); outline-offset: 3px;
+}
+
+a:focus-visible,
+button:focus-visible,
+textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
+
+/* ============================================================
+   Masthead
+   ============================================================ */
+
+.mast {
+  display: flex; flex-wrap: wrap;
+  justify-content: space-between; align-items: baseline;
+  gap: var(--space-sm) var(--space-lg);
+  padding: var(--space-2xl) var(--page-gutter) 0;
+}
+.mast__h {
+  font-size: var(--text-wordmark); line-height: 1.02; letter-spacing: -0.008em;
+  overflow-wrap: anywhere; min-inline-size: 0;
+}
+.mast__h a { color: var(--color-ink); text-decoration: none; transition: color var(--dur-short) var(--ease-out); }
+.mast__h a:hover { color: var(--color-ink-2); }
+.mast__layer {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: 0.24em; color: var(--color-muted); white-space: nowrap;
+}
+
+/* ============================================================
+   Stage — one surface, three moments
+   ============================================================ */
+
+.stage {
+  position: relative;
+  display: grid;
+  align-content: center;
+  padding: var(--space-3xl) var(--page-gutter);
+}
+
+/* Only one panel is present at a time. `hidden` (not opacity) keeps the
+   inactive state out of the tab order and out of the screen reader. */
+[data-state="input"]   .panel--gift,
+[data-state="forming"] .panel--gift,
+[data-state="gift"]    .panel--ask { display: none; }
+
+/* ============================================================
+   Input · the ruled line
+   ============================================================ */
+
+/* Full width. The greeting runs across the whole page in one small line;
+   the ruled line beneath gets the same full width to be written on. */
+.ask {
+  display: grid;
+  gap: var(--space-2xl);
+  inline-size: 100%;
+}
+
+/* The question leads; the writing line sits quieter beneath it. */
+.ask__greet {
+  font-size: var(--text-greet);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+}
+
+/* No box. A line to write on, the way paper has one — and the words sit ON
+   the line: single row, no reserved height above, a sliver of padding below.
+   `field-sizing: content` lets it grow downward if the thought runs long;
+   browsers without it scroll inside the row, which is acceptable. */
+.ask__field {
+  display: block;
+  /* A writing line, not a page-wide rule — long enough for one thought,
+     short enough to read as a line you'd put a pen to. */
+  inline-size: min(100%, 30rem);
+  min-block-size: 1.7em;
+  field-sizing: content;
+  padding: 0 0 var(--space-2xs);
+  border: 0;
+  border-block-end: var(--rule-hair) solid var(--color-rule);
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-wordmark);
+  font-size: var(--text-write);
+  line-height: 1.5;
+  resize: none;
+  transition: border-color var(--dur-long) var(--ease-out);
+}
+/* The placeholder is the page's only instruction now — it must be readable,
+   not decorative. Muted measures 4.92:1 on paper. */
+.ask__field::placeholder { color: var(--color-muted); }
+.ask__field:hover  { border-block-end-color: var(--color-neutral); }
+.ask__field:focus  { outline: none; border-block-end-color: var(--color-ink-2); }
+.ask__field:focus-visible { outline: none; }
+/* Keyboard users still get a ring — on the line, not around the box. */
+.ask__field:focus-visible { border-block-end: 2px solid var(--color-focus); }
+
+.ask__foot {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: var(--space-md) var(--space-lg);
+  min-block-size: 1.6em;   /* reserved, so nothing shifts when the verb appears */
+}
+
+/* The verb does not exist until there is something to send. */
+.ask__go {
+  appearance: none;
+  border: 0; background: none; padding: 0;
+  font-family: var(--font-wordmark);
+  font-size: var(--text-md);
+  color: var(--color-ink);
+  cursor: pointer;
+  white-space: nowrap;
+  border-block-end: var(--rule-hair) solid var(--color-accent);
+  padding-block-end: 2px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-long) var(--ease-out),
+              border-color var(--dur-short) var(--ease-out);
+}
+.ask__go:disabled { cursor: default; }
+[data-ready="yes"] .ask__go { opacity: 1; visibility: visible; }
+.ask__go:hover:not(:disabled) { border-block-end-color: var(--color-ink); }
+
+.ask__hint {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: 0.1em; color: var(--color-muted);
+}
+
+/* ============================================================
+   Forming · dissolve → gather. No spinner, ever.
+   The sentence comes apart into the motes layer 01 used, they draw
+   together, and the artwork assembles out of them.
+   ============================================================ */
+
+.forming {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-raised);
+  display: none;
+  place-items: center;
+  pointer-events: none;
+}
+[data-state="forming"] .forming { display: grid; }
+
+.forming__field { position: absolute; inset: 0; overflow: clip; }
+
+.spark {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  inline-size: var(--s);
+  block-size: var(--s);
+  background: var(--c);
+  opacity: 0;
+  /* travels from where its word was toward the centre of the plate */
+  animation: gather var(--t) var(--ease-in-out) var(--d) infinite;
+}
+@keyframes gather {
+  0%   { opacity: 0;        transform: translate(0, 0) scale(1); }
+  14%  { opacity: var(--o); transform: translate(calc(var(--gx) * 0.2), calc(var(--gy) * 0.2)) scale(1); }
+  76%  { opacity: var(--o); transform: translate(calc(var(--gx) * 0.92), calc(var(--gy) * 0.92)) scale(0.7); }
+  100% { opacity: 0;        transform: translate(var(--gx), var(--gy)) scale(0.4); }
+}
+
+.forming__echo {
+  position: relative;
+  max-inline-size: 24ch;
+  font-size: var(--text-md);
+  line-height: 1.5;
+  color: var(--color-muted);
+  text-align: center;
+  animation: echo-out 2.4s var(--ease-in-out) forwards;
+}
+@keyframes echo-out { to { opacity: 0.28; } }
+
+/* ============================================================
+   Gift · the mount. A print is mostly frame.
+   The screen layout below IS the export layout, at another scale.
+   ============================================================ */
+
+.gift {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-lg);
+  /* Bounded by viewport HEIGHT as well as width: a gift you have to scroll to
+     see whole is not a gift. The plate is square, so its height is its width. */
+  inline-size: min(100%, 34rem, 52dvh);
+  margin-inline: auto;
+  /* settle: the whole mount arrives once, slowly, and then stops */
+  animation: settle-in 1.1s var(--ease-out) both;
+}
+@keyframes settle-in { from { opacity: 0; transform: translateY(10px); } }
+
+.gift__line {
+  font-family: var(--font-hand);
+  font-size: var(--text-quote);
+  line-height: 1.42;
+  text-align: center;
+  color: var(--color-plate-ink);
+  max-inline-size: 24ch;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+  transform: rotate(-0.7deg);   /* the skill's hand-set tilt, once, not per word */
+}
+
+/* The plate keeps the skill's own paper and ink, not the site's. That is
+   deliberate: the illustration belongs to a series that has to stay
+   recognisable across a year of them, and the series' colours are its
+   identity. The page is the room; the plate is the picture. */
+.gift__plate {
+  inline-size: 100%;
+  aspect-ratio: 1;
+  background: var(--color-plate-paper);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-plate);
+  overflow: hidden;
+}
+.gift__plate svg { display: block; inline-size: 100%; block-size: 100%; }
+
+/* Elements assemble centre-outward rather than all at once. */
+.gift__plate [data-i] {
+  opacity: 0;
+  animation: assemble 900ms var(--ease-out) both;
+  animation-delay: calc(240ms + var(--i) * 110ms);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes assemble { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
+
+.gift__meta {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.24em;
+  color: var(--color-muted);
+  text-align: center;
+}
+.gift__rule {
+  inline-size: var(--space-xl);
+  block-size: var(--rule-hair);
+  background: var(--color-rule);
+  margin-block-end: var(--space-2xs);
+}
+
+/* Which hand drew it. Small, honest, always present. */
+.gift__via {
+  font-size: var(--text-xs);
+  letter-spacing: 0.18em;
+  color: var(--color-muted);
+}
+
+.gift__again {
+  appearance: none; border: 0; background: none; padding: 0;
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: 0.14em; color: var(--color-muted);
+  cursor: pointer; white-space: nowrap;
+  border-block-end: var(--rule-hair) solid transparent;
+  transition: color var(--dur-short) var(--ease-out),
+              border-color var(--dur-short) var(--ease-out);
+}
+.gift__again:hover { color: var(--color-ink); border-block-end-color: var(--color-rule); }
+
+/* The escape hatch: paste SVG from a real run of the skill. Collapsed by
+   default so the page never advertises its own seam. */
+.graft { inline-size: min(100%, 34rem); margin-inline: auto; }
+.graft > summary {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: 0.12em; color: var(--color-muted);
+  cursor: pointer; list-style: none; padding-block: var(--space-sm);
+}
+.graft > summary::-webkit-details-marker { display: none; }
+.graft > summary:hover { color: var(--color-ink-2); }
+.graft__field {
+  inline-size: 100%; min-block-size: 7em; margin-block-start: var(--space-sm);
+  padding: var(--space-sm);
+  border: var(--rule-hair) solid var(--color-rule); border-radius: 0;
+  background: transparent; color: var(--color-ink-2);
+  font-family: var(--font-mono); font-size: var(--text-xs); line-height: 1.6;
+  resize: vertical;
+}
+.graft__note {
+  margin-block-start: var(--space-xs);
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  line-height: 1.7; color: var(--color-muted);
+}
+
+/* ============================================================
+   The fixed invitation — same corner, shape and voice as layer 02
+   ============================================================ */
+
+.cta {
+  position: fixed;
+  inset-block-end: var(--space-xl);
+  inset-inline-end: var(--page-gutter);
+  z-index: var(--z-sticky);
+  display: none;
+  align-items: center;
+  gap: var(--space-sm);
+  min-block-size: 52px;
+  padding: var(--space-md) var(--space-xl);
+  appearance: none;
+  border: var(--rule-hair) solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-family: var(--font-wordmark);
+  font-size: var(--text-lg);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-short) var(--ease-out),
+              transform 110ms var(--ease-out);
+}
+[data-state="gift"] .cta { display: inline-flex; }
+.cta::after {
+  content: "";
+  inline-size: 0.6em; block-size: 0.6em;
+  border-inline-end: 2px solid currentColor;
+  border-block-end: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform var(--dur-short) var(--ease-out);
+}
+.cta:hover, .cta:focus-visible { background: var(--color-focus); }
+.cta:hover::after, .cta:focus-visible::after { transform: translateY(1px) rotate(45deg); }
+.cta:active { transform: translateY(1px); }
+
+/* ============================================================
+   Footer
+   ============================================================ */
+
+.colophon {
+  display: flex; flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-lg); align-items: baseline;
+  margin-inline: var(--page-gutter);
+  padding-block: var(--space-lg) var(--space-lg);
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: 0.12em; color: var(--color-muted);
+}
+/* Only the gift state shows the fixed Export pill — only then does the footer
+   need to clear it. In the input state the page ends at the footer, full stop. */
+[data-state="gift"] .colophon { padding-block-end: var(--cta-clearance); }
+.colophon__sep { color: var(--color-rule); }
+.colophon a {
+  color: var(--color-muted); text-decoration: none; white-space: nowrap;
+  border-block-end: var(--rule-hair) solid transparent;
+  transition: color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+}
+.colophon a:hover { color: var(--color-ink); border-block-end-color: var(--color-rule); }
+
+/* Live region for the state changes — announced, never drawn. */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ============================================================
+   ≤ 40rem
+   ============================================================ */
+
+@media (max-width: 40rem) {
+  .stage { padding-block: var(--space-2xl); }
+  .cta {
+    font-size: var(--text-base); min-block-size: 44px;
+    padding: var(--space-sm) var(--space-lg);
+    inset-block-end: var(--space-lg);
+  }
+  .cta::after { inline-size: 0.52em; block-size: 0.52em; }
+}
+
+/* ============================================================
+   Reduced motion — the gift is simply there, fully formed.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .gift, .gift__plate [data-i], .spark, .forming__echo {
+    animation: none !important;
+    opacity: 1;
+    transform: none !important;
+  }
+  .cta, .cta::after, .ask__field, .ask__go { transition: none; }
+}
