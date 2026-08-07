@@ -1067,13 +1067,20 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     setState('gift');
   }
 
-  /* The real skill, through the local studio server (server.py → claude -p).
-     The forming state holds as long as it takes; there is no spinner to lie
-     with, only the gathering. */
-  function askClaude(text) {
+  /* The real skill, through the studio server (server.py → claude -p).
+     The studio can live in two places, tried in order:
+       1. same origin — server.py locally, or a serverless deploy
+       2. the owner's own machine at http://localhost:4180 — browsers treat
+          localhost as a trustworthy origin, so even the HTTPS public page
+          may call it; server.py's CORS allowlist decides who is let in.
+     So the owner opens the public site with server.py running and gifts are
+     DRAWN BY CLAUDE on her own Claude login; every other visitor quietly
+     falls back to the built-in generator. The forming state holds as long
+     as it takes; there is no spinner to lie with, only the gathering. */
+  function callStudio(url, text) {
     var ctrl = new AbortController();
     var kill = setTimeout(function () { ctrl.abort(); }, 160000);
-    return fetch('/api/translate', {
+    return fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: text }),
@@ -1085,6 +1092,14 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     }).then(function (j) {
       if (!j.svg || j.svg.indexOf('<svg') !== 0) throw new Error('no svg');
       return { svg: sanitizeSVG(j.svg), via: 'claude', meta: null };
+    });
+  }
+
+  function askClaude(text) {
+    var home = 'http://localhost:4180';
+    return callStudio('/api/translate', text)['catch'](function (err) {
+      if (window.location.origin === home) throw err;   /* already tried it */
+      return callStudio(home + '/api/translate', text);
     });
   }
 

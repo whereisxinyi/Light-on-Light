@@ -29,6 +29,18 @@ PORT = 4180
 SKILL_MD = pathlib.Path.home() / ".claude/skills/hand-drawn-quote-art/SKILL.md"
 CLI_TIMEOUT = 150  # seconds; claude -p usually answers well inside this
 
+# Origins allowed to call /api/translate from the browser. The public site
+# calls this machine directly (browsers treat localhost as a trustworthy
+# origin, so the HTTPS page may fetch it); the CORS preflight below rejects
+# every other website, so a random page can't spend this machine's Claude
+# quota. "null" is the Origin a page opened straight from disk sends.
+ALLOWED_ORIGINS = {
+    "https://whereisxinyi.github.io",
+    "http://localhost:4180",
+    "http://127.0.0.1:4180",
+    "null",
+}
+
 SVG_RE = re.compile(r"<svg[\s\S]*?</svg>", re.IGNORECASE)
 
 
@@ -94,6 +106,24 @@ class Studio(SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=str(HERE), **kw)
 
+    def _cors(self):
+        origin = self.headers.get("Origin", "")
+        if origin in ALLOWED_ORIGINS:
+            self.send_header("Access-Control-Allow-Origin", origin)
+            self.send_header("Vary", "Origin")
+
+    def do_OPTIONS(self):
+        # CORS preflight. A JSON POST always preflights, so rejecting here
+        # means an unlisted website's request never reaches `claude` at all.
+        origin = self.headers.get("Origin", "")
+        self.send_response(204 if origin in ALLOWED_ORIGINS else 403)
+        self._cors()
+        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Max-Age", "86400")
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
     def do_POST(self):
         if self.path != "/api/translate":
             self.send_error(404)
@@ -112,6 +142,7 @@ class Studio(SimpleHTTPRequestHandler):
             code = 502
         data = json.dumps(payload).encode("utf-8")
         self.send_response(code)
+        self._cors()
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()

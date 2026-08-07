@@ -1,5 +1,7 @@
 # Light on Light
 
+**Live: <https://whereisxinyi.github.io/Light-on-Light/>**
+
 A quiet three-layer site: an opening screen where the name drifts as light,
 a "why this project" concept page, and an instrument that translates one
 sentence into a hand-drawn visual gift.
@@ -9,47 +11,52 @@ network requests. Open them from disk, from GitHub Pages, from anywhere.
 
 ## Layers
 
-| Page | Layer |
-|---|---|
-| `index.html` | 01 — the opening: the name, come apart into light |
-| `concept.html` | 02 — why this project |
-| `make.html` | 03 — write one sentence, receive a visual gift |
+| Layer | Live | Source |
+|---|---|---|
+| 01 — the opening: the name, come apart into light | [open](https://whereisxinyi.github.io/Light-on-Light/) | [`index.html`](index.html) |
+| 02 — why this project | [open](https://whereisxinyi.github.io/Light-on-Light/concept.html) | [`concept.html`](concept.html) |
+| 03 — write one sentence, receive a visual gift | [open](https://whereisxinyi.github.io/Light-on-Light/make.html) | [`make.html`](make.html) |
 
-## Two ways to serve it
+## How the gift gets drawn
 
-**Static (GitHub Pages)** — works as-is. The gift page uses its built-in
-generator (a port of the hand-drawn-quote-art method) and stamps each gift
-`DRAWN LOCALLY`. No keys, no cost.
+[`make.html`](make.html) looks for its studio in this order:
 
-**With the LLM (Vercel)** — import this repo into Vercel, then:
+1. **Same origin** — `/api/translate` (running [`server.py`](server.py)
+   locally, or a serverless deploy of [`api/translate.js`](api/translate.js))
+2. **The owner's machine** — `http://localhost:4180`. Run
+   [`server.py`](server.py) on your computer, open the live site, and every
+   gift is drawn by Claude through your own Claude Code login — no API key,
+   no hosting bill. [`server.py`](server.py)'s CORS allowlist only admits
+   this site's origin, so other websites can't reach your machine.
+3. **Built-in generator** — everyone else gets the in-page port of the
+   hand-drawn-quote-art method. Gifts are stamped `DRAWN BY CLAUDE` or
+   `DRAWN LOCALLY` so it's always honest about which hand drew it.
+
+## Use it with your own Claude (no API key)
 
 ```sh
-vercel env add ANTHROPIC_API_KEY   # a key from console.anthropic.com
-vercel --prod
+git clone https://github.com/whereisxinyi/Light-on-Light.git
+cd Light-on-Light
+python3 server.py
 ```
 
-`/api/translate` comes alive and every sentence is drawn by `claude-opus-5`
-running the real hand-drawn-quote-art skill; gifts stamp `DRAWN BY CLAUDE`.
-If the endpoint is unreachable the page falls back to the local generator —
-the deploy never hard-breaks.
+Then open <https://whereisxinyi.github.io/Light-on-Light/make.html> in the
+same machine's browser. That's it — the page finds the studio at
+`localhost:4180` and `claude -p` (your Claude Code login) draws the gifts.
 
-### Costs and safety
+## Optional: serverless deploy (Vercel)
 
-- Each gift is one `claude-opus-5` call (~2–4K input at cached rates after
-  the first request, ~1–2K output) — a few cents per gift.
-- `api/translate.js` has a naive per-instance rate limit (8 requests /
-  10 min / IP). Serverless instances don't share memory, so treat it as a
-  speed bump; for real protection add Upstash Ratelimit or Vercel KV.
-- `vercel.json` sets `maxDuration: 300`. If your plan rejects that, lower
-  it to 60 — generations at `effort: "low"` normally finish well inside it.
-- The function returns only sanitized `<svg>` (no scripts, handlers, or
-  external references), and the page sanitizes again before mounting.
+For gifts drawn by Claude even when your machine is off, import this repo
+into [Vercel](https://vercel.com/new), add an `ANTHROPIC_API_KEY`
+environment variable, and deploy — [`api/translate.js`](api/translate.js)
+takes over as the same-origin studio. Each gift is one `claude-opus-5`
+call (a few cents); the function carries a naive per-instance rate limit
+and returns only sanitized SVG.
 
-## Local development
+## Development
 
 ```sh
-python3 server.py    # http://localhost:4180 — bridges /api/translate to the
-                     # local `claude` CLI (Claude Code login, no API key)
+python3 server.py    # http://localhost:4180 — pages + /api/translate bridge
 python3 build.py     # rebuild the HTML from tokens.css / styles.css /
                      # concept.css / make.css — edit sources, not the HTML
 ```
