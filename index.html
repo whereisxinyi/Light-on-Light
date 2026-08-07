@@ -241,21 +241,18 @@ h1, p { margin: 0; font-weight: 400; }
 
 /* ============================================================
    Motion system 1 · emerge
-   Six seconds. The haze arrives first, the seam next, the name last —
-   so the page reads as something becoming visible, in that order.
+   Alive at first paint. The haze and the swarm carry NO entrance —
+   they are simply present, and because every drift/flicker cycle
+   starts mid-phase (negative delays), the very first frame is
+   already moving. Only the type gets a half-second, delay-free
+   fade so paint doesn't flash.
    ============================================================ */
 
-@keyframes emerge { to { opacity: 1; } }
+@keyframes emerge { from { opacity: 0; } to { opacity: 1; } }
 
-.haze, .swarm, .seam, .mark, .stamp {
-  opacity: 0;
-  animation: emerge var(--dur-emerge) var(--ease-in-out) forwards;
+.seam, .mark, .stamp {
+  animation: emerge 500ms var(--ease-out) both;
 }
-.haze  { animation-delay: 300ms;  }
-.swarm { animation-delay: 900ms;  }
-.seam  { animation-delay: 1600ms; }
-.stamp { animation-delay: 2200ms; }
-.mark  { animation-delay: 3000ms; }   /* the name arrives last: it is seen, not announced */
 
 /* ============================================================
    The top line — a seam and the layer it belongs to, paired.
@@ -357,7 +354,7 @@ h1, p { margin: 0; font-weight: 400; }
 .haze__l--b  { animation: drift-b var(--dur-drift-b) var(--ease-in-out) infinite alternate; }
 .haze__l--c,
 .haze__glow  { animation: drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate; }
-.seam        { animation: emerge var(--dur-emerge) var(--ease-in-out) 2200ms forwards,
+.seam        { animation: emerge 500ms var(--ease-out) both,
                           seam-grow var(--dur-grow) var(--ease-in-out) infinite alternate; }
 
 /* ============================================================
