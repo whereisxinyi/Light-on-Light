@@ -896,9 +896,10 @@ MAKE_JS = r"""
       plate.dataset.shape = art.meta.shape;
     }
     $('giftDate').textContent = current.date;
-    $('giftVia').textContent =
-      art.via === 'claude' ? 'DRAWN BY CLAUDE' :
-      art.via === 'gemini' ? 'DRAWN BY GEMINI' : 'DRAWN LOCALLY';
+    /* One universal stamp — the gift is signed by the project, not the
+       engine. Which hand actually drew it stays recorded on
+       plate.dataset.via (claude / gemini / local) for anyone who inspects. */
+    $('giftVia').textContent = 'DRAWN BY \u201CLight on Light\u201D';
     setState('gift');
   }
 
@@ -909,8 +910,8 @@ MAKE_JS = r"""
           localhost as a trustworthy origin, so even the HTTPS public page
           may call it; server.py's CORS allowlist decides who is let in.
      So the owner opens the public site with server.py running and gifts are
-     DRAWN BY CLAUDE on her own Claude login; every other visitor quietly
-     falls back to the built-in generator. The forming state holds as long
+     drawn by Claude on her own login; every other visitor quietly falls
+     through to the cloud studio or the built-in generator. The forming state holds as long
      as it takes; there is no spinner to lie with, only the gathering. */
   function callStudio(url, text) {
     var ctrl = new AbortController();
@@ -982,7 +983,7 @@ MAKE_JS = r"""
     var raw = this.value.trim();
     if (raw.indexOf('<svg') !== 0) return;
     $('plate').innerHTML = sanitizeSVG(raw);
-    $('giftVia').textContent = 'DRAWN BY CLAUDE';
+    $('giftVia').textContent = 'DRAWN BY \u201CLight on Light\u201D';
   });
 
   /* ---------- export ----------
@@ -1308,8 +1309,9 @@ plus the cloud drawing endpoint.
 4. **Built-in generator** — if all three studios are unreachable, the
    in-page port of the hand-drawn-quote-art method takes over.
 
-Gifts are always stamped honestly: `DRAWN BY CLAUDE`, `DRAWN BY GEMINI`,
-or `DRAWN LOCALLY`.
+Every gift carries the same signature — `DRAWN BY “Light on Light”` —
+whichever studio drew it; the engine (claude / gemini / local) is recorded
+on the artwork element's `data-via` attribute for anyone who inspects.
 
 ## Cloud setup (one env var)
 

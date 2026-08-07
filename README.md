@@ -37,8 +37,9 @@ plus the cloud drawing endpoint.
 4. **Built-in generator** — if all three studios are unreachable, the
    in-page port of the hand-drawn-quote-art method takes over.
 
-Gifts are always stamped honestly: `DRAWN BY CLAUDE`, `DRAWN BY GEMINI`,
-or `DRAWN LOCALLY`.
+Every gift carries the same signature — `DRAWN BY “Light on Light”` —
+whichever studio drew it; the engine (claude / gemini / local) is recorded
+on the artwork element's `data-via` attribute for anyone who inspects.
 
 ## Cloud setup (one env var)
 
