@@ -361,6 +361,8 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   z-index: var(--z-raised);
   display: none;
   place-items: center;
+  align-content: center;
+  gap: var(--space-lg);
   pointer-events: none;
 }
 [data-state="forming"] .forming { display: grid; }
@@ -395,6 +397,18 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   animation: echo-out 2.4s var(--ease-in-out) forwards;
 }
 @keyframes echo-out { to { opacity: 0.28; } }
+
+/* One quiet mono note under the dissolving sentence, breathing slowly —
+   the same furniture voice as LAYER 03 and the date stamp. */
+.forming__note {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.24em;
+  color: var(--color-muted);
+  animation: note-breathe 2s var(--ease-in-out) infinite alternate;
+}
+@keyframes note-breathe { to { opacity: 0.35; } }
 
 /* ============================================================
    Gift · the mount. A print is mostly frame.
@@ -485,30 +499,6 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 }
 .gift__again:hover { color: var(--color-ink); border-block-end-color: var(--color-rule); }
 
-/* The escape hatch: paste SVG from a real run of the skill. Collapsed by
-   default so the page never advertises its own seam. */
-.graft { inline-size: min(100%, 34rem); margin-inline: auto; }
-.graft > summary {
-  font-family: var(--font-mono); font-size: var(--text-xs);
-  letter-spacing: 0.12em; color: var(--color-muted);
-  cursor: pointer; list-style: none; padding-block: var(--space-sm);
-}
-.graft > summary::-webkit-details-marker { display: none; }
-.graft > summary:hover { color: var(--color-ink-2); }
-.graft__field {
-  inline-size: 100%; min-block-size: 7em; margin-block-start: var(--space-sm);
-  padding: var(--space-sm);
-  border: var(--rule-hair) solid var(--color-rule); border-radius: 0;
-  background: transparent; color: var(--color-ink-2);
-  font-family: var(--font-mono); font-size: var(--text-xs); line-height: 1.6;
-  resize: vertical;
-}
-.graft__note {
-  margin-block-start: var(--space-xs);
-  font-family: var(--font-mono); font-size: var(--text-xs);
-  line-height: 1.7; color: var(--color-muted);
-}
-
 /* ============================================================
    The fixed invitation — same corner, shape and voice as layer 02
    ============================================================ */
@@ -596,7 +586,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .gift, .gift__plate [data-i], .spark, .forming__echo {
+  .gift, .gift__plate [data-i], .spark, .forming__echo, .forming__note {
     animation: none !important;
     opacity: 1;
     transform: none !important;
@@ -630,10 +620,12 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     </form>
   </section>
 
-  <!-- FORMING — no spinner. The sentence comes apart and gathers. -->
+  <!-- FORMING — no spinner. The sentence comes apart and gathers,
+       with one quiet mono note saying what is happening. -->
   <div class="forming" aria-hidden="true">
     <div class="forming__field" id="sparks"></div>
     <p class="forming__echo" id="echo"></p>
+    <p class="forming__note">GENERATING&hellip;</p>
   </div>
 
   <!-- GIFT -->
@@ -649,15 +641,6 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
       </div>
     </figure>
 
-    <details class="graft">
-      <summary>Made this with the skill itself? Paste the SVG.</summary>
-      <label class="sr" for="graftField">Paste SVG from hand-drawn-quote-art</label>
-      <textarea class="graft__field" id="graftField" spellcheck="false"
-                placeholder="&lt;svg viewBox=&quot;0 0 680 680&quot;&gt; ... &lt;/svg&gt;"></textarea>
-      <p class="graft__note">Run <b>hand-drawn-quote-art</b> in Claude Code on the same
-        sentence, paste its SVG here, and this page will mount and export it with the
-        identical gift template.</p>
-    </details>
   </section>
 
 </main>
@@ -688,9 +671,9 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 
    The judgement is therefore a lookup, not an LLM's reading. It is good on the
    concrete words people actually reach for and plain on the ones it has never
-   seen — where it falls back to Mode 1, exactly as the skill instructs. When
-   you want the real thing, run the skill and paste its SVG into the graft box;
-   the gift template mounts and exports it identically.
+   seen — where it falls back to Mode 1, exactly as the skill instructs. The
+   studio chain above it (Claude locally, Gemini in the cloud) is the real
+   thing; this generator is the always-there floor beneath both.
 
    SEEDED, NOT RANDOM
    Every random draw comes from a hash of your sentence. The same thought
@@ -1143,14 +1126,6 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     go.disabled = true;
     setState('input');
     field.focus();
-  });
-
-  /* ---------- graft: mount a pasted run of the skill ---------- */
-  $('graftField').addEventListener('input', function () {
-    var raw = this.value.trim();
-    if (raw.indexOf('<svg') !== 0) return;
-    $('plate').innerHTML = sanitizeSVG(raw);
-    $('giftVia').textContent = 'DRAWN BY \u201CLight on Light\u201D';
   });
 
   /* ---------- export ----------

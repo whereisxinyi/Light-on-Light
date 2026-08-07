@@ -461,10 +461,12 @@ MAKE_BODY = """
     </form>
   </section>
 
-  <!-- FORMING — no spinner. The sentence comes apart and gathers. -->
+  <!-- FORMING — no spinner. The sentence comes apart and gathers,
+       with one quiet mono note saying what is happening. -->
   <div class="forming" aria-hidden="true">
     <div class="forming__field" id="sparks"></div>
     <p class="forming__echo" id="echo"></p>
+    <p class="forming__note">GENERATING&hellip;</p>
   </div>
 
   <!-- GIFT -->
@@ -480,15 +482,6 @@ MAKE_BODY = """
       </div>
     </figure>
 
-    <details class="graft">
-      <summary>Made this with the skill itself? Paste the SVG.</summary>
-      <label class="sr" for="graftField">Paste SVG from hand-drawn-quote-art</label>
-      <textarea class="graft__field" id="graftField" spellcheck="false"
-                placeholder="&lt;svg viewBox=&quot;0 0 680 680&quot;&gt; ... &lt;/svg&gt;"></textarea>
-      <p class="graft__note">Run <b>hand-drawn-quote-art</b> in Claude Code on the same
-        sentence, paste its SVG here, and this page will mount and export it with the
-        identical gift template.</p>
-    </details>
   </section>
 
 </main>
@@ -521,9 +514,9 @@ MAKE_JS = r"""
 
    The judgement is therefore a lookup, not an LLM's reading. It is good on the
    concrete words people actually reach for and plain on the ones it has never
-   seen — where it falls back to Mode 1, exactly as the skill instructs. When
-   you want the real thing, run the skill and paste its SVG into the graft box;
-   the gift template mounts and exports it identically.
+   seen — where it falls back to Mode 1, exactly as the skill instructs. The
+   studio chain above it (Claude locally, Gemini in the cloud) is the real
+   thing; this generator is the always-there floor beneath both.
 
    SEEDED, NOT RANDOM
    Every random draw comes from a hash of your sentence. The same thought
@@ -976,14 +969,6 @@ MAKE_JS = r"""
     go.disabled = true;
     setState('input');
     field.focus();
-  });
-
-  /* ---------- graft: mount a pasted run of the skill ---------- */
-  $('graftField').addEventListener('input', function () {
-    var raw = this.value.trim();
-    if (raw.indexOf('<svg') !== 0) return;
-    $('plate').innerHTML = sanitizeSVG(raw);
-    $('giftVia').textContent = 'DRAWN BY \u201CLight on Light\u201D';
   });
 
   /* ---------- export ----------
