@@ -83,8 +83,11 @@ def draw_with_claude(sentence: str) -> str:
     prompt = PROMPT.format(skill=skill_text(), sentence=sentence)
     # Prompt goes over stdin: the skill file opens with `---` frontmatter,
     # which argv-parsing reads as an option and chokes on.
+    # Haiku 4.5 — the fastest Claude model. A 680x680 line drawing doesn't
+    # need frontier reasoning, and generation drops from ~90s to well under
+    # half that. Swap back to a bigger model here if quality ever feels thin.
     proc = subprocess.run(
-        [cli, "-p", "--output-format", "text"],
+        [cli, "-p", "--model", "claude-haiku-4-5", "--output-format", "text"],
         input=prompt, capture_output=True, text=True,
         timeout=CLI_TIMEOUT, cwd=str(HERE),
     )

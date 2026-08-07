@@ -104,11 +104,12 @@ export default async function handler(req, res) {
     // Streaming keeps the connection alive for however long the drawing takes;
     // finalMessage() hands back the complete response.
     const stream = client.messages.stream({
-      model: "claude-opus-5",
+      // Haiku 4.5 — the fastest Claude model; ample for one 680x680 line
+      // drawing, and the page is latency-sensitive. Swap to "claude-opus-5"
+      // + output_config: {effort: "low"} if quality ever feels thin.
+      // (Haiku does not accept the effort parameter — don't add it here.)
+      model: "claude-haiku-4-5",
       max_tokens: 8000,
-      // Latency-sensitive interactive page; low effort is ample for one
-      // 680x680 line drawing. Raise to "medium" if quality feels thin.
-      output_config: { effort: "low" },
       system: [
         {
           type: "text",
