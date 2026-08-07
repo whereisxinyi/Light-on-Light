@@ -1063,7 +1063,9 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
       plate.dataset.shape = art.meta.shape;
     }
     $('giftDate').textContent = current.date;
-    $('giftVia').textContent = art.via === 'claude' ? 'DRAWN BY CLAUDE' : 'DRAWN LOCALLY';
+    $('giftVia').textContent =
+      art.via === 'claude' ? 'DRAWN BY CLAUDE' :
+      art.via === 'gemini' ? 'DRAWN BY GEMINI' : 'DRAWN LOCALLY';
     setState('gift');
   }
 
@@ -1091,15 +1093,26 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
       return r.json();
     }).then(function (j) {
       if (!j.svg || j.svg.indexOf('<svg') !== 0) throw new Error('no svg');
-      return { svg: sanitizeSVG(j.svg), via: 'claude', meta: null };
+      return { svg: sanitizeSVG(j.svg), via: j.via || 'claude', meta: null };
     });
   }
 
+  /* Three studios, tried in order:
+       1. same origin            — server.py locally, or the Vercel site itself
+       2. the owner's machine    — localhost:4180 → her own Claude login
+       3. the cloud              — the Vercel function → Gemini Flash
+     So the owner's Claude wins when her server is up; everyone else still
+     gets an LLM-drawn gift from the cloud; and only if all three are down
+     does the built-in generator take over. */
   function askClaude(text) {
     var home = 'http://localhost:4180';
+    var cloud = 'https://light-on-light.vercel.app';
     return callStudio('/api/translate', text)['catch'](function (err) {
       if (window.location.origin === home) throw err;   /* already tried it */
       return callStudio(home + '/api/translate', text);
+    })['catch'](function (err) {
+      if (window.location.origin === cloud) throw err;  /* already tried it */
+      return callStudio(cloud + '/api/translate', text);
     });
   }
 

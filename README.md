@@ -17,20 +17,41 @@ network requests. Open them from disk, from GitHub Pages, from anywhere.
 | 02 — why this project | [open](https://whereisxinyi.github.io/Light-on-Light/concept.html) | [`concept.html`](concept.html) |
 | 03 — write one sentence, receive a visual gift | [open](https://whereisxinyi.github.io/Light-on-Light/make.html) | [`make.html`](make.html) |
 
+Also live on Vercel: <https://light-on-light.vercel.app/> — same pages,
+plus the cloud drawing endpoint.
+
 ## How the gift gets drawn
 
 [`make.html`](make.html) looks for its studio in this order:
 
 1. **Same origin** — `/api/translate` (running [`server.py`](server.py)
-   locally, or a serverless deploy of [`api/translate.js`](api/translate.js))
+   locally, or the Vercel site itself)
 2. **The owner's machine** — `http://localhost:4180`. Run
-   [`server.py`](server.py) on your computer, open the live site, and every
-   gift is drawn by Claude through your own Claude Code login — no API key,
-   no hosting bill. [`server.py`](server.py)'s CORS allowlist only admits
-   this site's origin, so other websites can't reach your machine.
-3. **Built-in generator** — everyone else gets the in-page port of the
-   hand-drawn-quote-art method. Gifts are stamped `DRAWN BY CLAUDE` or
-   `DRAWN LOCALLY` so it's always honest about which hand drew it.
+   [`server.py`](server.py) on your computer, open either live site, and
+   every gift is drawn by Claude (Haiku 4.5) through your own Claude Code
+   login — no API key. The CORS allowlist only admits this project's
+   origins, so other websites can't reach your machine.
+3. **The cloud** — the Vercel function
+   ([`api/translate.js`](api/translate.js)) drawing with **Gemini Flash**
+   on a free-tier `GEMINI_API_KEY`. This is what every other visitor gets.
+4. **Built-in generator** — if all three studios are unreachable, the
+   in-page port of the hand-drawn-quote-art method takes over.
+
+Gifts are always stamped honestly: `DRAWN BY CLAUDE`, `DRAWN BY GEMINI`,
+or `DRAWN LOCALLY`.
+
+## Cloud setup (one env var)
+
+The Vercel function needs a free Gemini key: create one at
+<https://aistudio.google.com/apikey>, then
+
+```sh
+vercel env add GEMINI_API_KEY production
+vercel --prod
+```
+
+(`GEMINI_MODEL` optionally overrides the default `gemini-2.5-flash`.)
+The function has a per-instance rate limit and returns only sanitized SVG.
 
 ## Use it with your own Claude (no API key)
 
@@ -40,18 +61,8 @@ cd Light-on-Light
 python3 server.py
 ```
 
-Then open <https://whereisxinyi.github.io/Light-on-Light/make.html> in the
-same machine's browser. That's it — the page finds the studio at
-`localhost:4180` and `claude -p` (your Claude Code login) draws the gifts.
-
-## Optional: serverless deploy (Vercel)
-
-For gifts drawn by Claude even when your machine is off, import this repo
-into [Vercel](https://vercel.com/new), add an `ANTHROPIC_API_KEY`
-environment variable, and deploy — [`api/translate.js`](api/translate.js)
-takes over as the same-origin studio. Each gift is one `claude-opus-5`
-call (a few cents); the function carries a naive per-instance rate limit
-and returns only sanitized SVG.
+Then open the live site in the same machine's browser — the page finds the
+studio at `localhost:4180` and `claude -p` draws the gifts.
 
 ## Development
 

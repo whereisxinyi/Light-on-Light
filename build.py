@@ -896,7 +896,9 @@ MAKE_JS = r"""
       plate.dataset.shape = art.meta.shape;
     }
     $('giftDate').textContent = current.date;
-    $('giftVia').textContent = art.via === 'claude' ? 'DRAWN BY CLAUDE' : 'DRAWN LOCALLY';
+    $('giftVia').textContent =
+      art.via === 'claude' ? 'DRAWN BY CLAUDE' :
+      art.via === 'gemini' ? 'DRAWN BY GEMINI' : 'DRAWN LOCALLY';
     setState('gift');
   }
 
@@ -924,15 +926,26 @@ MAKE_JS = r"""
       return r.json();
     }).then(function (j) {
       if (!j.svg || j.svg.indexOf('<svg') !== 0) throw new Error('no svg');
-      return { svg: sanitizeSVG(j.svg), via: 'claude', meta: null };
+      return { svg: sanitizeSVG(j.svg), via: j.via || 'claude', meta: null };
     });
   }
 
+  /* Three studios, tried in order:
+       1. same origin            — server.py locally, or the Vercel site itself
+       2. the owner's machine    — localhost:4180 → her own Claude login
+       3. the cloud              — the Vercel function → Gemini Flash
+     So the owner's Claude wins when her server is up; everyone else still
+     gets an LLM-drawn gift from the cloud; and only if all three are down
+     does the built-in generator take over. */
   function askClaude(text) {
     var home = 'http://localhost:4180';
+    var cloud = 'https://light-on-light.vercel.app';
     return callStudio('/api/translate', text)['catch'](function (err) {
       if (window.location.origin === home) throw err;   /* already tried it */
       return callStudio(home + '/api/translate', text);
+    })['catch'](function (err) {
+      if (window.location.origin === cloud) throw err;  /* already tried it */
+      return callStudio(cloud + '/api/translate', text);
     });
   }
 
@@ -1110,10 +1123,10 @@ def render(out_name, title, desc, css_file, body, js, faces, tokens):
 
 
 DEPLOY_API_JS = r"""// /api/translate — the studio, deployable.
-// Vercel serverless function (Node). Calls the Anthropic API directly with the
-// official SDK; the hand-drawn-quote-art skill text rides as a cached system
-// prompt, so every request after the first reads it at ~0.1x price.
-import Anthropic from "@anthropic-ai/sdk";
+// Vercel serverless function (Node 18+). Calls Gemini Flash over plain REST —
+// no npm dependencies at all. The hand-drawn-quote-art skill text rides as the
+// system instruction. Set GEMINI_API_KEY in the project env (free keys at
+// aistudio.google.com/apikey); GEMINI_MODEL overrides the default model.
 
 const SKILL = `__SKILL__`;
 
@@ -1132,17 +1145,48 @@ OUTPUT RULES — these override anything else:
 - No <script>, no event handlers, no external references, no <image>.
 `;
 
-const client = new Anthropic(); // ANTHROPIC_API_KEY from the environment
+// Origins allowed to call this function from another site — the GitHub Pages
+// mirror, local dev, and pages opened straight from disk. Same-origin calls
+// (the Vercel site itself) don't need CORS at all.
+const ALLOWED_ORIGINS = new Set([
+  "https://whereisxinyi.github.io",
+  "http://localhost:4180",
+  "http://127.0.0.1:4180",
+  "null",
+]);
+
+function cors(req, res) {
+  const origin = req.headers.origin || "";
+  if (ALLOWED_ORIGINS.has(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+  }
+}
 
 // Naive per-instance rate limit. Serverless instances don't share memory, so
 // this is a speed bump, not a wall — for real limiting put Upstash/KV here.
 const hits = new Map();
 const WINDOW_MS = 10 * 60 * 1000;
-const MAX_HITS = 8;
+const MAX_HITS = 10;
 
 export default async function handler(req, res) {
+  cors(req, res);
+
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Max-Age", "86400");
+    res.status(204).end();
+    return;
+  }
   if (req.method !== "POST") {
     res.status(405).json({ error: "POST only" });
+    return;
+  }
+
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) {
+    res.status(502).json({ error: "GEMINI_API_KEY is not configured" });
     return;
   }
 
@@ -1165,41 +1209,45 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Streaming keeps the connection alive for however long the drawing takes;
-    // finalMessage() hands back the complete response.
-    const stream = client.messages.stream({
-      // Haiku 4.5 — the fastest Claude model; ample for one 680x680 line
-      // drawing, and the page is latency-sensitive. Swap to "claude-opus-5"
-      // + output_config: {effort: "low"} if quality ever feels thin.
-      // (Haiku does not accept the effort parameter — don't add it here.)
-      model: "claude-haiku-4-5",
-      max_tokens: 8000,
-      system: [
-        {
-          type: "text",
-          text: SKILL + RULES,
-          cache_control: { type: "ephemeral" }, // stable prefix — skill + rules
+    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const r = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/" +
+        model + ":generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": key,
         },
-      ],
-      messages: [
-        {
-          role: "user",
-          content:
-            "TASK — apply the method above to this exact sentence, once, " +
-            "silently, then output the SVG:\n\n    「" + sentence + "」",
-        },
-      ],
-    });
-    const message = await stream.finalMessage();
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: SKILL + RULES }] },
+          contents: [
+            {
+              role: "user",
+              parts: [
+                {
+                  text:
+                    "TASK — apply the method above to this exact sentence, " +
+                    "once, silently, then output the SVG:\n\n    「" +
+                    sentence + "」",
+                },
+              ],
+            },
+          ],
+          generationConfig: { maxOutputTokens: 8192, temperature: 1 },
+        }),
+      },
+    );
 
-    if (message.stop_reason === "refusal") {
-      res.status(502).json({ error: "the model declined this sentence" });
+    if (!r.ok) {
+      const detail = (await r.text()).slice(0, 200);
+      res.status(502).json({ error: "gemini " + r.status + ": " + detail });
       return;
     }
 
-    const text = message.content
-      .filter((b) => b.type === "text")
-      .map((b) => b.text)
+    const data = await r.json();
+    const text = (data.candidates?.[0]?.content?.parts || [])
+      .map((p) => p.text || "")
       .join("");
     const match = text.match(/<svg[\s\S]*?<\/svg>/i);
     if (!match) {
@@ -1210,11 +1258,11 @@ export default async function handler(req, res) {
     // Belt and braces before it reaches any browser.
     const svg = match[0]
       .replace(/<script[\s\S]*?<\/script>/gi, "")
-      .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+      .replace(/\son\w+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/gi, "")
       .replace(/javascript:/gi, "")
       .replace(/<image[\s\S]*?>/gi, "");
 
-    res.status(200).json({ svg, via: "claude" });
+    res.status(200).json({ svg, via: "gemini" });
   } catch (err) {
     res.status(502).json({ error: String(err?.message || err).slice(0, 200) });
   }
@@ -1240,20 +1288,41 @@ network requests. Open them from disk, from GitHub Pages, from anywhere.
 | 02 — why this project | [open](https://whereisxinyi.github.io/Light-on-Light/concept.html) | [`concept.html`](concept.html) |
 | 03 — write one sentence, receive a visual gift | [open](https://whereisxinyi.github.io/Light-on-Light/make.html) | [`make.html`](make.html) |
 
+Also live on Vercel: <https://light-on-light.vercel.app/> — same pages,
+plus the cloud drawing endpoint.
+
 ## How the gift gets drawn
 
 [`make.html`](make.html) looks for its studio in this order:
 
 1. **Same origin** — `/api/translate` (running [`server.py`](server.py)
-   locally, or a serverless deploy of [`api/translate.js`](api/translate.js))
+   locally, or the Vercel site itself)
 2. **The owner's machine** — `http://localhost:4180`. Run
-   [`server.py`](server.py) on your computer, open the live site, and every
-   gift is drawn by Claude through your own Claude Code login — no API key,
-   no hosting bill. [`server.py`](server.py)'s CORS allowlist only admits
-   this site's origin, so other websites can't reach your machine.
-3. **Built-in generator** — everyone else gets the in-page port of the
-   hand-drawn-quote-art method. Gifts are stamped `DRAWN BY CLAUDE` or
-   `DRAWN LOCALLY` so it's always honest about which hand drew it.
+   [`server.py`](server.py) on your computer, open either live site, and
+   every gift is drawn by Claude (Haiku 4.5) through your own Claude Code
+   login — no API key. The CORS allowlist only admits this project's
+   origins, so other websites can't reach your machine.
+3. **The cloud** — the Vercel function
+   ([`api/translate.js`](api/translate.js)) drawing with **Gemini Flash**
+   on a free-tier `GEMINI_API_KEY`. This is what every other visitor gets.
+4. **Built-in generator** — if all three studios are unreachable, the
+   in-page port of the hand-drawn-quote-art method takes over.
+
+Gifts are always stamped honestly: `DRAWN BY CLAUDE`, `DRAWN BY GEMINI`,
+or `DRAWN LOCALLY`.
+
+## Cloud setup (one env var)
+
+The Vercel function needs a free Gemini key: create one at
+<https://aistudio.google.com/apikey>, then
+
+```sh
+vercel env add GEMINI_API_KEY production
+vercel --prod
+```
+
+(`GEMINI_MODEL` optionally overrides the default `gemini-2.5-flash`.)
+The function has a per-instance rate limit and returns only sanitized SVG.
 
 ## Use it with your own Claude (no API key)
 
@@ -1263,18 +1332,8 @@ cd Light-on-Light
 python3 server.py
 ```
 
-Then open <https://whereisxinyi.github.io/Light-on-Light/make.html> in the
-same machine's browser. That's it — the page finds the studio at
-`localhost:4180` and `claude -p` (your Claude Code login) draws the gifts.
-
-## Optional: serverless deploy (Vercel)
-
-For gifts drawn by Claude even when your machine is off, import this repo
-into [Vercel](https://vercel.com/new), add an `ANTHROPIC_API_KEY`
-environment variable, and deploy — [`api/translate.js`](api/translate.js)
-takes over as the same-origin studio. Each gift is one `claude-opus-5`
-call (a few cents); the function carries a naive per-instance rate limit
-and returns only sanitized SVG.
+Then open the live site in the same machine's browser — the page finds the
+studio at `localhost:4180` and `claude -p` draws the gifts.
 
 ## Development
 
@@ -1303,7 +1362,6 @@ def deploy() -> None:
         "name": "light-on-light",
         "private": True,
         "type": "module",
-        "dependencies": {"@anthropic-ai/sdk": "^0.116.0"},
     }, indent=2) + "\n", encoding="utf-8")
 
     (HERE / "vercel.json").write_text(json.dumps({

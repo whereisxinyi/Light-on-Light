@@ -1,8 +1,8 @@
 // /api/translate — the studio, deployable.
-// Vercel serverless function (Node). Calls the Anthropic API directly with the
-// official SDK; the hand-drawn-quote-art skill text rides as a cached system
-// prompt, so every request after the first reads it at ~0.1x price.
-import Anthropic from "@anthropic-ai/sdk";
+// Vercel serverless function (Node 18+). Calls Gemini Flash over plain REST —
+// no npm dependencies at all. The hand-drawn-quote-art skill text rides as the
+// system instruction. Set GEMINI_API_KEY in the project env (free keys at
+// aistudio.google.com/apikey); GEMINI_MODEL overrides the default model.
 
 const SKILL = `---
 name: hand-drawn-quote-art
@@ -68,17 +68,48 @@ OUTPUT RULES — these override anything else:
 - No <script>, no event handlers, no external references, no <image>.
 `;
 
-const client = new Anthropic(); // ANTHROPIC_API_KEY from the environment
+// Origins allowed to call this function from another site — the GitHub Pages
+// mirror, local dev, and pages opened straight from disk. Same-origin calls
+// (the Vercel site itself) don't need CORS at all.
+const ALLOWED_ORIGINS = new Set([
+  "https://whereisxinyi.github.io",
+  "http://localhost:4180",
+  "http://127.0.0.1:4180",
+  "null",
+]);
+
+function cors(req, res) {
+  const origin = req.headers.origin || "";
+  if (ALLOWED_ORIGINS.has(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+  }
+}
 
 // Naive per-instance rate limit. Serverless instances don't share memory, so
 // this is a speed bump, not a wall — for real limiting put Upstash/KV here.
 const hits = new Map();
 const WINDOW_MS = 10 * 60 * 1000;
-const MAX_HITS = 8;
+const MAX_HITS = 10;
 
 export default async function handler(req, res) {
+  cors(req, res);
+
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Max-Age", "86400");
+    res.status(204).end();
+    return;
+  }
   if (req.method !== "POST") {
     res.status(405).json({ error: "POST only" });
+    return;
+  }
+
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) {
+    res.status(502).json({ error: "GEMINI_API_KEY is not configured" });
     return;
   }
 
@@ -101,41 +132,45 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Streaming keeps the connection alive for however long the drawing takes;
-    // finalMessage() hands back the complete response.
-    const stream = client.messages.stream({
-      // Haiku 4.5 — the fastest Claude model; ample for one 680x680 line
-      // drawing, and the page is latency-sensitive. Swap to "claude-opus-5"
-      // + output_config: {effort: "low"} if quality ever feels thin.
-      // (Haiku does not accept the effort parameter — don't add it here.)
-      model: "claude-haiku-4-5",
-      max_tokens: 8000,
-      system: [
-        {
-          type: "text",
-          text: SKILL + RULES,
-          cache_control: { type: "ephemeral" }, // stable prefix — skill + rules
+    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const r = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/" +
+        model + ":generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": key,
         },
-      ],
-      messages: [
-        {
-          role: "user",
-          content:
-            "TASK — apply the method above to this exact sentence, once, " +
-            "silently, then output the SVG:\n\n    「" + sentence + "」",
-        },
-      ],
-    });
-    const message = await stream.finalMessage();
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: SKILL + RULES }] },
+          contents: [
+            {
+              role: "user",
+              parts: [
+                {
+                  text:
+                    "TASK — apply the method above to this exact sentence, " +
+                    "once, silently, then output the SVG:\n\n    「" +
+                    sentence + "」",
+                },
+              ],
+            },
+          ],
+          generationConfig: { maxOutputTokens: 8192, temperature: 1 },
+        }),
+      },
+    );
 
-    if (message.stop_reason === "refusal") {
-      res.status(502).json({ error: "the model declined this sentence" });
+    if (!r.ok) {
+      const detail = (await r.text()).slice(0, 200);
+      res.status(502).json({ error: "gemini " + r.status + ": " + detail });
       return;
     }
 
-    const text = message.content
-      .filter((b) => b.type === "text")
-      .map((b) => b.text)
+    const data = await r.json();
+    const text = (data.candidates?.[0]?.content?.parts || [])
+      .map((p) => p.text || "")
       .join("");
     const match = text.match(/<svg[\s\S]*?<\/svg>/i);
     if (!match) {
@@ -146,11 +181,11 @@ export default async function handler(req, res) {
     // Belt and braces before it reaches any browser.
     const svg = match[0]
       .replace(/<script[\s\S]*?<\/script>/gi, "")
-      .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+      .replace(/\son\w+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/gi, "")
       .replace(/javascript:/gi, "")
       .replace(/<image[\s\S]*?>/gi, "");
 
-    res.status(200).json({ svg, via: "claude" });
+    res.status(200).json({ svg, via: "gemini" });
   } catch (err) {
     res.status(502).json({ error: String(err?.message || err).slice(0, 200) });
   }
