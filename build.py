@@ -1237,11 +1237,14 @@ export default async function handler(req, res) {
   // model, one attempt means one bad minute drops every visitor to the
   // page's built-in generator. Walk a chain instead — two tries per model,
   // a short breath between — before giving up.
+  // Aliases first (they track whatever Google currently points them at),
+  // then pinned stable models. Retired ids 404 and the chain just moves on.
   const MODELS = [...new Set([
     process.env.GEMINI_MODEL,
     "gemini-flash-latest",
+    "gemini-flash-lite-latest",
     "gemini-2.5-flash-lite",
-    "gemini-2.0-flash",
+    "gemini-2.5-flash",
   ].filter(Boolean))];
 
   const ask = (model) =>
@@ -1276,21 +1279,20 @@ export default async function handler(req, res) {
 
   try {
     let r = null;
-    let lastErr = "";
+    const errs = [];
     outer: for (const model of MODELS) {
       for (let attempt = 0; attempt < 2; attempt++) {
         let resp;
         try {
           resp = await ask(model);
         } catch (e) {
-          lastErr = "gemini(" + model + "): " +
-            String(e?.message || e).slice(0, 120);
+          errs.push(model + ": " + String(e?.message || e).slice(0, 80));
           continue;
         }
         if (resp.ok) { r = resp; break outer; }
-        lastErr = "gemini(" + model + ") " + resp.status + ": " +
-          (await resp.text()).slice(0, 120);
-        // 4xx other than 429 (bad model name, bad request) won't heal on
+        errs.push(model + " " + resp.status + ": " +
+          (await resp.text()).replace(/\s+/g, " ").slice(0, 80));
+        // 4xx other than 429 (retired model, bad request) won't heal on
         // retry — move straight to the next model in the chain.
         if (resp.status !== 429 && resp.status < 500) break;
         await new Promise((t) => setTimeout(t, 1200));
@@ -1298,7 +1300,9 @@ export default async function handler(req, res) {
     }
 
     if (!r) {
-      res.status(502).json({ error: lastErr || "gemini unavailable" });
+      // Every model's failure, so one look at this payload tells the whole
+      // story instead of only the last link in the chain.
+      res.status(502).json({ error: errs.join(" | ") || "gemini unavailable" });
       return;
     }
 
