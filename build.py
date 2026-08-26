@@ -600,6 +600,42 @@ MAKE_JS = r"""
   var CONTRAST_MARKS = [' but ', ' yet ', ' versus ', ' vs ', ' instead of ', ' rather than ',
                         ' and not ', ' or ', ' between '];
 
+  /* The same maps for Chinese. There are no spaces to split on, so these are
+     matched as substrings of the whole sentence; the longest hit per shape
+     wins, and longer hits beat shorter ones across shapes (清晨 beats 光).
+     Without this table every Chinese sentence missed every anchor and fell
+     into the same default rings — a wall of near-identical gifts. */
+  var ANCHOR_ZH = {
+    rings:   '专注 注意 倾听 聆听 安静 宁静 平静 耐心 等待 当下 中心 凝视 目光 守护 陪伴 圆 环',
+    bleed:   '晕开 蔓延 弥漫 淹没 流淌 渗 墨 染 浸 洇',
+    spiral:  '重复 循环 旋转 回来 回去 记忆 回忆 永远 又一次 再一次 开始 轮回 归 绕',
+    sprout:  '生长 成长 种子 种下 扎根 开花 发芽 生命 成为 长出 根 树 叶 花 春 绿 枝',
+    horizon: '呼吸 大海 天空 远方 距离 地平线 孤独 独自 空旷 辽阔 田野 清晨 阳光 黎明 自由 海 风 光 晨',
+    thread:  '旅程 旅行 跟随 迷路 寻找 找到 故事 文字 句子 语言 名字 连接 线 路 诗 字 词 歌 信 写 读 桥',
+    scatter: '忘记 遗忘 散落 消失 淡去 逝去 离开 瞬间 短暂 溜走 错过 飘散 流逝 来不及',
+    weight:  '重量 沉重 背负 负担 举起 下沉 深处 放下 扛 压 锚'
+  };
+  var PUNS_ZH = '光 重 根 线 沉 深 流 落 散 长 断 种 背 转 空 浮 烧 触 折'.split(' ');
+  var CONTRAST_ZH = ['但', '却', '而是', '而不是', '与其', '宁可', '宁愿', '还是', '可是',
+                     '然而', '反而', '不如'];
+
+  function candsZH(text) {
+    var out = [];
+    for (var key in ANCHOR_ZH) {
+      var list = ANCHOR_ZH[key].split(' ');
+      var best = null;
+      for (var i = 0; i < list.length; i++) {
+        if (text.indexOf(list[i]) > -1 && (!best || list[i].length > best.length)) best = list[i];
+      }
+      if (best) {
+        out.push({ word: best, shape: key,
+                   pun: PUNS_ZH.some(function (p) { return best.indexOf(p) > -1; }) });
+      }
+    }
+    out.sort(function (a, b) { return b.word.length - a.word.length; });
+    return out;
+  }
+
   function words(text) {
     return text.toLowerCase().replace(/[^\p{L}\p{N}\s'’]/gu, ' ')
                .split(/\s+/).filter(Boolean);
@@ -626,12 +662,14 @@ MAKE_JS = r"""
         }
       }
     }
+    if (/[一-鿿]/.test(text)) { cands = cands.concat(candsZH(text)); }
     var chosen = cands.filter(function (c) { return c.pun; })[0] || cands[0] || null;
     var anchor = chosen ? chosen.word : null;
     var shape  = chosen ? chosen.shape : null;
 
     var lower = ' ' + text.toLowerCase() + ' ';
-    var hasContrast = CONTRAST_MARKS.some(function (m) { return lower.indexOf(m) > -1; });
+    var hasContrast = CONTRAST_MARKS.some(function (m) { return lower.indexOf(m) > -1; })
+                   || CONTRAST_ZH.some(function (m) { return text.indexOf(m) > -1; });
     var isPun = !!(chosen && chosen.pun);
 
     /* The skill's priority order, checked in order: 2 beats 3 beats 1. */
@@ -1112,7 +1150,8 @@ DEPLOY_API_JS = r"""// /api/translate — the studio, deployable.
 // Vercel serverless function (Node 18+). Calls Gemini Flash over plain REST —
 // no npm dependencies at all. The hand-drawn-quote-art skill text rides as the
 // system instruction. Set GEMINI_API_KEY in the project env (free keys at
-// aistudio.google.com/apikey); GEMINI_MODEL overrides the default model.
+// aistudio.google.com/apikey); GEMINI_MODEL, if set, is tried first, ahead
+// of the built-in model chain.
 
 const SKILL = `__SKILL__`;
 
@@ -1194,9 +1233,19 @@ export default async function handler(req, res) {
     return;
   }
 
-  try {
-    const model = process.env.GEMINI_MODEL || "gemini-flash-latest";
-    const r = await fetch(
+  // Free-tier Gemini 503s ("high demand") come and go per model, so one
+  // model, one attempt means one bad minute drops every visitor to the
+  // page's built-in generator. Walk a chain instead — two tries per model,
+  // a short breath between — before giving up.
+  const MODELS = [...new Set([
+    process.env.GEMINI_MODEL,
+    "gemini-flash-latest",
+    "gemini-2.5-flash-lite",
+    "gemini-2.0-flash",
+  ].filter(Boolean))];
+
+  const ask = (model) =>
+    fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/" +
         model + ":generateContent",
       {
@@ -1225,9 +1274,31 @@ export default async function handler(req, res) {
       },
     );
 
-    if (!r.ok) {
-      const detail = (await r.text()).slice(0, 200);
-      res.status(502).json({ error: "gemini " + r.status + ": " + detail });
+  try {
+    let r = null;
+    let lastErr = "";
+    outer: for (const model of MODELS) {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        let resp;
+        try {
+          resp = await ask(model);
+        } catch (e) {
+          lastErr = "gemini(" + model + "): " +
+            String(e?.message || e).slice(0, 120);
+          continue;
+        }
+        if (resp.ok) { r = resp; break outer; }
+        lastErr = "gemini(" + model + ") " + resp.status + ": " +
+          (await resp.text()).slice(0, 120);
+        // 4xx other than 429 (bad model name, bad request) won't heal on
+        // retry — move straight to the next model in the chain.
+        if (resp.status !== 429 && resp.status < 500) break;
+        await new Promise((t) => setTimeout(t, 1200));
+      }
+    }
+
+    if (!r) {
+      res.status(502).json({ error: lastErr || "gemini unavailable" });
       return;
     }
 

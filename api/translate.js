@@ -2,7 +2,8 @@
 // Vercel serverless function (Node 18+). Calls Gemini Flash over plain REST —
 // no npm dependencies at all. The hand-drawn-quote-art skill text rides as the
 // system instruction. Set GEMINI_API_KEY in the project env (free keys at
-// aistudio.google.com/apikey); GEMINI_MODEL overrides the default model.
+// aistudio.google.com/apikey); GEMINI_MODEL, if set, is tried first, ahead
+// of the built-in model chain.
 
 const SKILL = `---
 name: hand-drawn-quote-art
@@ -131,9 +132,19 @@ export default async function handler(req, res) {
     return;
   }
 
-  try {
-    const model = process.env.GEMINI_MODEL || "gemini-flash-latest";
-    const r = await fetch(
+  // Free-tier Gemini 503s ("high demand") come and go per model, so one
+  // model, one attempt means one bad minute drops every visitor to the
+  // page's built-in generator. Walk a chain instead — two tries per model,
+  // a short breath between — before giving up.
+  const MODELS = [...new Set([
+    process.env.GEMINI_MODEL,
+    "gemini-flash-latest",
+    "gemini-2.5-flash-lite",
+    "gemini-2.0-flash",
+  ].filter(Boolean))];
+
+  const ask = (model) =>
+    fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/" +
         model + ":generateContent",
       {
@@ -162,9 +173,31 @@ export default async function handler(req, res) {
       },
     );
 
-    if (!r.ok) {
-      const detail = (await r.text()).slice(0, 200);
-      res.status(502).json({ error: "gemini " + r.status + ": " + detail });
+  try {
+    let r = null;
+    let lastErr = "";
+    outer: for (const model of MODELS) {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        let resp;
+        try {
+          resp = await ask(model);
+        } catch (e) {
+          lastErr = "gemini(" + model + "): " +
+            String(e?.message || e).slice(0, 120);
+          continue;
+        }
+        if (resp.ok) { r = resp; break outer; }
+        lastErr = "gemini(" + model + ") " + resp.status + ": " +
+          (await resp.text()).slice(0, 120);
+        // 4xx other than 429 (bad model name, bad request) won't heal on
+        // retry — move straight to the next model in the chain.
+        if (resp.status !== 429 && resp.status < 500) break;
+        await new Promise((t) => setTimeout(t, 1200));
+      }
+    }
+
+    if (!r) {
+      res.status(502).json({ error: lastErr || "gemini unavailable" });
       return;
     }
 
