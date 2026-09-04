@@ -333,14 +333,14 @@ CONCEPT_JS = """
   var plates = document.querySelector('.plates');
   if (plates) {
     var FIELDS = [
-      'radial-gradient(118% 92% at 32% 26%, color-mix(in oklch, var(--color-accent) 30%, transparent), transparent 74%),' +
+      'radial-gradient(118% 92% at 32% 26%, color-mix(in oklch, var(--color-accent) 16%, transparent), transparent 74%),' +
       'radial-gradient(104% 84% at 74% 72%, color-mix(in oklch, var(--color-paper-3) 40%, transparent), transparent 72%)',
 
       'radial-gradient(110% 96% at 68% 30%, color-mix(in oklch, var(--color-glow) 46%, transparent), transparent 70%),' +
       'radial-gradient(96% 88% at 28% 74%, color-mix(in oklch, var(--color-neutral) 34%, transparent), transparent 74%)',
 
       'radial-gradient(124% 88% at 46% 68%, color-mix(in oklch, var(--color-paper-3) 52%, transparent), transparent 72%),' +
-      'radial-gradient(90% 80% at 76% 22%, color-mix(in oklch, var(--color-accent) 22%, transparent), transparent 70%)',
+      'radial-gradient(90% 80% at 76% 22%, color-mix(in oklch, var(--color-accent) 12%, transparent), transparent 70%)',
 
       'radial-gradient(112% 90% at 24% 58%, color-mix(in oklch, var(--color-glow) 38%, transparent), transparent 72%),' +
       'radial-gradient(100% 86% at 70% 34%, color-mix(in oklch, var(--color-paper-3) 36%, transparent), transparent 74%)'
@@ -359,8 +359,8 @@ CONCEPT_JS = """
       ps('--x',   R(-6, 74).toFixed(2) + '%');
       ps('--y',   (24 + n * pband + R(0.05, 0.4) * pband).toFixed(2) + '%');
       ps('--w',   (narrow ? R(46, 78) : R(20, 40)).toFixed(1) + 'vw');
-      ps('--bl',  R(14, 22).toFixed(1) + 'px');   /* the fields are already soft; heavy blur only cost frames */
-      ps('--o',   R(0.18, 0.34).toFixed(2));
+      ps('--bl',  R(20, 30).toFixed(1) + 'px');   /* soft enough to read as light, not shape; scale is gone so this is cheap */
+      ps('--o',   R(0.16, 0.28).toFixed(2));
       ps('--dx',  R(-4, 4).toFixed(2) + 'vw');
       ps('--dy',  R(-3, 3).toFixed(2) + 'vh');
       ps('--t',   R(26, 46).toFixed(1)   + 's');
@@ -443,8 +443,8 @@ CONCEPT_BODY = """
   <a href="./index.html">Back to the beginning</a>
 </footer>
 
-<!-- The substrate. Beneath the paper, the name as the machine holds it:
-     a bitmap that flickers like something still running. -->
+<!-- The substrate. Under the paper, the name as the machine holds it: a
+     faint bitmap, legible where the light passes. -->
 <aside class="substrate" aria-hidden="true">
   <canvas class="substrate__px" id="substrate"></canvas>
 </aside>
@@ -565,8 +565,8 @@ MAKE_BODY = """
   <a href="./concept.html">Why this project</a>
 </footer>
 
-<!-- The substrate. Beneath the paper, the name as the machine holds it:
-     a bitmap that flickers like something still running. -->
+<!-- The substrate. Under the paper, the name as the machine holds it: a
+     faint bitmap, legible where the light passes. -->
 <aside class="substrate" aria-hidden="true">
   <canvas class="substrate__px" id="substrate"></canvas>
 </aside>
@@ -576,12 +576,14 @@ MAKE_BODY = """
 SUBSTRATE_JS = r"""
 /* ------------------------------------------------------------
    The substrate.
-   Beneath the paper the name exists as a bitmap — the way the machine
-   holds it — and it flickers the way something still running does: a
-   cell dims for a frame or three and recovers, a read head sweeps through
-   the word, a caret blinks after the last letter. Canvas, ~12 fps, drawn
-   only while on screen; one still frame under reduced motion. No cell
-   ever flickers faster than the read head passes, well under 3 Hz.
+   Under the paper the name exists as a bitmap — the way the machine holds
+   it — set small, in ink so faint it is a watermark until light passes
+   over it. A read head sweeps through the word and, where it is, the
+   cells warm to amber and become legible; a cell dims for a frame or
+   three and recovers; a few cells are lit amber all along, the same
+   pixel lights as layer 01; a caret blinks after the last letter. Canvas,
+   ~12 fps, drawn only while on screen; one still frame under reduced
+   motion. Nothing here flickers faster than 0.6 Hz.
    ------------------------------------------------------------ */
 (function () {
   var canvas = document.getElementById('substrate');
@@ -589,11 +591,11 @@ SUBSTRATE_JS = r"""
   var ctx = canvas.getContext('2d');
   /* Fewer, larger cells on a phone: a 3px cell is a texture, not a letter. */
   var narrow = window.innerWidth < 640;
-  var COLS = narrow ? 72 : 112, ROWS = narrow ? 15 : 22, GAP = 0.18, TEXT = 'Light on Light';
+  var COLS = narrow ? 64 : 84, ROWS = narrow ? 13 : 16, GAP = 0.22, TEXT = 'Light on Light';
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var css = getComputedStyle(document.documentElement);
   var tok = function (name, fb) { var v = css.getPropertyValue(name).trim(); return v || fb; };
-  var LIGHT = tok('--color-ink-paper', '#e8e2da');
+  var INK   = tok('--color-ink', '#2b2622');
   var AMBER = tok('--color-accent', '#c07a2a');
 
   var cells = [], caret = { c: 0, r: 0 }, cw = 0;
@@ -618,8 +620,10 @@ SUBSTRATE_JS = r"""
       for (var c = 0; c < COLS; c++) {
         var a = d[(r * COLS + c) * 4 + 3] / 255;
         if (a < 0.22) continue;
-        cells.push({ c: c, r: r, base: 0.45 + 0.5 * Math.min(1, a * 1.15),
-                     amber: Math.random() < 0.025, dip: 0, left: 0 });
+        var aa = Math.min(1, a * 1.15), amber = Math.random() < 0.025;
+        /* Ink cells are a watermark; the amber ones are lights. */
+        cells.push({ c: c, r: r, amber: amber,
+                     base: amber ? 0.5 + 0.35 * aa : 0.12 + 0.2 * aa, dip: 0, left: 0 });
       }
     }
     caret.c = Math.min(COLS - 2, Math.ceil(x + w) + 2);
@@ -642,19 +646,20 @@ SUBSTRATE_JS = r"""
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     var pad = cw * GAP, s = cw - pad * 2;
     for (var i = 0; i < cells.length; i++) {
-      var k = cells[i], b = k.base;
+      var k = cells[i], b = k.base, col = k.amber ? AMBER : INK;
       if (!reduce) {
         if (k.left > 0) { b = k.dip; k.left--; }
-        else if (Math.random() < 0.002) { k.dip = 0.06 + Math.random() * 0.24; k.left = 1 + Math.floor(Math.random() * 3); }
+        else if (Math.random() < 0.002) { k.dip = k.base * 0.15; k.left = 1 + Math.floor(Math.random() * 3); }
+        /* Where the light is passing, the word warms and can be read. */
         var dc = Math.abs(k.c - sweep);
-        if (dc < 3) b = Math.min(1, b + (3 - dc) * 0.14);
+        if (dc < 3) { b = Math.min(0.72, b + (3 - dc) * 0.18); col = AMBER; }
       }
       ctx.globalAlpha = b;
-      ctx.fillStyle = k.amber ? AMBER : LIGHT;
+      ctx.fillStyle = col;
       ctx.fillRect(k.c * cw + pad, k.r * cw + pad, s, s);
     }
     if (caretOn || reduce) {
-      ctx.globalAlpha = 0.9;
+      ctx.globalAlpha = 0.75;
       ctx.fillStyle = AMBER;
       ctx.fillRect(caret.c * cw + pad, (caret.r - 3) * cw + pad, s, cw * 4 - pad * 2);
     }
