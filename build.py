@@ -581,6 +581,8 @@ MAKE_BODY = """
       <button class="cta ask__go" id="go" type="submit" disabled>Wrap it</button>
     </form>
     <p class="said" id="said"></p>
+    <!-- Writing again belongs to the sentence, so it sits under it. -->
+    <button class="gift__again" id="again" type="button">Write another</button>
   </section>
 
   <!-- Right · the card: the print itself, at every moment. While forming, a
@@ -605,8 +607,7 @@ MAKE_BODY = """
       <div class="gift__wrap" aria-hidden="true"></div>
     </figure>
     <div class="gift__actions">
-      <button class="cta" id="export" type="button">Keep it</button>
-      <button class="gift__again" id="again" type="button">One more thought</button>
+      <button class="cta" id="export" type="button">Export</button>
       <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
     </div>
     <div class="burst" id="burst" aria-hidden="true"></div>
@@ -1160,7 +1161,7 @@ MAKE_JS = r"""
       s === 'wrapped' ? 'LAYER 03 \u2014 READY' : LAYER_STAMP;
     if (s === 'forming') { live.textContent = 'Translating your sentence.'; }
     if (s === 'wrapped') { live.textContent = 'Your gift is wrapped, and opening.'; }
-    if (s === 'gift') { live.textContent = 'Your gift is open. Keep it downloads a JPG.'; }
+    if (s === 'gift') { live.textContent = 'Your gift is open. Export downloads a JPG.'; }
   }
 
   field.addEventListener('input', function () {

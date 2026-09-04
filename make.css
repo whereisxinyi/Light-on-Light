@@ -137,8 +137,10 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   --plate: min(22rem, calc(100dvh - 37rem), 34vw);
   --card-pad: clamp(1rem, 2.2vw, 1.6rem);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  column-gap: clamp(var(--space-xl), 6vw, var(--space-4xl));
+  /* Two equal halves: the thought on the left, the card centred in the
+     right half rather than pushed to the edge. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: var(--space-2xl);
   align-items: center;
   padding: var(--space-3xl) var(--page-gutter) clamp(var(--space-3xl), 14vh, var(--space-4xl));
 }
@@ -244,6 +246,8 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 [data-state="wrapped"] .said,
 [data-state="gift"]    .said { display: block; }
 [data-state="gift"] .gift__actions { display: flex; animation: settle-in 900ms var(--ease-out) 2200ms both; }
+.left .gift__again { display: none; justify-self: start; }
+[data-state="gift"] .left .gift__again { display: inline-block; animation: settle-in 900ms var(--ease-out) 2200ms both; }
 @keyframes settle-in { from { opacity: 0; transform: translateY(10px); } }
 
 /* ---------- right ---------- */
@@ -254,6 +258,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   display: grid;
   justify-items: center;
   align-content: center;
+  justify-self: center;
   row-gap: var(--space-xl);
 }
 
@@ -492,13 +497,11 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   position: absolute; inset-inline: 0; inset-block-end: 0;
   block-size: var(--rule-hair);
   background: var(--color-accent);
-  opacity: 0.5;
-  transform: scaleX(0.42);
-  transform-origin: 0 50%;
-  transition: transform var(--dur-slow) var(--ease-in-out), opacity var(--dur-slow) var(--ease-in-out);
+  opacity: 0.55;
+  transition: opacity var(--dur-short) var(--ease-out);
 }
 .gift__again:hover { color: var(--color-ink); }
-.gift__again:hover::after { opacity: 1; transform: scaleX(1); }
+.gift__again:hover::after { opacity: 1; }
 
 /* ============================================================
    Export — the same glass pill as layer 02's invitation, in flow.
