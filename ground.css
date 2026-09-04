@@ -1,0 +1,103 @@
+/* SOURCE FILE — the ground shared by layers 02 and 03; build.py prepends it to
+ * each page's own stylesheet.
+ *
+ * One paper, the whole way down. Everything on layers 02 and 03 happens on
+ * this: a bank of warm haze, the name in ghost letters far too large and far
+ * too faint to read, paper dust, and one warm point of light that wanders.
+ * The field never changes surface — no dark section, no cut — the moments
+ * of each layer dissolve in and out on top of it. This is layer 01's field,
+ * settled, so the three layers are one place.
+ */
+
+.ground {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: clip;
+}
+.ground__haze, .ground__glow {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+}
+.ground__haze { mix-blend-mode: multiply; }
+.ground__haze--a {
+  inset-block-start: 6%;   inset-inline-start: 22%;
+  inline-size: min(66vw, 54rem); aspect-ratio: 1.3;
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-paper-3) 60%, transparent), transparent 78%);
+  filter: blur(72px);
+  animation: ground-drift-a var(--dur-drift-a) var(--ease-in-out) infinite alternate;
+}
+.ground__haze--c {
+  inset-block-start: 30%;  inset-inline-start: 34%;
+  inline-size: min(46vw, 36rem); aspect-ratio: 2.1;
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-paper-3) 44%, transparent), transparent 76%);
+  filter: blur(58px);
+  animation: ground-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
+}
+.ground__glow {
+  inset-block-start: 22%;  inset-inline-start: 44%;
+  inline-size: min(26vw, 20rem); aspect-ratio: 1.15;
+  background: radial-gradient(closest-side, var(--color-glow), transparent 72%);
+  filter: blur(46px);
+  mix-blend-mode: screen;
+  animation: ground-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
+}
+@keyframes ground-drift-a { to { transform: translate3d(-5%, 4%, 0); } }
+@keyframes ground-drift-c { to { transform: translate3d(-4%, -6%, 0); } }
+
+/* The light. One warm point, soft-edged, that wanders the field on a path
+   long enough that it is never seen to repeat. */
+.ground__light {
+  position: absolute;
+  inset-block-start: 28%; inset-inline-start: 46%;
+  inline-size: 18px; block-size: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    color-mix(in oklch, var(--color-accent) 72%, white) 0,
+    color-mix(in oklch, var(--color-accent) 42%, transparent) 38%,
+    transparent 70%);
+  filter: blur(1.2px);
+  opacity: 0.85;
+  animation: ground-wander 53s var(--ease-in-out) infinite alternate;
+}
+@keyframes ground-wander {
+  0%   { transform: translate(0, 0); }
+  30%  { transform: translate(-30vw, 16vh); }
+  62%  { transform: translate(12vw, 34vh); }
+  100% { transform: translate(26vw, -4vh); }
+}
+
+/* Ghost letters and dust are dealt by the generator (see GROUND_JS). */
+.ground__ch {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  font-family: var(--font-wordmark);
+  font-size: var(--s);
+  line-height: 1;
+  color: var(--color-ink);
+  opacity: var(--o);
+  user-select: none;
+}
+.ground__dust {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  inline-size: var(--s);
+  block-size: var(--s);
+  border-radius: 50%;
+  background: var(--color-ink);
+  opacity: var(--o);
+}
+
+/* Everything that is not the ground sits on it. */
+.mast, main, .colophon, .substrate, .grain { position: relative; z-index: 1; }
+.grain { z-index: calc(var(--z-sticky) - 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ground__haze, .ground__glow, .ground__light { animation: none !important; }
+}

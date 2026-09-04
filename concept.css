@@ -15,17 +15,17 @@
  *   face; the steps are H1 wordmark → statement → lede → mono label, carried by
  *   font-size, colour depth (ink → ink-2 → muted), and the serif/mono split.
  *
- * LIGHT NARRATIVE — the page's spine, not decoration:
- *   storm   paper   thoughts arrive, lit
- *   night   ink     dusk: the light goes out over ~18vh. The feed takes the
- *                   thoughts (a dense field of them, top) and one question
- *                   answers, lit amber, over blurred plates (bottom). Dawn:
- *                   the light comes back over ~24vh, glow-tinted.
- *   idea    paper   fully lit again
- *   give    paper   layer 01's haze returns; the invitation docks here
+ * NARRATIVE — three acts on one paper, after the film:
+ *   act 1   thoughts arrive, one by one; scroll on and each comes apart
+ *           into its letters, which fall to the foot of the stage
+ *   act 2   one sentence, a word at a time
+ *   act 3   the invitation, over a curtain of everything ever said here
+ *   The surface never changes. No dark section, no cut: the ground (haze,
+ *   ghost letters, dust, one wandering light) is fixed under everything.
  *
- * motion: flash · sink · plate-drift  (3 primitives)
- *   No scroll-triggered reveals anywhere.
+ * motion: arrive · fall · word-in · curtain-drift
+ *   The acts are staged by scroll position — a narrative needs a clock, and
+ *   on a page the reader's scroll is the clock. Deliberate.
  * emphasis: accent colour + drawn underline, once. NOT italic — gate 38a.
  * pre-emit critique: P5 H5 E4 S5 R5 V4
  * contrast: pass (40–41) · mobile: pass (34, 49, 50–57) · tokens: pass (48)
@@ -91,6 +91,9 @@ h1, h2, p { margin: 0; font-weight: 400; }
   font-family: var(--font-mono);
   font-size: var(--text-xs);
 }
+/* Read by screen readers, never drawn. */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
 .skip:focus-visible {
   inset-inline-start: var(--page-gutter);
   inset-block-start: var(--space-md);
@@ -142,314 +145,173 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 }
 
 /* ============================================================
-   Storm · thoughts flashing up at random and going.
-   Motion primitive 1 · flash.
+   Acts. Each is a fold on the same paper; nothing here has a surface
+   of its own. The ground shows through everything.
    ============================================================ */
 
-.storm {
+main { position: relative; }
+
+.act {
   position: relative;
-  isolation: isolate;
-  overflow: clip;
-  min-block-size: clamp(26rem, 60dvh, 40rem);
-  display: grid;
-  align-content: end;
-  padding: var(--space-2xl) var(--page-gutter) var(--space-3xl);
+  padding-inline: var(--page-gutter);
 }
 
-.storm__field,
-.swarm-dark {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-base);
-  pointer-events: none;
+/* ------------------------------------------------------------
+   Act 1 · thoughts arrive, and are lost.
+   Two screens of scroll over one sticky stage. Phase follows the
+   scroll (see the generator): "arrive" brings the thoughts up one by
+   one; "lose" throws every letter a little way out and drops it to a
+   drift along the foot of the stage.
+   ------------------------------------------------------------ */
+
+.act--thoughts { min-block-size: 200dvh; padding-inline: 0; }
+
+.act__stage {
+  position: sticky;
+  inset-block-start: 0;
+  block-size: 100dvh;
   overflow: clip;
 }
-/* Every field fades out before its container's edge, so a thought or a plate
-   is never cut in half by a seam. */
-.storm__field,
-.swarm-dark,
-.plates {
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
-          mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
-}
 
-/* Outer level drifts; inner level flashes. One property each, so the two
-   animations can never collide on `transform`. */
-.pop {
+.thoughts { position: absolute; inset: 0; }
+
+.thought {
   position: absolute;
   inset-inline-start: var(--x);
   inset-block-start: var(--y);
-  inline-size: max-content;
-  max-inline-size: min(21rem, 62vw);
-  will-change: transform;
-  animation: pop-drift var(--t1) var(--ease-in-out) var(--d1) infinite alternate;
-}
-.pop__t {
-  display: block;
-  opacity: 0;
   font-family: var(--font-voice);
   font-style: italic;
   font-size: var(--s);
   line-height: 1.3;
-  color: var(--c);
-  /* No blur on text that moves: a fractional blur on a layer whose sub-pixel
-     position changes every frame re-rasterises every frame and the letters
-     crawl. Depth is carried by size and opacity alone. */
-  will-change: transform, opacity;
-  animation: pop-flash var(--t2) var(--ease-out) var(--d2) infinite;
+  color: var(--color-ink-2);
+  white-space: nowrap;
+  opacity: 0;
+}
+.thought .ch { display: inline-block; white-space: pre; }
+
+[data-phase="arrive"] .thought {
+  animation: thought-arrive 1.6s var(--ease-out) var(--d) both;
+}
+@keyframes thought-arrive {
+  from { opacity: 0; transform: translateY(0.35em); }
+  to   { opacity: 1; transform: none; }
 }
 
-@keyframes pop-drift { to { transform: translate(var(--dx), var(--dy)); } }
-
-/* Appear quickly, hold, leave. The long tail of zero is the wait before the
-   thought comes round again — that dead time is what keeps the field from
-   reading as a marquee. */
-@keyframes pop-flash {
-  0%   { opacity: 0; transform: translateY(0.3em); }
-  6%   { opacity: var(--o); transform: none; }
-  /* The exit gets its own curve: an ease-out here would leave at full speed
-     and read as a cut rather than a fade. */
-  30%  { opacity: var(--o); transform: none; animation-timing-function: var(--ease-in-out); }
-  42%  { opacity: 0; transform: translateY(-0.3em); }
-  100% { opacity: 0; transform: translateY(-0.3em); }
+[data-phase="lose"] .thought { opacity: 1; }
+[data-phase="lose"] .thought .ch {
+  animation: ch-fall 2.8s var(--ease-in) var(--cd) both;
+}
+/* Out a little first — the thought bursts — then down, turning, to the
+   drift line the generator measured for each letter. */
+@keyframes ch-fall {
+  0%   { transform: none; opacity: 1; animation-timing-function: var(--ease-out); }
+  22%  { transform: translate(var(--sx), var(--sy)) rotate(var(--sr)); opacity: 0.95;
+         animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.6); }
+  100% { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)); opacity: 0.55; }
 }
 
-.storm__note {
-  position: relative;
-  z-index: var(--z-raised);
-  max-inline-size: 30ch;
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  line-height: 1.55;
+.act__note {
+  position: absolute;
+  inset-inline: var(--page-gutter);
+  inset-block-end: clamp(var(--space-xl), 9vh, var(--space-3xl));
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+  opacity: 0;
+  transition: opacity 900ms var(--ease-in-out);
+}
+[data-phase="arrive"] .act__note--arrive,
+[data-phase="lose"]   .act__note--lose { opacity: 1; transition-delay: 600ms; }
+
+/* ------------------------------------------------------------
+   Act 2 · the statement, a word at a time.
+   ------------------------------------------------------------ */
+
+.act--statement {
+  min-block-size: 100dvh;
+  display: grid;
+  place-items: center;
+}
+.statement {
+  max-inline-size: 22ch;
+  text-align: center;
+  text-wrap: balance;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-turn);
+  line-height: 1.14;
+  letter-spacing: -0.012em;
   color: var(--color-ink);
 }
+.statement .w { display: inline-block; opacity: 0; transform: translateY(0.25em); }
+.statement.is-in .w { animation: word-in 700ms var(--ease-out) calc(var(--i) * 140ms) both; }
+@keyframes word-in { to { opacity: 1; transform: none; } }
 
-/* ============================================================
-   Beats · one fold each, hard surface changes between.
-   ============================================================ */
+/* ------------------------------------------------------------
+   Act 3 · the invitation, over the curtain.
+   Rows of everything ever said here drift slowly, faint, a few words
+   lit amber; the invitation sits on a small pool of clear paper.
+   ------------------------------------------------------------ */
 
-.beat {
-  position: relative;
+.act--invite {
   isolation: isolate;
   overflow: clip;
+  min-block-size: 80dvh;
+  display: grid;
+  place-items: center;
+}
+.curtain {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   display: grid;
   align-content: center;
-  gap: var(--space-2xl);
-  padding-block: clamp(var(--space-3xl), 17vh, var(--space-4xl));
-  padding-inline: var(--page-gutter);
-  min-block-size: clamp(22rem, 56dvh, 36rem);
+  row-gap: clamp(0.5rem, 1.6vh, 1.1rem);
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
 }
-
-/* The copy must out-paint the fields behind it. Those are positioned with a
-   z-index, so static flow content would otherwise sit underneath them. */
-.beat > :not(.swarm-dark):not(.plates) {
-  position: relative;
-  z-index: var(--z-raised);
-}
-
-.beat--light { background: var(--color-paper); color: var(--color-ink); }
-
-/* ============================================================
-   Night · dusk, two moments, dawn — one section.
-   The surface change is a gradient at each end, not a cut: the
-   narrative says the light goes out and comes back, so it does.
-   ============================================================ */
-
-.night {
-  --dusk: clamp(8rem, 18vh, 12rem);
-  --dawn: clamp(12rem, 30vh, 20rem);
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-content: space-between;
-  row-gap: clamp(var(--space-3xl), 16vh, var(--space-4xl));
-  min-block-size: 100dvh;
-  padding-block: calc(var(--dusk) + var(--space-2xl)) calc(var(--dawn) + var(--space-2xl));
-  padding-inline: var(--page-gutter);
-  color: var(--color-ink-paper);
-  background: linear-gradient(to bottom,
-    var(--color-paper)                       0,
-    var(--color-paper-3)                     calc(var(--dusk) * 0.35),
-    oklch(30% 0.012 66)                      calc(var(--dusk) * 0.78),
-    var(--color-ink)                         var(--dusk),
-    var(--color-ink)                         calc(100% - var(--dawn)),
-    oklch(30% 0.014 66)                      calc(100% - var(--dawn) * 0.74),
-    oklch(52% 0.035 66)                      calc(100% - var(--dawn) * 0.46),
-    color-mix(in oklch, var(--color-glow) 82%, var(--color-accent) 18%)
-                                             calc(100% - var(--dawn) * 0.2),
-    var(--color-paper)                       100%);
-}
-.night > :not(.swarm-dark):not(.plates) {
-  position: relative;
-  z-index: var(--z-raised);
-}
-.night__pain { grid-column: 1; grid-row: 1; }
-.night__turn { grid-column: 2; grid-row: 2; }
-
-.beat__lede {
-  max-inline-size: 46ch;
-  font-family: var(--font-body);
-  font-weight: 500;              /* light text on ink reads thinner; the medium compensates */
-  font-size: var(--text-lede);
-  line-height: 1.5;
-  color: var(--color-ink-paper);
-}
-
-.beat__turn {
-  max-inline-size: 19ch;
-  font-size: var(--text-turn);
-  line-height: 1.14;
-  letter-spacing: -0.012em;
-  overflow-wrap: anywhere;
-  min-inline-size: 0;
-}
-
-.beat__ask {
-  max-inline-size: 20ch;
-  font-size: var(--text-turn);
-  line-height: 1.14;
-  letter-spacing: -0.012em;
-  overflow-wrap: anywhere;
-  min-inline-size: 0;
-}
-
-/* ============================================================
-   Emphasis — accent + a drawn underline. Never italic (gate 38a),
-   and Instrument Serif has one weight, so weight is unavailable too.
-   ============================================================ */
-
-.lit {
-  color: var(--color-accent);
-  text-decoration: underline;
-  text-decoration-color: var(--color-accent);
-  text-decoration-thickness: 2px;
-  /* em-relative, not px: at display sizes a fixed 1–2px offset sits inside
-     the letterforms. skip-ink clears the descenders. */
-  text-underline-offset: 0.08em;
-  text-decoration-skip-ink: auto;
-}
-
-/* ============================================================
-   Motion primitive 2 · sink
-   The dark field. The same voice as the storm, but buried — drifting
-   down and dimming. The pain said in motion rather than in more copy.
-   ============================================================ */
-
-.sunk__t {
-  position: absolute;
-  inset-inline-start: var(--x);
-  inset-block-start: var(--y);
-  max-inline-size: min(24rem, 66vw);
+.curtain__row {
+  inline-size: max-content;
+  margin-inline-start: 50%;
+  white-space: nowrap;
   font-family: var(--font-voice);
   font-style: italic;
   font-size: var(--s);
-  line-height: 1.3;
-  color: var(--color-ink-paper);
-  opacity: 0;
-  will-change: transform, opacity;
-  animation: sink var(--t1) var(--ease-in-out) var(--d1) infinite;
-}
-/* Visible for 65% of the cycle, not 48%: with a dozen of these the field has
-   to read as full, and the previous timing left it two-thirds empty. */
-@keyframes sink {
-  0%   { opacity: 0;        transform: translateY(-2.5vh); }
-  15%  { opacity: var(--o); transform: translateY(0); }
-  80%  { opacity: 0;        transform: translateY(3vh); }
-  100% { opacity: 0;        transform: translateY(3vh); }
-}
-
-/* ============================================================
-   Motion primitive 3 · plates
-   Floating, heavily blurred photographs behind the turn.
-
-   These are SWAPPABLE SLOTS. Each plate takes its picture from --img;
-   with no --img set it falls back to a soft two-stop field, which at
-   this blur radius is what a photograph looks like anyway. Drop a real
-   image in (`--img: url(...)`) and nothing else needs to change.
-
-   Restraint is enforced structurally, not by eye: opacity is capped low,
-   saturation is pulled down, and the blur floor is high enough that no
-   plate can ever resolve into a subject that competes with the question.
-   ============================================================ */
-
-.plates {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-base);
-  pointer-events: none;
-  overflow: clip;
-}
-
-.plate {
-  position: absolute;
-  inset-inline-start: var(--x);
-  inset-block-start: var(--y);
-  inline-size: var(--w);
-  aspect-ratio: var(--ar);
-  border-radius: var(--radius-plate);
-  background-image: var(--img);
-  background-size: cover;
-  background-position: center;
-  filter: blur(var(--bl)) saturate(0.55);
+  line-height: 1.4;
+  color: var(--color-ink-2);
   opacity: var(--o);
   will-change: transform;
-  animation: plate-drift var(--t) var(--ease-in-out) var(--d) infinite alternate;
+  animation: curtain-drift var(--t) linear var(--d) infinite alternate;
 }
-/* Translate only. Scaling a filtered layer re-runs the blur at the new size on
-   every frame — with five plates this size it was the page's whole jank. */
-@keyframes plate-drift {
-  to { transform: translate(var(--dx), var(--dy)); }
+.curtain__row i { font-style: normal; margin-inline: 0.7em; color: var(--color-rule); }
+.curtain__row .lit { color: var(--color-accent); }
+@keyframes curtain-drift {
+  from { transform: translateX(calc(-50% - var(--dir) * 8%)); }
+  to   { transform: translateX(calc(-50% + var(--dir) * 8%)); }
+}
+.invite {
+  position: relative;
+  max-inline-size: 30ch;
+  padding: var(--space-xl) var(--space-2xl);
+  text-align: center;
+  text-wrap: balance;
+  font-family: var(--font-voice);
+  font-style: italic;
+  font-size: var(--text-display-s);
+  line-height: 1.3;
+  color: var(--color-ink);
+  background: radial-gradient(closest-side,
+    var(--color-paper) 45%,
+    color-mix(in oklch, var(--color-paper) 75%, transparent) 78%,
+    transparent);
 }
 
 /* ============================================================
-   Give · mostly whitespace, and where the invitation comes to rest.
+   The invitation docks under the last act.
    ============================================================ */
-
-.give {
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
-  min-block-size: clamp(14rem, 30dvh, 22rem);
-}
-
-/* Layer 01's haze, at about half its amplitude. The container is masked at
-   both edges: a blob larger than the fold fades out before the fold ends, so
-   the clip never leaves a straight edge. */
-.haze {
-  position: absolute; inset: 0; z-index: var(--z-base); pointer-events: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
-          mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
-}
-.haze__l, .haze__glow { position: absolute; display: block; border-radius: 50%; }
-.haze__l { mix-blend-mode: multiply; }
-.haze__l--a {
-  inset-block-start: -30%; inset-inline-start: 12%;
-  inline-size: min(62vw, 50rem); aspect-ratio: 1.7;
-  background: radial-gradient(closest-side,
-    color-mix(in oklch, var(--color-paper-3) 62%, transparent), transparent 78%);
-  filter: blur(40px);
-  animation: give-drift-a var(--dur-drift-a) var(--ease-in-out) infinite alternate;
-}
-.haze__l--c {
-  inset-block-start: 18%; inset-inline-start: 40%;
-  inline-size: min(40vw, 32rem); aspect-ratio: 2.4;
-  background: radial-gradient(closest-side,
-    color-mix(in oklch, var(--color-paper-3) 46%, transparent), transparent 76%);
-  filter: blur(34px);
-  animation: give-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
-}
-.haze__glow {
-  inset-block-start: 8%; inset-inline-start: 48%;
-  inline-size: min(22vw, 17rem); aspect-ratio: 1.3;
-  background: radial-gradient(closest-side, var(--color-glow), transparent 72%);
-  filter: blur(30px);
-  mix-blend-mode: screen;
-  animation: give-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
-}
-@keyframes give-drift-a { to { transform: translate3d(-3%, 2.5%, 0); } }
-@keyframes give-drift-c { to { transform: translate3d(-2.5%, -4%, 0); } }
 
 /* The dock is sticky against the viewport's bottom edge for as long as
    <main> is on screen, then sits in flow as main's last child. No fixed
@@ -549,7 +411,9 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   position: relative;
   isolation: isolate;
   margin-inline: var(--page-gutter);
-  padding-block: var(--space-xl) var(--space-lg);
+  padding-block: var(--space-md) 0;
+  display: flow-root;          /* so the canvas's negative bottom margin shortens this box */
+  overflow: clip;              /* and the lower half of the name hangs below it */
 }
 /* The deepest fog pools along the whole foot of the page. */
 .substrate::before {
@@ -562,7 +426,8 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
     color-mix(in oklch, var(--color-paper-3) 72%, transparent), transparent 72%);
   mix-blend-mode: multiply;
 }
-/* Gutter to gutter: the name is the width of the page here. */
+/* Gutter to gutter: the name is the width of the page here, and only its
+   upper half shows; the generator sets the negative bottom margin. */
 .substrate__px { display: block; inline-size: 100%; }
 
 /* ============================================================
@@ -570,18 +435,10 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
    ============================================================ */
 
 @media (max-width: 40rem) {
-  .storm { min-block-size: clamp(26rem, 62dvh, 38rem); }
-  .beat  { min-block-size: auto; padding-block: var(--space-3xl); }
-  .night { grid-template-columns: minmax(0, 1fr); min-block-size: auto;
-           row-gap: clamp(12rem, 36vh, 20rem); }   /* room for the sunk field between the two moments */
-  .night__pain, .night__turn { grid-column: 1; }
-  .night__turn { grid-row: 2; }
-  .give  { min-block-size: clamp(10rem, 24dvh, 14rem); }
-  .pop   { max-inline-size: 74vw; }
-
-  /* A fixed CTA on a full-width column will sit over body copy — that is the
-     cost of pinning it, not a bug to style away. Shrink it to roughly half the
-     area so it covers as little as possible, and keep the 44px hit target. */
+  .act--thoughts { min-block-size: 180dvh; }
+  .act--statement { min-block-size: 80dvh; }
+  .statement { max-inline-size: 16ch; }
+  .invite { padding: var(--space-lg) var(--space-md); }
   .dock { inset-block-end: var(--space-lg); }
   .cta {
     font-size: var(--text-base);
@@ -591,17 +448,18 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 }
 
 /* ============================================================
-   Reduced motion — the fields settle. Thoughts hold where they
-   landed, at the opacity they were dealt; nothing flashes or sinks.
+   Reduced motion — the thoughts are simply there; nothing falls,
+   drifts, or arrives. The statement is whole.
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .pop, .pop__t, .sunk__t, .plate, .haze__l, .haze__glow, .dock {
+  .thought, .thought .ch, .statement .w, .curtain__row, .dock {
     animation: none !important;
     transform: none !important;
   }
-  .pop__t  { opacity: var(--o); }
-  .sunk__t { opacity: var(--o); }
+  .thought, .statement .w { opacity: 1; }
+  .act__note { transition: none; }
+  .act--thoughts { min-block-size: 100dvh; }
   .cta { transition: none; }
   .cta::before { animation: none; opacity: 1; }
 }

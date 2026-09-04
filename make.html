@@ -177,6 +177,110 @@
 @media (min-width: 1700px) { html { font-size: 18px; } }
 @media (min-width: 2200px) { html { font-size: 20px; } }
 
+/* SOURCE FILE — the ground shared by layers 02 and 03; build.py prepends it to
+ * each page's own stylesheet.
+ *
+ * One paper, the whole way down. Everything on layers 02 and 03 happens on
+ * this: a bank of warm haze, the name in ghost letters far too large and far
+ * too faint to read, paper dust, and one warm point of light that wanders.
+ * The field never changes surface — no dark section, no cut — the moments
+ * of each layer dissolve in and out on top of it. This is layer 01's field,
+ * settled, so the three layers are one place.
+ */
+
+.ground {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: clip;
+}
+.ground__haze, .ground__glow {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+}
+.ground__haze { mix-blend-mode: multiply; }
+.ground__haze--a {
+  inset-block-start: 6%;   inset-inline-start: 22%;
+  inline-size: min(66vw, 54rem); aspect-ratio: 1.3;
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-paper-3) 60%, transparent), transparent 78%);
+  filter: blur(72px);
+  animation: ground-drift-a var(--dur-drift-a) var(--ease-in-out) infinite alternate;
+}
+.ground__haze--c {
+  inset-block-start: 30%;  inset-inline-start: 34%;
+  inline-size: min(46vw, 36rem); aspect-ratio: 2.1;
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-paper-3) 44%, transparent), transparent 76%);
+  filter: blur(58px);
+  animation: ground-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
+}
+.ground__glow {
+  inset-block-start: 22%;  inset-inline-start: 44%;
+  inline-size: min(26vw, 20rem); aspect-ratio: 1.15;
+  background: radial-gradient(closest-side, var(--color-glow), transparent 72%);
+  filter: blur(46px);
+  mix-blend-mode: screen;
+  animation: ground-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
+}
+@keyframes ground-drift-a { to { transform: translate3d(-5%, 4%, 0); } }
+@keyframes ground-drift-c { to { transform: translate3d(-4%, -6%, 0); } }
+
+/* The light. One warm point, soft-edged, that wanders the field on a path
+   long enough that it is never seen to repeat. */
+.ground__light {
+  position: absolute;
+  inset-block-start: 28%; inset-inline-start: 46%;
+  inline-size: 18px; block-size: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    color-mix(in oklch, var(--color-accent) 72%, white) 0,
+    color-mix(in oklch, var(--color-accent) 42%, transparent) 38%,
+    transparent 70%);
+  filter: blur(1.2px);
+  opacity: 0.85;
+  animation: ground-wander 53s var(--ease-in-out) infinite alternate;
+}
+@keyframes ground-wander {
+  0%   { transform: translate(0, 0); }
+  30%  { transform: translate(-30vw, 16vh); }
+  62%  { transform: translate(12vw, 34vh); }
+  100% { transform: translate(26vw, -4vh); }
+}
+
+/* Ghost letters and dust are dealt by the generator (see GROUND_JS). */
+.ground__ch {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  font-family: var(--font-wordmark);
+  font-size: var(--s);
+  line-height: 1;
+  color: var(--color-ink);
+  opacity: var(--o);
+  user-select: none;
+}
+.ground__dust {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  inline-size: var(--s);
+  block-size: var(--s);
+  border-radius: 50%;
+  background: var(--color-ink);
+  opacity: var(--o);
+}
+
+/* Everything that is not the ground sits on it. */
+.mast, main, .colophon, .substrate, .grain { position: relative; z-index: 1; }
+.grain { z-index: calc(var(--z-sticky) - 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ground__haze, .ground__glow, .ground__light { animation: none !important; }
+}
+
 /* SOURCE FILE — make.html is a single self-contained page and does not link
  * this stylesheet; it embeds a copy. Edit here, then run `python3 build.py`.
  *
@@ -298,143 +402,95 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 [data-state="forming"] .mast__layer { animation: note-breathe 2s var(--ease-in-out) infinite alternate; }
 
 /* ============================================================
-   Stage — one surface, three moments
+   Stage · one thought on the left, the card on the right.
+   After the film: the label, the sentence at display size, the verb;
+   and across from it the print, arriving. The stage keeps its first-
+   screen height; the caption sits at its foot.
    ============================================================ */
 
 .stage {
   position: relative;
   isolation: isolate;
   overflow: clip;
-  /* The first screen is still mast + stage + colophon; the substrate lives
-     below the fold. 12.5rem is what the masthead and colophon take. */
+  /* The first screen is mast + stage + colophon; 12.5rem is what the
+     masthead and colophon take. */
   min-block-size: calc(100dvh - 12.5rem);
-  /* The gift's size, shared by the parcel and the plate so one becomes the
-     other in place. Bounded by height: a gift you scroll to see whole is not
-     a gift. 29rem is what the masthead, padding and colophon take. */
-  --plate: min(34rem, calc(100dvh - 29rem), 80vw);
+  /* The drawing's size. The card adds its own margins around it. Bounded by
+     height so the whole card, wrapped or open, sits inside the stage. */
+  --plate: min(22rem, calc(100dvh - 37rem), 34vw);
+  --card-pad: clamp(1rem, 2.2vw, 1.6rem);
   display: grid;
-  align-content: end;
-  padding: var(--space-3xl) var(--page-gutter) clamp(var(--space-2xl), 18vh, var(--space-4xl));
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: clamp(var(--space-xl), 6vw, var(--space-4xl));
+  align-items: center;
+  padding: var(--space-3xl) var(--page-gutter) clamp(var(--space-3xl), 14vh, var(--space-4xl));
 }
-.stage > .panel { position: relative; z-index: var(--z-raised); }
 
-/* Layer 01's haze, at about half its amplitude, masked so the stage's edges
-   never cut a blob. */
-.haze {
-  position: absolute; inset: 0; z-index: var(--z-base); pointer-events: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
-          mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+.forming__field {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-raised);
+  overflow: clip;
+  pointer-events: none;
 }
-.haze__l, .haze__glow { position: absolute; display: block; border-radius: 50%; }
-.haze__l { mix-blend-mode: multiply; }
-.haze__l--a {
-  inset-block-start: 4%; inset-inline-start: 28%;
-  inline-size: min(60vw, 48rem); aspect-ratio: 1.4;
-  background: radial-gradient(closest-side,
-    color-mix(in oklch, var(--color-paper-3) 62%, transparent), transparent 78%);
-  filter: blur(56px);
-  animation: haze-drift-a var(--dur-drift-a) var(--ease-in-out) infinite alternate;
-}
-.haze__l--c {
-  inset-block-start: 30%; inset-inline-start: 40%;
-  inline-size: min(42vw, 34rem); aspect-ratio: 2.1;
-  background: radial-gradient(closest-side,
-    color-mix(in oklch, var(--color-paper-3) 46%, transparent), transparent 76%);
-  filter: blur(44px);
-  animation: haze-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
-}
-.haze__glow {
-  inset-block-start: 22%; inset-inline-start: 50%;
-  inline-size: min(22vw, 17rem); aspect-ratio: 1.15;
-  background: radial-gradient(closest-side, var(--color-glow), transparent 72%);
-  filter: blur(36px);
-  mix-blend-mode: screen;
-  animation: haze-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
-}
-@keyframes haze-drift-a { to { transform: translate3d(-3.5%, 2.5%, 0); } }
-@keyframes haze-drift-c { to { transform: translate3d(-2.5%, -4%, 0); } }
 
-/* Only one panel is present at a time. `hidden` (not opacity) keeps the
-   inactive state out of the tab order and out of the screen reader; the
-   incoming panel then fades up from where the last one stood. */
-[data-state="input"]   .panel--gift,
-[data-state="forming"] .panel--gift,
-[data-state="wrapped"] .panel--gift,
-[data-state="gift"]    .panel--ask { display: none; }
-[data-state="input"]   .panel--ask { animation: settle-in 900ms var(--ease-out) both; }
-[data-state="gift"]    .stage { align-content: start; }
+/* ---------- left ---------- */
 
-/* ============================================================
-   Input · the ruled line
-   ============================================================ */
+.left {
+  position: relative;
+  z-index: var(--z-raised);
+  display: grid;
+  gap: var(--space-lg);
+  align-content: center;
+  max-inline-size: 34rem;
+}
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  color: var(--color-muted);
+}
 
 .ask {
   display: grid;
   gap: var(--space-xl);
-  inline-size: 100%;
+  justify-items: start;
 }
-
-/* The question leads, at display size; the writing line sits beneath it. */
-.ask__greet {
-  font-size: var(--text-display-s);
-  line-height: 1.2;
-  color: var(--color-ink);
-  overflow-wrap: anywhere;
-  min-inline-size: 0;
-}
-
-/* The line and its verb share one row and one baseline: the verb appears at
-   the end of what you wrote, not on a line of its own further down. */
-.ask__row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-lg);
-  inline-size: min(100%, 46rem);
-}
-
-/* No box. A line to write on, the way paper has one — and the words sit ON
-   the line: single row, no reserved height above, a sliver of padding below.
-   `field-sizing: content` lets it grow downward if the thought runs long;
-   browsers without it scroll inside the row, which is acceptable. */
+/* The line you write on, in the voice thoughts have everywhere here. */
 .ask__field {
   display: block;
-  flex: 1 1 auto;
-  min-inline-size: 0;
-  min-block-size: 1.7em;
+  inline-size: 100%;
+  min-block-size: 1.4em;
   field-sizing: content;
-  padding: 0 0 var(--space-2xs);
+  padding: 0 0 0.3em;
   border: 0;
   border-block-end: var(--rule-hair) solid var(--color-rule);
   border-radius: 0;
   background: transparent;
   color: var(--color-ink);
-  font-family: var(--font-body);
-  font-size: var(--text-write);
-  line-height: 1.5;
+  font-family: var(--font-voice);
+  font-style: italic;
+  font-size: var(--text-display-s);
+  line-height: 1.3;
   resize: none;
   transition: border-color var(--dur-long) var(--ease-out);
 }
-/* The placeholder is the page's only instruction now — it must be readable,
-   not decorative. Muted measures 4.92:1 on paper. */
 .ask__field::placeholder { color: var(--color-muted); }
-.ask__field:hover  { border-block-end-color: var(--color-neutral); }
-.ask__field:focus  { outline: none; border-block-end-color: var(--color-ink-2); }
-.ask__field:focus-visible { outline: none; }
-/* Keyboard users still get a ring — on the line, not around the box. */
-.ask__field:focus-visible { border-block-end: 2px solid var(--color-focus); }
+.ask__field:hover { border-block-end-color: var(--color-neutral); }
+.ask__field:focus { outline: none; border-block-end-color: var(--color-ink-2); }
+.ask__field:focus-visible { outline: none; border-block-end: 2px solid var(--color-focus); }
 
-/* The verb is the same glass pill as Unwrap and Export — one primary action,
-   one shape, on every layer. It does not exist until there is something to
-   send; then it arrives at the end of the line. */
-.ask__row .ask__go {
+/* The verb is the same glass pill as Unwrap and Save. It does not exist
+   until there is something to send. */
+.ask .ask__go {
   opacity: 0;
   visibility: hidden;
-  transform: translateX(-6px);
+  transform: translateY(4px);
   transition: opacity   var(--dur-long) var(--ease-out),
               transform var(--dur-long) var(--ease-out),
               visibility 0s var(--dur-long);
 }
-[data-ready="yes"] .ask__row .ask__go {
+[data-ready="yes"] .ask .ask__go {
   opacity: 1;
   visibility: visible;
   transform: none;
@@ -443,76 +499,76 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
               border-color var(--dur-short) var(--ease-out),
               color        var(--dur-short) var(--ease-out);
 }
-.ask__row .ask__go:disabled { cursor: default; opacity: 0; }
+.ask .ask__go:disabled { cursor: default; opacity: 0; }
 
-/* While the sentence gathers, the line it was written on empties. */
-.panel--ask { transition: opacity 600ms var(--ease-in-out); }
-[data-state="forming"] .panel--ask,
-[data-state="wrapped"] .panel--ask { opacity: 0; pointer-events: none; }
+/* The sentence, kept: the same line, no longer editable. */
+.said {
+  display: none;
+  padding-block-end: 0.3em;
+  border-block-end: var(--rule-hair) solid var(--color-rule);
+  font-family: var(--font-voice);
+  font-style: italic;
+  font-size: var(--text-display-s);
+  line-height: 1.3;
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+.gift__actions {
+  display: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-lg);
+}
+[data-state="forming"] .ask,
+[data-state="wrapped"] .ask,
+[data-state="gift"]    .ask { display: none; }
+[data-state="forming"] .said,
+[data-state="wrapped"] .said,
+[data-state="gift"]    .said { display: block; }
+[data-state="gift"] .gift__actions { display: flex; animation: settle-in 900ms var(--ease-out) 1600ms both; }
+@keyframes settle-in { from { opacity: 0; transform: translateY(10px); } }
 
+/* ---------- right ---------- */
 
-/* ============================================================
-   Forming · dissolve → gather. No spinner, ever.
-   The sentence comes apart into the motes layer 01 used, they draw
-   together, and the artwork assembles out of them.
-   ============================================================ */
-
-.forming {
-  position: absolute;
-  inset: 0;
-  /* The stage's own padding, so this layer's centre is the stage's content
-     centre — the parcel and the plate must coincide to the pixel. */
-  padding: inherit;
+.right {
+  position: relative;
   z-index: var(--z-raised);
   display: grid;
-  place-items: center;
-  /* Anchored to the top of the stage's content box, exactly as the gift is,
-     so the parcel and the plate share one position whatever sits below. */
-  align-content: start;
-  gap: var(--space-lg);
-  pointer-events: none;
-  /* Fades in over the emptying line and out under the arriving gift, instead
-     of switching on and off. */
+  justify-items: center;
+  align-content: center;
+  row-gap: var(--space-xl);
+}
+
+/* The card is one element through every moment. Its size is its content's,
+   which is always present — invisible until the gift is open — so the edge
+   that draws itself, the wrapping, and the opened print are all exactly the
+   same box. */
+.card {
+  position: relative;
+  margin: 0;
   opacity: 0;
   visibility: hidden;
   transition: opacity 700ms var(--ease-in-out), visibility 0s 700ms;
 }
-[data-state="forming"] .forming,
-[data-state="wrapped"] .forming {
+[data-state="forming"] .card,
+[data-state="wrapped"] .card,
+[data-state="gift"]    .card {
   opacity: 1;
   visibility: visible;
   transition: opacity 700ms var(--ease-in-out);
 }
+[data-state="wrapped"] .card { animation: card-breathe 4s var(--ease-in-out) infinite alternate; }
+@keyframes card-breathe { to { transform: scale(1.01); } }
 
-/* The parcel: the gift's exact footprint. While forming, a hairline draws
-   itself around the gathering motes; once the drawing is ready it becomes
-   paper — wrapped — and breathes, waiting to be opened. */
-.parcel {
-  position: relative;
-  inline-size: var(--plate);
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  padding: var(--space-xl);
-  border-radius: var(--radius-plate);
-}
-.parcel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--color-paper-2);
-  opacity: 0;
-  transition: opacity 900ms var(--ease-in-out);
-}
-.parcel__edge {
+.card__edge {
   position: absolute;
   inset: 0;
   inline-size: 100%;
   block-size: 100%;
   overflow: visible;
+  pointer-events: none;
 }
-.parcel__edge rect {
+.card__edge rect {
   fill: none;
   stroke: var(--color-rule);
   stroke-width: 1;
@@ -520,96 +576,59 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   stroke-dasharray: 100;
   stroke-dashoffset: 100;
 }
-[data-state="forming"] .parcel__edge rect { animation: parcel-draw 3.2s var(--ease-in-out) 300ms forwards; }
-[data-state="wrapped"] .parcel__edge rect { stroke-dashoffset: 0; }
-@keyframes parcel-draw { to { stroke-dashoffset: 0; } }
-[data-state="wrapped"] .parcel::before { opacity: 1; }
-[data-state="wrapped"] .parcel { animation: parcel-breathe 4s var(--ease-in-out) infinite alternate; }
-@keyframes parcel-breathe { to { transform: scale(1.012); } }
-[data-state="wrapped"] .forming__field,
-[data-state="wrapped"] .forming__echo { opacity: 0; transition: opacity 900ms var(--ease-in-out); }
-
-/* The one thing to do while it is wrapped. Sits just under the parcel; it is
-   the only part of this layer that takes the pointer. */
-.unwrap {
-  pointer-events: auto;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity var(--dur-long) var(--ease-out), visibility 0s var(--dur-long);
-}
-.unwrap:disabled { pointer-events: none; }
-[data-state="wrapped"] .unwrap {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 700ms var(--ease-out) 700ms,
-              border-color var(--dur-short) var(--ease-out),
-              color        var(--dur-short) var(--ease-out);
-}
-
-.forming__field { position: absolute; inset: 0; overflow: clip; }
-
-.spark {
-  position: absolute;
-  inset-inline-start: var(--x);
-  inset-block-start: var(--y);
-  inline-size: var(--s);
-  block-size: var(--s);
-  background: var(--c);
-  opacity: 0;
-  /* travels from where its word was toward the centre of the plate */
-  animation: gather var(--t) var(--ease-in-out) var(--d) infinite;
-}
-@keyframes gather {
-  0%   { opacity: 0;        transform: translate(0, 0) scale(1); }
-  14%  { opacity: var(--o); transform: translate(calc(var(--gx) * 0.2), calc(var(--gy) * 0.2)) scale(1); }
-  76%  { opacity: var(--o); transform: translate(calc(var(--gx) * 0.92), calc(var(--gy) * 0.92)) scale(0.7); }
-  100% { opacity: 0;        transform: translate(var(--gx), var(--gy)) scale(0.4); }
-}
+[data-state="forming"] .card__edge rect { animation: edge-draw 3.2s var(--ease-in-out) 300ms forwards; }
+[data-state="wrapped"] .card__edge rect,
+[data-state="gift"]    .card__edge rect { stroke-dashoffset: 0; }
+@keyframes edge-draw { to { stroke-dashoffset: 0; } }
 
 .forming__echo {
-  position: relative;
-  max-inline-size: 24ch;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-xl);
+  margin: 0;
   font-family: var(--font-voice);
   font-style: italic;
-  font-size: var(--text-md);
+  font-size: var(--text-body);
   line-height: 1.5;
   color: var(--color-muted);
   text-align: center;
   overflow-wrap: anywhere;
-  animation: echo-out 2.4s var(--ease-in-out) forwards;
+  opacity: 0;
+  transition: opacity 900ms var(--ease-in-out);
 }
-@keyframes echo-out { to { opacity: 0.28; } }
+[data-state="forming"] .forming__echo { opacity: 0.6; }
 
-@keyframes note-breathe { to { opacity: 0.35; } }
-
-/* ============================================================
-   Gift · a print, centred, where the parcel was. The wrapping is still on
-   it for the first moment; it parts, and the drawing assembles underneath.
-   The sentence is in the drawing and is not repeated beside it; the date
-   is the only caption. Two actions on one baseline below.
-   ============================================================ */
-
-.gift {
+/* The print. Lighter than the page — a card laid on it — with the sentence
+   above the drawing and the date beneath, as on the export. */
+.card__paper {
   display: grid;
   justify-items: center;
-  gap: var(--space-lg);
-  inline-size: 100%;
-  margin: 0;
+  gap: var(--space-md);
+  padding: var(--card-pad);
+  background: color-mix(in oklch, var(--color-paper) 50%, white);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-plate);
+  box-shadow: 0 1.6rem 3rem -2.2rem color-mix(in oklch, var(--color-ink) 45%, transparent);
+  opacity: 0;
+  transition: opacity 600ms var(--ease-in-out) 500ms;
 }
-@keyframes settle-in { from { opacity: 0; transform: translateY(10px); } }
-
-.gift__mount {
-  position: relative;
-  inline-size: var(--plate);
-  aspect-ratio: 1;
+[data-state="gift"] .card__paper { opacity: 1; }
+.card__line {
+  max-inline-size: var(--plate);
+  font-family: var(--font-voice);
+  font-style: italic;
+  font-size: var(--text-base);
+  line-height: 1.4;
+  color: var(--color-ink-2);
+  text-align: center;
+  overflow-wrap: anywhere;
 }
-
-/* The plate keeps the skill's own paper and ink, not the site's. That is
-   deliberate: the illustration belongs to a series that has to stay
-   recognisable across a year of them, and the series' colours are its
-   identity. The page is the room; the plate is the picture. */
+/* The plate keeps the skill's own paper and ink, not the site's: the
+   illustration belongs to a series, and the series' colours are its identity. */
 .gift__plate {
-  inline-size: 100%;
+  inline-size: var(--plate);
   aspect-ratio: 1;
   background: var(--color-plate-paper);
   border: var(--rule-hair) solid var(--color-rule);
@@ -617,11 +636,23 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   overflow: hidden;
 }
 .gift__plate svg { display: block; inline-size: 100%; block-size: 100%; }
+.card__meta {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  text-align: center;
+}
 
-/* The wrapping: the same paper the parcel became, in two leaves that part.
-   It is drawn identically to the wrapped parcel, so the hand-over from the
-   forming layer to the gift is invisible. */
-.gift__wrap { position: absolute; inset: 0; pointer-events: none; }
+/* The wrapping: paper over the whole card. Wrapped, it is simply there;
+   opened, it parts in two leaves and the drawing assembles underneath. */
+.gift__wrap { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 900ms var(--ease-in-out); }
+[data-state="wrapped"] .gift__wrap,
+[data-state="gift"]    .gift__wrap { opacity: 1; }
 .gift__wrap::before,
 .gift__wrap::after {
   content: "";
@@ -631,8 +662,10 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   border: var(--rule-hair) solid var(--color-rule);
   border-radius: var(--radius-plate);
 }
-.gift__wrap::before { clip-path: inset(0 50% 0 0); animation: leaf-left  1100ms var(--ease-in-out) 500ms forwards; }
-.gift__wrap::after  { clip-path: inset(0 0 0 50%); animation: leaf-right 1100ms var(--ease-in-out) 500ms forwards; }
+.gift__wrap::before { clip-path: inset(0 50% 0 0); }
+.gift__wrap::after  { clip-path: inset(0 0 0 50%); }
+[data-state="gift"] .gift__wrap::before { animation: leaf-left  1100ms var(--ease-in-out) 200ms forwards; }
+[data-state="gift"] .gift__wrap::after  { animation: leaf-right 1100ms var(--ease-in-out) 200ms forwards; }
 @keyframes leaf-left  { to { transform: translateX(-104%); opacity: 0; } }
 @keyframes leaf-right { to { transform: translateX(104%);  opacity: 0; } }
 
@@ -640,30 +673,64 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 .gift__plate [data-i] {
   opacity: 0;
   animation: assemble 900ms var(--ease-out) both;
-  animation-delay: calc(1100ms + var(--i) * 110ms);
+  animation-delay: calc(1000ms + var(--i) * 110ms);
   transform-box: fill-box;
   transform-origin: center;
 }
 @keyframes assemble { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
 
-.gift__meta {
-  display: flex;
-  gap: var(--space-md);
+/* The one thing to do while it is wrapped. */
+.unwrap {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-long) var(--ease-out), visibility 0s var(--dur-long);
+}
+[data-state="wrapped"] .unwrap {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 700ms var(--ease-out) 700ms,
+              border-color var(--dur-short) var(--ease-out),
+              color        var(--dur-short) var(--ease-out);
+}
+.unwrap:disabled { pointer-events: none; }
+
+/* The motes. */
+.spark {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  inline-size: var(--s);
+  block-size: var(--s);
+  background: var(--c);
+  opacity: 0;
+  animation: gather var(--t) var(--ease-in-out) var(--d) infinite;
+}
+@keyframes gather {
+  0%   { opacity: 0;        transform: translate(0, 0) scale(1); }
+  14%  { opacity: var(--o); transform: translate(calc(var(--gx) * 0.2), calc(var(--gy) * 0.2)) scale(1); }
+  76%  { opacity: var(--o); transform: translate(calc(var(--gx) * 0.92), calc(var(--gy) * 0.92)) scale(0.7); }
+  100% { opacity: 0;        transform: translate(var(--gx), var(--gy)) scale(0.4); }
+}
+[data-state="wrapped"] .forming__field,
+[data-state="gift"]    .forming__field { opacity: 0; transition: opacity 900ms var(--ease-in-out); }
+
+/* The caption at the foot of the stage. */
+.stage__caption {
+  position: absolute;
+  inset-inline: var(--page-gutter);
+  inset-block-end: clamp(var(--space-lg), 5vh, var(--space-2xl));
+  z-index: var(--z-raised);
+  text-align: center;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  letter-spacing: 0.16em;
+  letter-spacing: 0.12em;
   color: var(--color-muted);
-  animation: settle-in 900ms var(--ease-out) 1500ms both;
 }
-.gift__via::before { content: "\00B7"; margin-inline-end: var(--space-md); color: var(--color-rule); }
-.gift__actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-lg);
-  animation: settle-in 900ms var(--ease-out) 1700ms both;
-}
+.stage__caption--gift { display: none; }
+[data-state="gift"] .stage__caption--ask  { display: none; }
+[data-state="gift"] .stage__caption--gift { display: inline; }
+
+@keyframes note-breathe { to { opacity: 0.35; } }
 
 /* The second action: a verb with a seam, the quieter sibling of the pill. */
 .gift__again {
@@ -764,7 +831,9 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   position: relative;
   isolation: isolate;
   margin-inline: var(--page-gutter);
-  padding-block: var(--space-xl) var(--space-lg);
+  padding-block: var(--space-md) 0;
+  display: flow-root;          /* so the canvas's negative bottom margin shortens this box */
+  overflow: clip;              /* and the lower half of the name hangs below it */
 }
 /* The deepest fog pools along the whole foot of the page. */
 .substrate::before {
@@ -777,19 +846,25 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     color-mix(in oklch, var(--color-paper-3) 72%, transparent), transparent 72%);
   mix-blend-mode: multiply;
 }
-/* Gutter to gutter: the name is the width of the page here. */
+/* Gutter to gutter: the name is the width of the page here, and only its
+   upper half shows; the generator sets the negative bottom margin. */
 .substrate__px { display: block; inline-size: 100%; }
 
 /* ============================================================
-   ≤ 40rem
+   ≤ 40rem — one column: the thought, then the card beneath it.
    ============================================================ */
 
 @media (max-width: 40rem) {
-  .stage { padding-block: var(--space-2xl); }
-  .ask__row { flex-wrap: wrap; row-gap: var(--space-md); }
-  .ask__field { flex-basis: 100%; }
-  .ask__row .ask__go { margin-inline-start: auto; }
-  .gift, .forming { gap: var(--space-md); }
+  .stage {
+    --plate: calc(100vw - 2 * var(--page-gutter) - 2 * var(--card-pad));
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-2xl);
+    align-content: start;
+    padding-block: var(--space-2xl) var(--space-3xl);
+    min-block-size: auto;
+  }
+  .left { max-inline-size: none; }
+  .stage__caption { position: static; inset: auto; margin-block-start: var(--space-xl); }
   .cta {
     font-size: var(--text-base); min-block-size: 44px;
     padding: var(--space-sm) var(--space-lg) var(--space-sm) var(--space-md);
@@ -797,23 +872,19 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 }
 
 /* ============================================================
-   Reduced motion — the gift is simply there, fully formed.
+   Reduced motion — the gift is simply there, open, fully drawn.
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .gift, .gift__plate [data-i], .spark, .forming__echo, .mast__layer,
-  .gift__meta, .gift__actions, .parcel {
+  .card, .card__edge rect, .gift__plate [data-i], .spark, .gift__actions, .mast__layer,
+  .gift__wrap::before, .gift__wrap::after {
     animation: none !important;
-    opacity: 1;
     transform: none !important;
   }
-  .gift__wrap { display: none; }                       /* the gift is simply open */
-  .parcel__edge rect { stroke-dashoffset: 0; animation: none !important; }
-  .haze__l, .haze__glow { animation: none !important; }
-  .cta, .ask__field, .ask__go, .panel--ask, .forming, .unwrap, .parcel::before { transition: none; }
-  .panel--ask { animation: none !important; }
-  .forming { visibility: visible; }
-  [data-state="input"] .forming, [data-state="gift"] .forming { visibility: hidden; }
+  .gift__plate [data-i], .gift__actions { opacity: 1; }
+  .card__edge rect { stroke-dashoffset: 0; }
+  [data-state="gift"] .gift__wrap { display: none; }
+  .card, .card__paper, .gift__wrap, .forming__echo, .unwrap, .ask__field, .ask__go, .cta, .forming__field { transition: none; }
   .cta::before { animation: none; opacity: 1; }
 }
 
@@ -832,6 +903,15 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 </svg>
 <div class="grain" aria-hidden="true"></div>
 
+<!-- The ground: one paper the whole way down. Haze, ghost letters, dust, and
+     one wandering point of light. Layer 01's field, settled. -->
+<div class="ground" aria-hidden="true">
+  <span class="ground__haze ground__haze--a"></span>
+  <span class="ground__haze ground__haze--c"></span>
+  <span class="ground__glow"></span>
+  <span class="ground__light"></span>
+</div>
+
 <header class="mast">
   <h1 class="mast__h"><a href="./index.html">Light on Light</a></h1>
   <p class="mast__layer" id="stamp">LAYER 03 &mdash; YOUR VISUAL GIFT</p>
@@ -839,59 +919,55 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 
 <main class="stage">
 
-  <!-- Layer 01's haze, quieter. You write on the paper the name settled on. -->
-  <div class="haze" aria-hidden="true">
-    <span class="haze__l haze__l--a"></span>
-    <span class="haze__l haze__l--c"></span>
-    <span class="haze__glow"></span>
-  </div>
+  <!-- The motes: the sentence coming apart on the left and gathering on the
+       right, where the card is being drawn. -->
+  <div class="forming__field" id="sparks" aria-hidden="true"></div>
 
-  <!-- INPUT · low and left, where layer 01 put the wordmark. -->
-  <section class="panel panel--ask">
+  <!-- Left · one thought. The line you write on; then the sentence, kept;
+       then, once the gift is open, what you can do with it. -->
+  <section class="left">
+    <p class="label">ONE THOUGHT</p>
     <form class="ask" id="ask" autocomplete="off">
-      <h2 class="ask__greet">What passed through your mind today?</h2>
-      <div class="ask__row">
-        <label class="sr" for="field">Your thought</label>
-        <textarea class="ask__field" id="field" name="thought" rows="1" maxlength="180"
-                  placeholder="One sentence is enough"></textarea>
-        <button class="cta ask__go" id="go" type="submit" disabled>Translate it</button>
-      </div>
+      <label class="sr" for="field">Your thought</label>
+      <textarea class="ask__field" id="field" name="thought" rows="1" maxlength="180"
+                placeholder="What passed through your mind today?"></textarea>
+      <button class="cta ask__go" id="go" type="submit" disabled>Translate it</button>
     </form>
+    <p class="said" id="said"></p>
+    <div class="gift__actions">
+      <button class="cta" id="export" type="button">Save as image</button>
+      <button class="gift__again" id="again" type="button">Write another</button>
+      <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
+    </div>
   </section>
 
-  <!-- FORMING → WRAPPED. No spinner. The sentence comes apart into motes
-       that gather where the gift will be, and a parcel draws itself around
-       them. When the drawing is ready the parcel is paper, and waits. -->
-  <div class="forming">
-    <div class="forming__field" id="sparks" aria-hidden="true"></div>
-    <div class="parcel" aria-hidden="true">
-      <svg class="parcel__edge" viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
+  <!-- Right · the card: the print itself, at every moment. While forming, a
+       hairline draws its edge around the gathering motes; ready, it is
+       wrapped in paper and waits; opened, the wrapping parts and the
+       drawing assembles. One element throughout, so nothing ever jumps. -->
+  <section class="right">
+    <figure class="card" id="gift">
+      <svg class="card__edge" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
       </svg>
-      <p class="forming__echo" id="echo"></p>
-    </div>
-    <button class="cta unwrap" id="unwrap" type="button">Unwrap</button>
-  </div>
-
-  <!-- GIFT · the print, centred, with the wrapping still on it for the first
-       second. The sentence is in the drawing; it is not repeated beside it. -->
-  <section class="panel panel--gift">
-    <figure class="gift" id="gift">
-      <div class="gift__mount">
+      <p class="forming__echo" id="echo" aria-hidden="true"></p>
+      <div class="card__paper">
+        <p class="card__line" id="giftLine"></p>
         <div class="gift__plate" id="plate" role="img" aria-label="A hand-drawn illustration made from your sentence"></div>
-        <div class="gift__wrap" aria-hidden="true"></div>
+        <p class="card__meta">
+          <span id="giftDate"></span>
+          <span>Light on Light<span class="gift__via" id="giftVia" hidden> &middot; drawn offline</span></span>
+        </p>
       </div>
-      <figcaption class="gift__meta">
-        <span id="giftDate"></span>
-        <span class="gift__via" id="giftVia" hidden></span>
-      </figcaption>
-      <div class="gift__actions">
-        <button class="cta" id="export" type="button">Save as image</button>
-        <button class="gift__again" id="again" type="button">Write another</button>
-        <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
-      </div>
+      <div class="gift__wrap" aria-hidden="true"></div>
     </figure>
+    <button class="cta unwrap" id="unwrap" type="button">Unwrap</button>
   </section>
+
+  <p class="stage__caption" aria-hidden="true">
+    <span class="stage__caption--ask">One sentence is enough.</span>
+    <span class="stage__caption--gift">It answers you in a picture.</span>
+  </p>
 
 </main>
 
@@ -909,6 +985,39 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 </aside>
 
 <script>
+/* ------------------------------------------------------------
+   The ground's loose parts: the name in ghost letters, and dust.
+   Dealt once at load, never animated — they are the paper, not weather.
+   ------------------------------------------------------------ */
+(function () {
+  var g = document.querySelector('.ground');
+  if (!g) return;
+  var R = function (a, b) { return a + Math.random() * (b - a); };
+  var frag = document.createDocumentFragment();
+  var letters = ['L', 'i', 'g', 'h', 't', 'o', 'n', 'g', 'h', 'i'];
+  for (var i = 0; i < letters.length; i++) {
+    var c = document.createElement('span');
+    c.className = 'ground__ch';
+    c.textContent = letters[i];
+    c.style.setProperty('--x', R(2, 90).toFixed(1) + '%');
+    c.style.setProperty('--y', R(4, 86).toFixed(1) + '%');
+    c.style.setProperty('--s', R(7, 15).toFixed(1) + 'vw');
+    c.style.setProperty('--o', R(0.028, 0.06).toFixed(3));
+    frag.appendChild(c);
+  }
+  var n = Math.round(Math.min(90, Math.max(30, window.innerWidth * window.innerHeight / 18000)));
+  for (var k = 0; k < n; k++) {
+    var d = document.createElement('span');
+    d.className = 'ground__dust';
+    d.style.setProperty('--x', R(0, 100).toFixed(2) + '%');
+    d.style.setProperty('--y', R(0, 100).toFixed(2) + '%');
+    d.style.setProperty('--s', R(1, 2.2).toFixed(2) + 'px');
+    d.style.setProperty('--o', R(0.12, 0.38).toFixed(2));
+    frag.appendChild(d);
+  }
+  g.appendChild(frag);
+})();
+
 /* ============================================================================
    Layer 03 — the instrument.
 
@@ -1284,18 +1393,23 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     if (reduce) return;
     var r = rngFrom(hash(text) ^ 0x9e37);
     var n = Math.min(52, 16 + text.length);
+    /* From the sentence, kept on the left, to the centre of the card. */
+    var field = host.getBoundingClientRect();
+    var from  = $('said').getBoundingClientRect();
+    var to    = $('gift').getBoundingClientRect();
+    var tx = to.left + to.width / 2 - field.left, ty = to.top + to.height / 2 - field.top;
     var frag = document.createDocumentFragment();
     for (var i = 0; i < n; i++) {
       var s = document.createElement('span');
       s.className = 'spark';
-      var x = 8 + r() * 84, y = 26 + r() * 48;
-      s.style.setProperty('--x', x.toFixed(2) + '%');
-      s.style.setProperty('--y', y.toFixed(2) + '%');
-      /* everything travels toward the middle, where the plate will be */
-      s.style.setProperty('--gx', ((50 - x) * 0.9).toFixed(2) + 'vw');
-      s.style.setProperty('--gy', ((50 - y) * 0.62).toFixed(2) + 'vh');
-      s.style.setProperty('--s', (1.6 + r() * 3.6).toFixed(2) + 'px');
-      s.style.setProperty('--o', (0.2 + r() * 0.5).toFixed(2));
+      var x = from.left - field.left + r() * from.width;
+      var y = from.top - field.top + r() * from.height;
+      s.style.setProperty('--x', x.toFixed(1) + 'px');
+      s.style.setProperty('--y', y.toFixed(1) + 'px');
+      s.style.setProperty('--gx', ((tx - x) * (0.86 + r() * 0.12)).toFixed(1) + 'px');
+      s.style.setProperty('--gy', ((ty - y) * (0.86 + r() * 0.12)).toFixed(1) + 'px');
+      s.style.setProperty('--s', (1.6 + r() * 3.4).toFixed(2) + 'px');
+      s.style.setProperty('--o', (0.22 + r() * 0.5).toFixed(2));
       s.style.setProperty('--c', r() < 0.16 ? 'var(--color-accent)' : 'var(--color-ink-2)');
       s.style.setProperty('--t', (2.6 + r() * 2.4).toFixed(2) + 's');
       s.style.setProperty('--d', (-r() * 4).toFixed(2) + 's');
@@ -1303,6 +1417,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     }
     host.appendChild(frag);
   }
+
 
   /* Injected markup is injected markup, whoever drew it. */
   function sanitizeSVG(raw) {
@@ -1316,6 +1431,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     var d = new Date();
     current.text = text;
     current.date = stamp(d);
+    $('giftLine').textContent = text;          /* the print's own caption — textContent, never innerHTML */
     var plate = $('plate');
     plate.innerHTML = art.svg;
     /* Assemble centre-outward whoever drew it: deal data-i to the top-level
@@ -1343,9 +1459,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
        it means something; on screen the wordmark is already the signature.
        Only an offline draw is called out, because it is not the product's
        ceiling, and the studio is offered again. */
-    var via = $('giftVia');
-    via.hidden = art.via !== 'local';
-    via.textContent = 'DRAWN OFFLINE';
+    $('giftVia').hidden = art.via !== 'local';
     $('redraw').hidden = art.via !== 'local';
     setState('gift');
   }
@@ -1411,8 +1525,14 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     if (text.length < 2) return;
 
     $('echo').textContent = text;
+    $('said').textContent = text;
+    /* The card's caption and date go in now, unseen, so the card has its
+       final size from the first frame of forming: the edge that draws, the
+       wrapping and the open print are one box. */
+    $('giftLine').textContent = text;
+    $('giftDate').textContent = stamp(new Date());
+    setState('forming');       /* the sentence is kept on the left before the motes leave it */
     sow(text);
-    setState('forming');
 
     /* Claude first; the built-in generator only when the studio is
        unreachable (double-clicked file, CLI missing, timeout). The gift
@@ -1545,13 +1665,14 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 /* ------------------------------------------------------------
    The substrate.
    Under the paper the name exists as a bitmap — the way the machine holds
-   it — gutter to gutter across the foot of the page, in ink so faint it
-   is a watermark until light passes over it. A read head sweeps through the word and, where it is, the
-   cells warm to amber and become legible; a cell dims for a frame or
-   three and recovers; a few cells are lit amber all along, the same
-   pixel lights as layer 01; a caret blinks after the last letter. Canvas,
-   ~12 fps, drawn only while on screen; one still frame under reduced
-   motion. Nothing here flickers faster than 0.6 Hz.
+   it — gutter to gutter across the foot of the page, and only the upper
+   half of it: the rest has sunk below the page's edge. Ink so faint it is
+   a watermark; a read head sweeps through and warms the cells it passes
+   to amber; single cells glint — a brief amber point with a faint cross,
+   the way light catches a grain — and a few stay lit, the same pixel
+   lights as layer 01. Canvas, ~12 fps, drawn only while on screen; one
+   still frame under reduced motion. Every glint is one cell, once, for
+   under half a second; nothing here flickers faster than 0.6 Hz.
    ------------------------------------------------------------ */
 (function () {
   var canvas = document.getElementById('substrate');
@@ -1559,14 +1680,15 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   var ctx = canvas.getContext('2d');
   /* Fewer, larger cells on a phone: a 3px cell is a texture, not a letter. */
   var narrow = window.innerWidth < 640;
-  var COLS = narrow ? 64 : 128, ROWS = narrow ? 13 : 24, GAP = 0.24, TEXT = 'Light on Light';
+  var COLS = narrow ? 72 : 160, ROWS = narrow ? 15 : 30, GAP = 0.26, TEXT = 'Light on Light';
+  var SHOW = 0.5;   /* the fraction of the bitmap's height left above the page's edge */
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var css = getComputedStyle(document.documentElement);
   var tok = function (name, fb) { var v = css.getPropertyValue(name).trim(); return v || fb; };
   var INK   = tok('--color-ink', '#2b2622');
   var AMBER = tok('--color-accent', '#c07a2a');
 
-  var cells = [], caret = { c: 0, r: 0 }, cw = 0;
+  var cells = [], cw = 0;
 
   /* Rasterise the wordmark at cell resolution and keep every cell the
      letters touch. Edge cells keep their partial coverage as a dimmer base,
@@ -1591,11 +1713,9 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
         var aa = Math.min(1, a * 1.15), amber = Math.random() < 0.025;
         /* Ink cells are a watermark; the amber ones are lights. */
         cells.push({ c: c, r: r, amber: amber,
-                     base: amber ? 0.5 + 0.35 * aa : 0.12 + 0.2 * aa, dip: 0, left: 0 });
+                     base: amber ? 0.5 + 0.35 * aa : 0.12 + 0.2 * aa, dip: 0, left: 0, g: 0 });
       }
     }
-    caret.c = Math.min(COLS - 2, Math.ceil(x + w) + 2);
-    caret.r = y;
   }
 
   function layout() {
@@ -1605,10 +1725,12 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     canvas.width = Math.round(cssW * dpr);
     canvas.height = Math.round(cw * ROWS * dpr);
     canvas.style.height = (cw * ROWS) + 'px';
+    /* The lower part hangs below the footer's clipped box: cut in half. */
+    canvas.style.marginBlockEnd = (-cw * ROWS * (1 - SHOW)) + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  var sweep = -4, caretOn = true, frame = 0, last = 0, running = false, onScreen = false, raf = 0;
+  var sweep = -4, frame = 0, last = 0, running = false, onScreen = false, raf = 0;
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1616,20 +1738,28 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     for (var i = 0; i < cells.length; i++) {
       var k = cells[i], b = k.base, col = k.amber ? AMBER : INK;
       if (!reduce) {
-        if (k.left > 0) { b = k.dip; k.left--; }
+        if (k.g > 0) {
+          /* A glint: bright amber for a frame, then out over four more. */
+          b = 0.3 + 0.65 * (k.g / 5); col = AMBER;
+          if (k.g >= 4) {
+            ctx.globalAlpha = b * 0.35; ctx.fillStyle = AMBER;
+            ctx.fillRect((k.c - 1) * cw + pad, k.r * cw + pad, s, s);
+            ctx.fillRect((k.c + 1) * cw + pad, k.r * cw + pad, s, s);
+            ctx.fillRect(k.c * cw + pad, (k.r - 1) * cw + pad, s, s);
+            ctx.fillRect(k.c * cw + pad, (k.r + 1) * cw + pad, s, s);
+          }
+          k.g--;
+        }
+        else if (k.left > 0) { b = k.dip; k.left--; }
+        else if (Math.random() < 0.0045) { k.g = 5; }
         else if (Math.random() < 0.002) { k.dip = k.base * 0.15; k.left = 1 + Math.floor(Math.random() * 3); }
         /* Where the light is passing, the word warms and can be read. */
         var dc = Math.abs(k.c - sweep);
-        if (dc < 3) { b = Math.min(0.72, b + (3 - dc) * 0.18); col = AMBER; }
+        if (dc < 3 && k.g === 0) { b = Math.min(0.72, b + (3 - dc) * 0.18); col = AMBER; }
       }
       ctx.globalAlpha = b;
       ctx.fillStyle = col;
       ctx.fillRect(k.c * cw + pad, k.r * cw + pad, s, s);
-    }
-    if (caretOn || reduce) {
-      ctx.globalAlpha = 0.75;
-      ctx.fillStyle = AMBER;
-      ctx.fillRect(caret.c * cw + pad, (caret.r - 3) * cw + pad, s, cw * 4 - pad * 2);
     }
     ctx.globalAlpha = 1;
   }
@@ -1640,7 +1770,6 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     if (now - last < 83) return;            /* ~12 fps is plenty for a bitmap */
     last = now; frame++;
     sweep += 0.6; if (sweep > COLS + 6) sweep = -4;   /* one pass ≈ 16 s */
-    if (frame % 11 === 0) caretOn = !caretOn;         /* ≈ 0.55 Hz */
     draw();
   }
   function start() { if (running || reduce || !onScreen || document.hidden) return; running = true; raf = requestAnimationFrame(tick); }

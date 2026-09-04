@@ -189,187 +189,163 @@ SWARM_JS = """
 })();
 """
 
-CONCEPT_JS = """
+CONCEPT_JS = r"""
 /* ------------------------------------------------------------
-   Layer 02's two fields.
+   Layer 02's three acts.
 
-   `storm`  — the thoughts arriving. Each is dealt a position, a size, a
-              blur, a drift, and its own flash cycle. The cycles are long
-              (18–34s) but the visible window inside each is short (~36%),
-              so at any moment only a handful are lit. That ratio is what
-              makes it read as "occasional" rather than "a marquee".
-   `sunk`   — the same voice, buried. Drifts down through the dark section
-              and dims out. The pain point, said in motion.
+   Act 1 · thoughts. Seven of them, dealt positions in bands so no two
+   collide, each split into letters. Phase "arrive": they come up one by
+   one. Phase "lose": every letter is thrown a little way out and falls to
+   the foot of the stage, turning as it goes, and settles in a drift there.
+   The phase follows the scroll position inside the act; the act is two
+   screens tall and its stage is sticky, so the reader scrolls the thoughts
+   into being and then scrolls them apart.
 
-   Runs once at load. After that it is all CSS — no rAF, no scroll listener.
+   Act 2 · the statement is revealed a word at a time once it is in view.
+
+   Act 3 · the curtain: rows of everything ever said here, faint, drifting
+   slowly left and right behind the invitation.
    ------------------------------------------------------------ */
 (function () {
-  var R      = function (a, b) { return a + Math.random() * (b - a); };
-  var chance = function (p) { return Math.random() < p; };
-
-  /* The brief supplied the first three. The rest are written in the same
-     register — first person, fragmentary, specific enough to be somebody's. */
-  var THOUGHTS = [
-    'What if I grow as a plant?',
-    "What if I'm a poem?",
-    'I need some space\\u2026',
-    'What if silence has a colour?',
-    'I should call my mother.',
-    'What if the sea remembers?',
-    'Why did I keep this?',
-    "What if I'm early, not late?",
-    'Something about the light today.',
-    'What if rest is the work?',
-    'I forgot what I was going to say.',
-    'What if I begin again on a Tuesday?',
-    'What if nobody is watching?',
-    'The word for this in another language.'
-  ];
-
-  function shuffled() {
-    var a = THOUGHTS.slice(), i, j, t;
-    for (i = a.length - 1; i > 0; i--) {
-      j = Math.floor(Math.random() * (i + 1));
-      t = a[i]; a[i] = a[j]; a[j] = t;
-    }
-    return a;
-  }
-
+  var R = function (a, b) { return a + Math.random() * (b - a); };
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var narrow = window.innerWidth < 640;
 
-  /* ---- storm ---- */
-  var storm = document.querySelector('.storm__field');
-  if (storm) {
-    var pool  = shuffled();
-    var count = Math.min(pool.length, narrow ? 5 :
-                Math.max(7, Math.round(window.innerWidth * window.innerHeight / 105000)));
-    var frag  = document.createDocumentFragment();
-
-    /* Each thought owns a horizontal band and jitters inside it. Fully random
-       y collides constantly once the column is narrow — two thoughts lit in the
-       same place is unreadable, and no amount of tuning opacity fixes it.
-       Banding rules the collision out structurally. */
-    var band = 64 / count;
-
+  /* ---- Act 1 ---- */
+  var THOUGHTS = [
+    'what if a morning could be kept',
+    'light falls where you stood',
+    'what if a thought could answer',
+    'a thought is a small weather',
+    'what if you drew it instead',
+    'nothing you do not name stays',
+    'say it once and it stays'
+  ];
+  var act = document.querySelector('.act--thoughts');
+  var host = document.getElementById('thoughts');
+  if (act && host) {
+    var count = narrow ? 5 : THOUGHTS.length;
+    var band = 56 / count;
+    var frag = document.createDocumentFragment();
     for (var i = 0; i < count; i++) {
-      var p = document.createElement('span');
       var t = document.createElement('span');
-      p.className = 'pop';
-      t.className = 'pop__t';
-      t.textContent = pool[i];
-      p.appendChild(t);
-
-      var set = function (el) { return function (k, v) { el.style.setProperty(k, v); }; }(p);
-
-      /* Kept clear of the bottom-left corner, where the note sits. */
-      set('--x', (narrow ? R(3, 22) : R(4, 70)).toFixed(2) + '%');
-      set('--y', (10 + i * band + R(0.1, 0.55) * band).toFixed(2) + '%');   /* 10%: air under the wordmark */
-      /* Drift stays under half a band so it can't wander into a neighbour. */
-      set('--dx', R(-5, 5).toFixed(2) + 'vw');
-      set('--dy', (narrow ? R(-1.4, 1.4) : R(-3, 3)).toFixed(2) + 'vh');
-      set('--t1', R(20, 38).toFixed(1) + 's');
-      set('--d1', (-R(0, 38)).toFixed(1) + 's');
-
-      /* A few sit further back — smaller and fainter. (Not blurred: see the
-         note on .pop__t in concept.css.) */
-      var near = chance(0.55);
-      /* Capped under the note's size: a thought is texture behind the
-         narrator's line, never a second headline. And never amber — the
-         accent lands on the turn and the invitation, nowhere else. */
-      set('--s',  (near ? R(1.1, 1.5) : R(0.95, 1.1)).toFixed(2) + 'rem');
-      set('--o',  (near ? R(0.62, 0.9) : R(0.3, 0.5)).toFixed(2));
-      set('--c',  'var(--color-ink)');
-
-      set('--t2', R(18, 34).toFixed(1)   + 's');
-      set('--d2', (-R(0, 34)).toFixed(1) + 's');
-
-      frag.appendChild(p);
+      t.className = 'thought';
+      /* alternate left / right, each in its own horizontal band */
+      var left = i % 2 === 0;
+      t.style.setProperty('--x', (narrow ? R(4, 14) : (left ? R(4, 22) : R(50, 64))).toFixed(1) + '%');
+      t.style.setProperty('--y', (12 + i * band + R(0, 0.4) * band).toFixed(1) + '%');
+      t.style.setProperty('--s', (narrow ? R(1.05, 1.3) : R(1.15, 1.7)).toFixed(2) + 'rem');
+      t.style.setProperty('--d', (0.35 + i * 0.55).toFixed(2) + 's');
+      var text = THOUGHTS[i];
+      for (var j = 0; j < text.length; j++) {
+        var ch = document.createElement('span');
+        ch.className = 'ch';
+        ch.textContent = text[j];
+        /* thrown a little way out, then down to the drift at the foot */
+        ch.style.setProperty('--sx', R(-6, 6).toFixed(1) + 'vw');
+        ch.style.setProperty('--sy', R(-10, 2).toFixed(1) + 'vh');
+        ch.style.setProperty('--sr', R(-40, 40).toFixed(0) + 'deg');
+        ch.style.setProperty('--fx', R(-9, 9).toFixed(1) + 'vw');
+        ch.style.setProperty('--fr', R(-120, 120).toFixed(0) + 'deg');
+        ch.style.setProperty('--cd', R(0, 0.9).toFixed(2) + 's');
+        t.appendChild(ch);
+      }
+      frag.appendChild(t);
     }
-    storm.appendChild(frag);
+    host.appendChild(frag);
+
+    /* Every letter falls to the same drift line, however high it started. */
+    function measure() {
+      var stage = act.querySelector('.act__stage').getBoundingClientRect();
+      var floor = stage.top + stage.height * 0.8;
+      var chs = host.querySelectorAll('.ch');
+      for (var k = 0; k < chs.length; k++) {
+        var b = chs[k].getBoundingClientRect();
+        chs[k].style.setProperty('--fy', (floor - b.bottom + R(-8, 8)).toFixed(0) + 'px');
+      }
+    }
+
+    var phase = 'idle', measured = false;
+    function setPhase(p) {
+      if (p === phase) return;
+      if (p === 'lose' && !measured) { measure(); measured = true; }
+      phase = p;
+      act.dataset.phase = p;
+    }
+    function onScroll() {
+      var r = act.getBoundingClientRect();
+      var vh = window.innerHeight;
+      if (r.bottom <= 0 || r.top >= vh) return;             /* not on screen */
+      var travel = r.height - vh;                            /* one screen of scroll inside the act */
+      var progress = travel > 0 ? Math.min(1, Math.max(0, -r.top / travel)) : 1;
+      if (reduce) { setPhase('arrive'); return; }
+      setPhase(progress < 0.42 ? 'arrive' : 'lose');
+    }
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () { ticking = false; onScroll(); });
+    }, { passive: true });
+    window.addEventListener('resize', function () { measured = false; if (phase === 'lose') { measure(); measured = true; } });
+    onScroll();
   }
 
-  /* ---- the dark field ----
-     Dense on purpose: the whole pool of thoughts, popping in and sinking out
-     of the dark. This field IS the pain point — it replaces the sentence that
-     used to say it. Banded so nothing overlaps; held to one side of the copy
-     column so the lede always wins. */
-  var dark = document.querySelector('.swarm-dark');
-  if (dark) {
-    var pool2  = shuffled();
-    var many   = narrow ? 6 : 10;
-    /* Desktop: the upper 56% of the night — the lede is top-left, the turn
-       bottom-right, so the field lives beside the lede and above the turn.
-       Narrow: one column, so the field takes the gap between the two. */
-    /* Desktop: the top-right quarter only — beside the lede, and a clear
-       band above the turn, which owns the lower right. */
-    var sband  = (narrow ? 24 : 34) / many;
-    var sfrom  = narrow ? 36 : 6;
-    var frag2  = document.createDocumentFragment();
-    for (var k = 0; k < many; k++) {
-      var s = document.createElement('span');
-      s.className = 'sunk__t';
-      s.textContent = pool2[k];
-      s.style.setProperty('--x',  (narrow ? R(6, 40) : R(52, 88)).toFixed(2) + '%');
-      s.style.setProperty('--y',  (sfrom + k * sband + R(0.1, 0.5) * sband).toFixed(2) + '%');
-      s.style.setProperty('--s',  R(0.9, 1.15).toFixed(2) + 'rem');   /* texture, never a second headline */
-      s.style.setProperty('--o',  (narrow ? R(0.12, 0.24) : R(0.18, 0.36)).toFixed(2));
-      s.style.setProperty('--t1', R(9, 16).toFixed(1)    + 's');
-      s.style.setProperty('--d1', (-R(0, 16)).toFixed(1) + 's');
-      frag2.appendChild(s);
+  /* ---- Act 2 ---- */
+  var st = document.getElementById('statement');
+  if (st) {
+    var words = st.textContent.trim().split(/\s+/);
+    st.textContent = '';
+    for (var w = 0; w < words.length; w++) {
+      var span = document.createElement('span');
+      span.className = 'w';
+      span.style.setProperty('--i', w);
+      span.textContent = words[w];
+      st.appendChild(span);
+      if (w < words.length - 1) st.appendChild(document.createTextNode(' '));
     }
-    dark.appendChild(frag2);
+    /* Reveal once it is well inside the viewport. Checked on scroll rather
+       than through an observer so it also fires when the page is scrolled
+       by script, restored, or opened part-way down. */
+    function revealStatement() {
+      if (st.classList.contains('is-in')) return;
+      var b = st.getBoundingClientRect(), vh = window.innerHeight;
+      if (reduce || (b.top < vh * 0.7 && b.bottom > vh * 0.2)) st.classList.add('is-in');
+    }
+    window.addEventListener('scroll', revealStatement, { passive: true });
+    revealStatement();
   }
 
-  /* ---- plates ----
-     Floating, heavily blurred photographs behind the turn.
-
-     THESE ARE SWAPPABLE SLOTS. Each plate paints whatever is in --img.
-     With no --img it falls back to one of the soft two-stop fields below,
-     which at this blur is what a photograph looks like anyway. To use
-     real pictures, set --img on the plate:  --img: url('./photos/01.jpg')
-     Nothing else has to change.
-
-     Restraint is structural, not by eye: opacity is capped at 0.34,
-     saturation pulled to 0.55, and the blur floor is high enough that no
-     plate can resolve into a subject that competes with the question. */
-  var plates = document.querySelector('.plates');
-  if (plates) {
-    var FIELDS = [
-      'radial-gradient(118% 92% at 32% 26%, color-mix(in oklch, var(--color-accent) 16%, transparent), transparent 74%),' +
-      'radial-gradient(104% 84% at 74% 72%, color-mix(in oklch, var(--color-paper-3) 40%, transparent), transparent 72%)',
-
-      'radial-gradient(110% 96% at 68% 30%, color-mix(in oklch, var(--color-glow) 46%, transparent), transparent 70%),' +
-      'radial-gradient(96% 88% at 28% 74%, color-mix(in oklch, var(--color-neutral) 34%, transparent), transparent 74%)',
-
-      'radial-gradient(124% 88% at 46% 68%, color-mix(in oklch, var(--color-paper-3) 52%, transparent), transparent 72%),' +
-      'radial-gradient(90% 80% at 76% 22%, color-mix(in oklch, var(--color-accent) 12%, transparent), transparent 70%)',
-
-      'radial-gradient(112% 90% at 24% 58%, color-mix(in oklch, var(--color-glow) 38%, transparent), transparent 72%),' +
-      'radial-gradient(100% 86% at 70% 34%, color-mix(in oklch, var(--color-paper-3) 36%, transparent), transparent 74%)'
+  /* ---- Act 3 ---- */
+  var curtain = document.getElementById('curtain');
+  if (curtain) {
+    var SAID = [
+      'light falls where you were standing', 'a thought is a small weather',
+      'the day keeps nothing you do not name', 'memory is a room with the door left open',
+      'say it once and it stays', 'everything passing leaves a line',
+      'light on light on light', 'poetry is a moving space'
     ];
-    var RATIOS = ['4 / 3', '3 / 4', '1 / 1', '16 / 10', '5 / 4'];
-
-    var pcount = narrow ? 3 : 4;
-    var pband  = 50 / pcount;   /* from 42% down: the plates belong to the turn */
-    var frag3  = document.createDocumentFragment();
-    for (var n = 0; n < pcount; n++) {
-      var pl = document.createElement('span');
-      pl.className = 'plate';
-      var ps = function (el) { return function (k, v) { el.style.setProperty(k, v); }; }(pl);
-      ps('--img', FIELDS[n % FIELDS.length]);
-      ps('--ar',  RATIOS[Math.floor(Math.random() * RATIOS.length)]);
-      ps('--x',   R(-6, 74).toFixed(2) + '%');
-      ps('--y',   (42 + n * pband + R(0.05, 0.4) * pband).toFixed(2) + '%');
-      ps('--w',   (narrow ? R(46, 78) : R(20, 40)).toFixed(1) + 'vw');
-      ps('--bl',  R(34, 48).toFixed(1) + 'px');   /* light, not shape; scale is gone so this is cheap */
-      ps('--o',   R(0.12, 0.22).toFixed(2));
-      ps('--dx',  R(-4, 4).toFixed(2) + 'vw');
-      ps('--dy',  R(-3, 3).toFixed(2) + 'vh');
-      ps('--t',   R(26, 46).toFixed(1)   + 's');
-      ps('--d',   (-R(0, 46)).toFixed(1) + 's');
-      frag3.appendChild(pl);
+    var rows = narrow ? 7 : 9;
+    var frag3 = document.createDocumentFragment();
+    for (var r2 = 0; r2 < rows; r2++) {
+      var row = document.createElement('div');
+      row.className = 'curtain__row';
+      var start = (r2 * 3) % SAID.length, parts = [];
+      for (var q = 0; q < SAID.length * 2; q++) parts.push(SAID[(start + q) % SAID.length]);
+      var html = '';
+      for (var u = 0; u < parts.length; u++) {
+        var lit = (u + r2) % 7 === 3;
+        html += '<span' + (lit ? ' class="lit"' : '') + '>' + parts[u] + '</span><i>·</i>';
+      }
+      row.innerHTML = html;
+      row.style.setProperty('--t', R(70, 130).toFixed(0) + 's');
+      row.style.setProperty('--d', (-R(0, 130)).toFixed(0) + 's');
+      row.style.setProperty('--dir', r2 % 2 ? '1' : '-1');
+      row.style.setProperty('--o', R(0.16, 0.34).toFixed(2));
+      row.style.setProperty('--s', R(1.05, 1.5).toFixed(2) + 'rem');
+      frag3.appendChild(row);
     }
-    plates.appendChild(frag3);
+    curtain.appendChild(frag3);
   }
 })();
 """
@@ -386,6 +362,15 @@ CONCEPT_BODY = """
 </svg>
 <div class="grain" aria-hidden="true"></div>
 
+<!-- The ground: one paper the whole way down. Haze, ghost letters, dust, and
+     one wandering point of light. Layer 01's field, settled. -->
+<div class="ground" aria-hidden="true">
+  <span class="ground__haze ground__haze--a"></span>
+  <span class="ground__haze ground__haze--c"></span>
+  <span class="ground__glow"></span>
+  <span class="ground__light"></span>
+</div>
+
 <header class="mast">
   <h1 class="mast__h"><a href="./index.html">Light on Light</a></h1>
   <p class="mast__layer">LAYER 02 &mdash; WHY THIS PROJECT</p>
@@ -393,44 +378,30 @@ CONCEPT_BODY = """
 
 <main>
 
-  <!-- Thoughts arriving. Populated by the generator below. -->
-  <section class="storm">
-    <div class="storm__field" aria-hidden="true"></div>
-    <p class="storm__note">Thoughts arrive all day. You keep almost none of them.</p>
-  </section>
-
-  <!-- Night · one dark section, two moments. The light goes out over a dusk
-       band at the top, the pain and the turn share one field (so no thought
-       or plate is ever sliced at a seam), and the light comes back over a
-       dawn band at the bottom, into the idea. -->
-  <section class="night">
-    <div class="swarm-dark" aria-hidden="true"></div>
-    <div class="plates" aria-hidden="true"></div>
-    <p class="beat__lede night__pain">Thoughts arrive in the shower, on the platform, halfway
-      through someone else&rsquo;s sentence. Then the feed arrives, and by lunch
-      there is nothing left to remember.</p>
-    <h2 class="beat__turn night__turn">What if an image could <span class="lit">respond</span>
-      to a thought?</h2>
-  </section>
-
-  <!-- The idea. Paper, fully back. -->
-  <section class="beat beat--light">
-    <h2 class="beat__ask">How can fleeting thoughts become meaningful memories?</h2>
-  </section>
-
-  <!-- The last fold. Layer 01's haze comes back here, quieter, so the page
-       ends on the paper it began on. -->
-  <section class="give" id="invite">
-    <div class="haze" aria-hidden="true">
-      <span class="haze__l haze__l--a"></span>
-      <span class="haze__l haze__l--c"></span>
-      <span class="haze__glow"></span>
+  <!-- Act 1 · thoughts arrive, and are lost. Two beats on one sticky stage:
+       the thoughts come up one by one; scroll on, and each comes apart into
+       its letters, which fall to the foot of the stage. -->
+  <section class="act act--thoughts" data-phase="idle">
+    <div class="act__stage">
+      <div class="thoughts" id="thoughts" aria-hidden="true"></div>
+      <p class="act__note act__note--arrive">Something crossed your mind this morning.</p>
+      <p class="act__note act__note--lose">You can no longer remember what it was.</p>
+      <p class="sr">Thoughts arrive all day; by the afternoon you can no longer remember what they were.</p>
     </div>
   </section>
 
-  <!-- The invitation. Sticky, not fixed: it rides the bottom edge of the
-       viewport the whole way down, then settles here as the page's last
-       element instead of hovering over the colophon. -->
+  <!-- Act 2 · the statement, one word at a time. -->
+  <section class="act act--statement">
+    <h2 class="statement" id="statement">A thought you never answer is a thought you lose.</h2>
+  </section>
+
+  <!-- Act 3 · the invitation, over a curtain of everything that was ever
+       said here. The pill docks under it. -->
+  <section class="act act--invite" id="invite">
+    <div class="curtain" id="curtain" aria-hidden="true"></div>
+    <p class="invite">Give it one sentence, and let it answer back.</p>
+  </section>
+
   <div class="dock">
     <a class="cta" href="./make.html">Unwrap My Gift</a>
   </div>
@@ -499,6 +470,15 @@ MAKE_BODY = """
 </svg>
 <div class="grain" aria-hidden="true"></div>
 
+<!-- The ground: one paper the whole way down. Haze, ghost letters, dust, and
+     one wandering point of light. Layer 01's field, settled. -->
+<div class="ground" aria-hidden="true">
+  <span class="ground__haze ground__haze--a"></span>
+  <span class="ground__haze ground__haze--c"></span>
+  <span class="ground__glow"></span>
+  <span class="ground__light"></span>
+</div>
+
 <header class="mast">
   <h1 class="mast__h"><a href="./index.html">Light on Light</a></h1>
   <p class="mast__layer" id="stamp">LAYER 03 &mdash; YOUR VISUAL GIFT</p>
@@ -506,59 +486,55 @@ MAKE_BODY = """
 
 <main class="stage">
 
-  <!-- Layer 01's haze, quieter. You write on the paper the name settled on. -->
-  <div class="haze" aria-hidden="true">
-    <span class="haze__l haze__l--a"></span>
-    <span class="haze__l haze__l--c"></span>
-    <span class="haze__glow"></span>
-  </div>
+  <!-- The motes: the sentence coming apart on the left and gathering on the
+       right, where the card is being drawn. -->
+  <div class="forming__field" id="sparks" aria-hidden="true"></div>
 
-  <!-- INPUT · low and left, where layer 01 put the wordmark. -->
-  <section class="panel panel--ask">
+  <!-- Left · one thought. The line you write on; then the sentence, kept;
+       then, once the gift is open, what you can do with it. -->
+  <section class="left">
+    <p class="label">ONE THOUGHT</p>
     <form class="ask" id="ask" autocomplete="off">
-      <h2 class="ask__greet">What passed through your mind today?</h2>
-      <div class="ask__row">
-        <label class="sr" for="field">Your thought</label>
-        <textarea class="ask__field" id="field" name="thought" rows="1" maxlength="180"
-                  placeholder="One sentence is enough"></textarea>
-        <button class="cta ask__go" id="go" type="submit" disabled>Translate it</button>
-      </div>
+      <label class="sr" for="field">Your thought</label>
+      <textarea class="ask__field" id="field" name="thought" rows="1" maxlength="180"
+                placeholder="What passed through your mind today?"></textarea>
+      <button class="cta ask__go" id="go" type="submit" disabled>Translate it</button>
     </form>
+    <p class="said" id="said"></p>
+    <div class="gift__actions">
+      <button class="cta" id="export" type="button">Save as image</button>
+      <button class="gift__again" id="again" type="button">Write another</button>
+      <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
+    </div>
   </section>
 
-  <!-- FORMING → WRAPPED. No spinner. The sentence comes apart into motes
-       that gather where the gift will be, and a parcel draws itself around
-       them. When the drawing is ready the parcel is paper, and waits. -->
-  <div class="forming">
-    <div class="forming__field" id="sparks" aria-hidden="true"></div>
-    <div class="parcel" aria-hidden="true">
-      <svg class="parcel__edge" viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
+  <!-- Right · the card: the print itself, at every moment. While forming, a
+       hairline draws its edge around the gathering motes; ready, it is
+       wrapped in paper and waits; opened, the wrapping parts and the
+       drawing assembles. One element throughout, so nothing ever jumps. -->
+  <section class="right">
+    <figure class="card" id="gift">
+      <svg class="card__edge" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
       </svg>
-      <p class="forming__echo" id="echo"></p>
-    </div>
-    <button class="cta unwrap" id="unwrap" type="button">Unwrap</button>
-  </div>
-
-  <!-- GIFT · the print, centred, with the wrapping still on it for the first
-       second. The sentence is in the drawing; it is not repeated beside it. -->
-  <section class="panel panel--gift">
-    <figure class="gift" id="gift">
-      <div class="gift__mount">
+      <p class="forming__echo" id="echo" aria-hidden="true"></p>
+      <div class="card__paper">
+        <p class="card__line" id="giftLine"></p>
         <div class="gift__plate" id="plate" role="img" aria-label="A hand-drawn illustration made from your sentence"></div>
-        <div class="gift__wrap" aria-hidden="true"></div>
+        <p class="card__meta">
+          <span id="giftDate"></span>
+          <span>Light on Light<span class="gift__via" id="giftVia" hidden> &middot; drawn offline</span></span>
+        </p>
       </div>
-      <figcaption class="gift__meta">
-        <span id="giftDate"></span>
-        <span class="gift__via" id="giftVia" hidden></span>
-      </figcaption>
-      <div class="gift__actions">
-        <button class="cta" id="export" type="button">Save as image</button>
-        <button class="gift__again" id="again" type="button">Write another</button>
-        <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
-      </div>
+      <div class="gift__wrap" aria-hidden="true"></div>
     </figure>
+    <button class="cta unwrap" id="unwrap" type="button">Unwrap</button>
   </section>
+
+  <p class="stage__caption" aria-hidden="true">
+    <span class="stage__caption--ask">One sentence is enough.</span>
+    <span class="stage__caption--gift">It answers you in a picture.</span>
+  </p>
 
 </main>
 
@@ -577,17 +553,54 @@ MAKE_BODY = """
 """
 
 
+GROUND_JS = r"""
+/* ------------------------------------------------------------
+   The ground's loose parts: the name in ghost letters, and dust.
+   Dealt once at load, never animated — they are the paper, not weather.
+   ------------------------------------------------------------ */
+(function () {
+  var g = document.querySelector('.ground');
+  if (!g) return;
+  var R = function (a, b) { return a + Math.random() * (b - a); };
+  var frag = document.createDocumentFragment();
+  var letters = ['L', 'i', 'g', 'h', 't', 'o', 'n', 'g', 'h', 'i'];
+  for (var i = 0; i < letters.length; i++) {
+    var c = document.createElement('span');
+    c.className = 'ground__ch';
+    c.textContent = letters[i];
+    c.style.setProperty('--x', R(2, 90).toFixed(1) + '%');
+    c.style.setProperty('--y', R(4, 86).toFixed(1) + '%');
+    c.style.setProperty('--s', R(7, 15).toFixed(1) + 'vw');
+    c.style.setProperty('--o', R(0.028, 0.06).toFixed(3));
+    frag.appendChild(c);
+  }
+  var n = Math.round(Math.min(90, Math.max(30, window.innerWidth * window.innerHeight / 18000)));
+  for (var k = 0; k < n; k++) {
+    var d = document.createElement('span');
+    d.className = 'ground__dust';
+    d.style.setProperty('--x', R(0, 100).toFixed(2) + '%');
+    d.style.setProperty('--y', R(0, 100).toFixed(2) + '%');
+    d.style.setProperty('--s', R(1, 2.2).toFixed(2) + 'px');
+    d.style.setProperty('--o', R(0.12, 0.38).toFixed(2));
+    frag.appendChild(d);
+  }
+  g.appendChild(frag);
+})();
+"""
+
+
 SUBSTRATE_JS = r"""
 /* ------------------------------------------------------------
    The substrate.
    Under the paper the name exists as a bitmap — the way the machine holds
-   it — gutter to gutter across the foot of the page, in ink so faint it
-   is a watermark until light passes over it. A read head sweeps through the word and, where it is, the
-   cells warm to amber and become legible; a cell dims for a frame or
-   three and recovers; a few cells are lit amber all along, the same
-   pixel lights as layer 01; a caret blinks after the last letter. Canvas,
-   ~12 fps, drawn only while on screen; one still frame under reduced
-   motion. Nothing here flickers faster than 0.6 Hz.
+   it — gutter to gutter across the foot of the page, and only the upper
+   half of it: the rest has sunk below the page's edge. Ink so faint it is
+   a watermark; a read head sweeps through and warms the cells it passes
+   to amber; single cells glint — a brief amber point with a faint cross,
+   the way light catches a grain — and a few stay lit, the same pixel
+   lights as layer 01. Canvas, ~12 fps, drawn only while on screen; one
+   still frame under reduced motion. Every glint is one cell, once, for
+   under half a second; nothing here flickers faster than 0.6 Hz.
    ------------------------------------------------------------ */
 (function () {
   var canvas = document.getElementById('substrate');
@@ -595,14 +608,15 @@ SUBSTRATE_JS = r"""
   var ctx = canvas.getContext('2d');
   /* Fewer, larger cells on a phone: a 3px cell is a texture, not a letter. */
   var narrow = window.innerWidth < 640;
-  var COLS = narrow ? 64 : 128, ROWS = narrow ? 13 : 24, GAP = 0.24, TEXT = 'Light on Light';
+  var COLS = narrow ? 72 : 160, ROWS = narrow ? 15 : 30, GAP = 0.26, TEXT = 'Light on Light';
+  var SHOW = 0.5;   /* the fraction of the bitmap's height left above the page's edge */
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var css = getComputedStyle(document.documentElement);
   var tok = function (name, fb) { var v = css.getPropertyValue(name).trim(); return v || fb; };
   var INK   = tok('--color-ink', '#2b2622');
   var AMBER = tok('--color-accent', '#c07a2a');
 
-  var cells = [], caret = { c: 0, r: 0 }, cw = 0;
+  var cells = [], cw = 0;
 
   /* Rasterise the wordmark at cell resolution and keep every cell the
      letters touch. Edge cells keep their partial coverage as a dimmer base,
@@ -627,11 +641,9 @@ SUBSTRATE_JS = r"""
         var aa = Math.min(1, a * 1.15), amber = Math.random() < 0.025;
         /* Ink cells are a watermark; the amber ones are lights. */
         cells.push({ c: c, r: r, amber: amber,
-                     base: amber ? 0.5 + 0.35 * aa : 0.12 + 0.2 * aa, dip: 0, left: 0 });
+                     base: amber ? 0.5 + 0.35 * aa : 0.12 + 0.2 * aa, dip: 0, left: 0, g: 0 });
       }
     }
-    caret.c = Math.min(COLS - 2, Math.ceil(x + w) + 2);
-    caret.r = y;
   }
 
   function layout() {
@@ -641,10 +653,12 @@ SUBSTRATE_JS = r"""
     canvas.width = Math.round(cssW * dpr);
     canvas.height = Math.round(cw * ROWS * dpr);
     canvas.style.height = (cw * ROWS) + 'px';
+    /* The lower part hangs below the footer's clipped box: cut in half. */
+    canvas.style.marginBlockEnd = (-cw * ROWS * (1 - SHOW)) + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  var sweep = -4, caretOn = true, frame = 0, last = 0, running = false, onScreen = false, raf = 0;
+  var sweep = -4, frame = 0, last = 0, running = false, onScreen = false, raf = 0;
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -652,20 +666,28 @@ SUBSTRATE_JS = r"""
     for (var i = 0; i < cells.length; i++) {
       var k = cells[i], b = k.base, col = k.amber ? AMBER : INK;
       if (!reduce) {
-        if (k.left > 0) { b = k.dip; k.left--; }
+        if (k.g > 0) {
+          /* A glint: bright amber for a frame, then out over four more. */
+          b = 0.3 + 0.65 * (k.g / 5); col = AMBER;
+          if (k.g >= 4) {
+            ctx.globalAlpha = b * 0.35; ctx.fillStyle = AMBER;
+            ctx.fillRect((k.c - 1) * cw + pad, k.r * cw + pad, s, s);
+            ctx.fillRect((k.c + 1) * cw + pad, k.r * cw + pad, s, s);
+            ctx.fillRect(k.c * cw + pad, (k.r - 1) * cw + pad, s, s);
+            ctx.fillRect(k.c * cw + pad, (k.r + 1) * cw + pad, s, s);
+          }
+          k.g--;
+        }
+        else if (k.left > 0) { b = k.dip; k.left--; }
+        else if (Math.random() < 0.0045) { k.g = 5; }
         else if (Math.random() < 0.002) { k.dip = k.base * 0.15; k.left = 1 + Math.floor(Math.random() * 3); }
         /* Where the light is passing, the word warms and can be read. */
         var dc = Math.abs(k.c - sweep);
-        if (dc < 3) { b = Math.min(0.72, b + (3 - dc) * 0.18); col = AMBER; }
+        if (dc < 3 && k.g === 0) { b = Math.min(0.72, b + (3 - dc) * 0.18); col = AMBER; }
       }
       ctx.globalAlpha = b;
       ctx.fillStyle = col;
       ctx.fillRect(k.c * cw + pad, k.r * cw + pad, s, s);
-    }
-    if (caretOn || reduce) {
-      ctx.globalAlpha = 0.75;
-      ctx.fillStyle = AMBER;
-      ctx.fillRect(caret.c * cw + pad, (caret.r - 3) * cw + pad, s, cw * 4 - pad * 2);
     }
     ctx.globalAlpha = 1;
   }
@@ -676,7 +698,6 @@ SUBSTRATE_JS = r"""
     if (now - last < 83) return;            /* ~12 fps is plenty for a bitmap */
     last = now; frame++;
     sweep += 0.6; if (sweep > COLS + 6) sweep = -4;   /* one pass ≈ 16 s */
-    if (frame % 11 === 0) caretOn = !caretOn;         /* ≈ 0.55 Hz */
     draw();
   }
   function start() { if (running || reduce || !onScreen || document.hidden) return; running = true; raf = requestAnimationFrame(tick); }
@@ -1077,18 +1098,23 @@ MAKE_JS = r"""
     if (reduce) return;
     var r = rngFrom(hash(text) ^ 0x9e37);
     var n = Math.min(52, 16 + text.length);
+    /* From the sentence, kept on the left, to the centre of the card. */
+    var field = host.getBoundingClientRect();
+    var from  = $('said').getBoundingClientRect();
+    var to    = $('gift').getBoundingClientRect();
+    var tx = to.left + to.width / 2 - field.left, ty = to.top + to.height / 2 - field.top;
     var frag = document.createDocumentFragment();
     for (var i = 0; i < n; i++) {
       var s = document.createElement('span');
       s.className = 'spark';
-      var x = 8 + r() * 84, y = 26 + r() * 48;
-      s.style.setProperty('--x', x.toFixed(2) + '%');
-      s.style.setProperty('--y', y.toFixed(2) + '%');
-      /* everything travels toward the middle, where the plate will be */
-      s.style.setProperty('--gx', ((50 - x) * 0.9).toFixed(2) + 'vw');
-      s.style.setProperty('--gy', ((50 - y) * 0.62).toFixed(2) + 'vh');
-      s.style.setProperty('--s', (1.6 + r() * 3.6).toFixed(2) + 'px');
-      s.style.setProperty('--o', (0.2 + r() * 0.5).toFixed(2));
+      var x = from.left - field.left + r() * from.width;
+      var y = from.top - field.top + r() * from.height;
+      s.style.setProperty('--x', x.toFixed(1) + 'px');
+      s.style.setProperty('--y', y.toFixed(1) + 'px');
+      s.style.setProperty('--gx', ((tx - x) * (0.86 + r() * 0.12)).toFixed(1) + 'px');
+      s.style.setProperty('--gy', ((ty - y) * (0.86 + r() * 0.12)).toFixed(1) + 'px');
+      s.style.setProperty('--s', (1.6 + r() * 3.4).toFixed(2) + 'px');
+      s.style.setProperty('--o', (0.22 + r() * 0.5).toFixed(2));
       s.style.setProperty('--c', r() < 0.16 ? 'var(--color-accent)' : 'var(--color-ink-2)');
       s.style.setProperty('--t', (2.6 + r() * 2.4).toFixed(2) + 's');
       s.style.setProperty('--d', (-r() * 4).toFixed(2) + 's');
@@ -1096,6 +1122,7 @@ MAKE_JS = r"""
     }
     host.appendChild(frag);
   }
+
 
   /* Injected markup is injected markup, whoever drew it. */
   function sanitizeSVG(raw) {
@@ -1109,6 +1136,7 @@ MAKE_JS = r"""
     var d = new Date();
     current.text = text;
     current.date = stamp(d);
+    $('giftLine').textContent = text;          /* the print's own caption — textContent, never innerHTML */
     var plate = $('plate');
     plate.innerHTML = art.svg;
     /* Assemble centre-outward whoever drew it: deal data-i to the top-level
@@ -1136,9 +1164,7 @@ MAKE_JS = r"""
        it means something; on screen the wordmark is already the signature.
        Only an offline draw is called out, because it is not the product's
        ceiling, and the studio is offered again. */
-    var via = $('giftVia');
-    via.hidden = art.via !== 'local';
-    via.textContent = 'DRAWN OFFLINE';
+    $('giftVia').hidden = art.via !== 'local';
     $('redraw').hidden = art.via !== 'local';
     setState('gift');
   }
@@ -1204,8 +1230,14 @@ MAKE_JS = r"""
     if (text.length < 2) return;
 
     $('echo').textContent = text;
+    $('said').textContent = text;
+    /* The card's caption and date go in now, unseen, so the card has its
+       final size from the first frame of forming: the edge that draws, the
+       wrapping and the open print are one box. */
+    $('giftLine').textContent = text;
+    $('giftDate').textContent = stamp(new Date());
+    setState('forming');       /* the sentence is kept on the left before the motes leave it */
     sow(text);
-    setState('forming');
 
     /* Claude first; the built-in generator only when the studio is
        unreachable (double-clicked file, CLI missing, timeout). The gift
@@ -1364,8 +1396,10 @@ __BODY__
 """
 
 
-def render(out_name, title, desc, css_file, body, js, faces, tokens):
+def render(out_name, title, desc, css_file, body, js, faces, tokens, ground=False):
     styles = (HERE / css_file).read_text(encoding="utf-8")
+    if ground:
+        styles = (HERE / "ground.css").read_text(encoding="utf-8") + "\n" + styles
     html = (PAGE
             .replace("__TITLE__", title)
             .replace("__DESC__", desc)
@@ -1690,12 +1724,12 @@ def main() -> None:
     render("concept.html",
            "Light on Light",
            "Thoughts arrive all day. You keep almost none of them.",
-           "concept.css", CONCEPT_BODY, CONCEPT_JS + SUBSTRATE_JS, faces, tokens)
+           "concept.css", CONCEPT_BODY, GROUND_JS + CONCEPT_JS + SUBSTRATE_JS, faces, tokens, ground=True)
 
     render("make.html",
            "Light on Light",
            "What passed through your mind today?",
-           "make.css", MAKE_BODY, MAKE_JS + SUBSTRATE_JS, faces, tokens)
+           "make.css", MAKE_BODY, GROUND_JS + MAKE_JS + SUBSTRATE_JS, faces, tokens, ground=True)
 
     deploy()
 

@@ -177,6 +177,110 @@
 @media (min-width: 1700px) { html { font-size: 18px; } }
 @media (min-width: 2200px) { html { font-size: 20px; } }
 
+/* SOURCE FILE — the ground shared by layers 02 and 03; build.py prepends it to
+ * each page's own stylesheet.
+ *
+ * One paper, the whole way down. Everything on layers 02 and 03 happens on
+ * this: a bank of warm haze, the name in ghost letters far too large and far
+ * too faint to read, paper dust, and one warm point of light that wanders.
+ * The field never changes surface — no dark section, no cut — the moments
+ * of each layer dissolve in and out on top of it. This is layer 01's field,
+ * settled, so the three layers are one place.
+ */
+
+.ground {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: clip;
+}
+.ground__haze, .ground__glow {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+}
+.ground__haze { mix-blend-mode: multiply; }
+.ground__haze--a {
+  inset-block-start: 6%;   inset-inline-start: 22%;
+  inline-size: min(66vw, 54rem); aspect-ratio: 1.3;
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-paper-3) 60%, transparent), transparent 78%);
+  filter: blur(72px);
+  animation: ground-drift-a var(--dur-drift-a) var(--ease-in-out) infinite alternate;
+}
+.ground__haze--c {
+  inset-block-start: 30%;  inset-inline-start: 34%;
+  inline-size: min(46vw, 36rem); aspect-ratio: 2.1;
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-paper-3) 44%, transparent), transparent 76%);
+  filter: blur(58px);
+  animation: ground-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
+}
+.ground__glow {
+  inset-block-start: 22%;  inset-inline-start: 44%;
+  inline-size: min(26vw, 20rem); aspect-ratio: 1.15;
+  background: radial-gradient(closest-side, var(--color-glow), transparent 72%);
+  filter: blur(46px);
+  mix-blend-mode: screen;
+  animation: ground-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
+}
+@keyframes ground-drift-a { to { transform: translate3d(-5%, 4%, 0); } }
+@keyframes ground-drift-c { to { transform: translate3d(-4%, -6%, 0); } }
+
+/* The light. One warm point, soft-edged, that wanders the field on a path
+   long enough that it is never seen to repeat. */
+.ground__light {
+  position: absolute;
+  inset-block-start: 28%; inset-inline-start: 46%;
+  inline-size: 18px; block-size: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    color-mix(in oklch, var(--color-accent) 72%, white) 0,
+    color-mix(in oklch, var(--color-accent) 42%, transparent) 38%,
+    transparent 70%);
+  filter: blur(1.2px);
+  opacity: 0.85;
+  animation: ground-wander 53s var(--ease-in-out) infinite alternate;
+}
+@keyframes ground-wander {
+  0%   { transform: translate(0, 0); }
+  30%  { transform: translate(-30vw, 16vh); }
+  62%  { transform: translate(12vw, 34vh); }
+  100% { transform: translate(26vw, -4vh); }
+}
+
+/* Ghost letters and dust are dealt by the generator (see GROUND_JS). */
+.ground__ch {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  font-family: var(--font-wordmark);
+  font-size: var(--s);
+  line-height: 1;
+  color: var(--color-ink);
+  opacity: var(--o);
+  user-select: none;
+}
+.ground__dust {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  inline-size: var(--s);
+  block-size: var(--s);
+  border-radius: 50%;
+  background: var(--color-ink);
+  opacity: var(--o);
+}
+
+/* Everything that is not the ground sits on it. */
+.mast, main, .colophon, .substrate, .grain { position: relative; z-index: 1; }
+.grain { z-index: calc(var(--z-sticky) - 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ground__haze, .ground__glow, .ground__light { animation: none !important; }
+}
+
 /* SOURCE FILE — concept.html is a single self-contained page and does not link
  * this stylesheet; it embeds a copy. Edit here, then run `python3 build.py`.
  *
@@ -194,17 +298,17 @@
  *   face; the steps are H1 wordmark → statement → lede → mono label, carried by
  *   font-size, colour depth (ink → ink-2 → muted), and the serif/mono split.
  *
- * LIGHT NARRATIVE — the page's spine, not decoration:
- *   storm   paper   thoughts arrive, lit
- *   night   ink     dusk: the light goes out over ~18vh. The feed takes the
- *                   thoughts (a dense field of them, top) and one question
- *                   answers, lit amber, over blurred plates (bottom). Dawn:
- *                   the light comes back over ~24vh, glow-tinted.
- *   idea    paper   fully lit again
- *   give    paper   layer 01's haze returns; the invitation docks here
+ * NARRATIVE — three acts on one paper, after the film:
+ *   act 1   thoughts arrive, one by one; scroll on and each comes apart
+ *           into its letters, which fall to the foot of the stage
+ *   act 2   one sentence, a word at a time
+ *   act 3   the invitation, over a curtain of everything ever said here
+ *   The surface never changes. No dark section, no cut: the ground (haze,
+ *   ghost letters, dust, one wandering light) is fixed under everything.
  *
- * motion: flash · sink · plate-drift  (3 primitives)
- *   No scroll-triggered reveals anywhere.
+ * motion: arrive · fall · word-in · curtain-drift
+ *   The acts are staged by scroll position — a narrative needs a clock, and
+ *   on a page the reader's scroll is the clock. Deliberate.
  * emphasis: accent colour + drawn underline, once. NOT italic — gate 38a.
  * pre-emit critique: P5 H5 E4 S5 R5 V4
  * contrast: pass (40–41) · mobile: pass (34, 49, 50–57) · tokens: pass (48)
@@ -270,6 +374,9 @@ h1, h2, p { margin: 0; font-weight: 400; }
   font-family: var(--font-mono);
   font-size: var(--text-xs);
 }
+/* Read by screen readers, never drawn. */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
 .skip:focus-visible {
   inset-inline-start: var(--page-gutter);
   inset-block-start: var(--space-md);
@@ -321,314 +428,173 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 }
 
 /* ============================================================
-   Storm · thoughts flashing up at random and going.
-   Motion primitive 1 · flash.
+   Acts. Each is a fold on the same paper; nothing here has a surface
+   of its own. The ground shows through everything.
    ============================================================ */
 
-.storm {
+main { position: relative; }
+
+.act {
   position: relative;
-  isolation: isolate;
-  overflow: clip;
-  min-block-size: clamp(26rem, 60dvh, 40rem);
-  display: grid;
-  align-content: end;
-  padding: var(--space-2xl) var(--page-gutter) var(--space-3xl);
+  padding-inline: var(--page-gutter);
 }
 
-.storm__field,
-.swarm-dark {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-base);
-  pointer-events: none;
+/* ------------------------------------------------------------
+   Act 1 · thoughts arrive, and are lost.
+   Two screens of scroll over one sticky stage. Phase follows the
+   scroll (see the generator): "arrive" brings the thoughts up one by
+   one; "lose" throws every letter a little way out and drops it to a
+   drift along the foot of the stage.
+   ------------------------------------------------------------ */
+
+.act--thoughts { min-block-size: 200dvh; padding-inline: 0; }
+
+.act__stage {
+  position: sticky;
+  inset-block-start: 0;
+  block-size: 100dvh;
   overflow: clip;
 }
-/* Every field fades out before its container's edge, so a thought or a plate
-   is never cut in half by a seam. */
-.storm__field,
-.swarm-dark,
-.plates {
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
-          mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
-}
 
-/* Outer level drifts; inner level flashes. One property each, so the two
-   animations can never collide on `transform`. */
-.pop {
+.thoughts { position: absolute; inset: 0; }
+
+.thought {
   position: absolute;
   inset-inline-start: var(--x);
   inset-block-start: var(--y);
-  inline-size: max-content;
-  max-inline-size: min(21rem, 62vw);
-  will-change: transform;
-  animation: pop-drift var(--t1) var(--ease-in-out) var(--d1) infinite alternate;
-}
-.pop__t {
-  display: block;
-  opacity: 0;
   font-family: var(--font-voice);
   font-style: italic;
   font-size: var(--s);
   line-height: 1.3;
-  color: var(--c);
-  /* No blur on text that moves: a fractional blur on a layer whose sub-pixel
-     position changes every frame re-rasterises every frame and the letters
-     crawl. Depth is carried by size and opacity alone. */
-  will-change: transform, opacity;
-  animation: pop-flash var(--t2) var(--ease-out) var(--d2) infinite;
+  color: var(--color-ink-2);
+  white-space: nowrap;
+  opacity: 0;
+}
+.thought .ch { display: inline-block; white-space: pre; }
+
+[data-phase="arrive"] .thought {
+  animation: thought-arrive 1.6s var(--ease-out) var(--d) both;
+}
+@keyframes thought-arrive {
+  from { opacity: 0; transform: translateY(0.35em); }
+  to   { opacity: 1; transform: none; }
 }
 
-@keyframes pop-drift { to { transform: translate(var(--dx), var(--dy)); } }
-
-/* Appear quickly, hold, leave. The long tail of zero is the wait before the
-   thought comes round again — that dead time is what keeps the field from
-   reading as a marquee. */
-@keyframes pop-flash {
-  0%   { opacity: 0; transform: translateY(0.3em); }
-  6%   { opacity: var(--o); transform: none; }
-  /* The exit gets its own curve: an ease-out here would leave at full speed
-     and read as a cut rather than a fade. */
-  30%  { opacity: var(--o); transform: none; animation-timing-function: var(--ease-in-out); }
-  42%  { opacity: 0; transform: translateY(-0.3em); }
-  100% { opacity: 0; transform: translateY(-0.3em); }
+[data-phase="lose"] .thought { opacity: 1; }
+[data-phase="lose"] .thought .ch {
+  animation: ch-fall 2.8s var(--ease-in) var(--cd) both;
+}
+/* Out a little first — the thought bursts — then down, turning, to the
+   drift line the generator measured for each letter. */
+@keyframes ch-fall {
+  0%   { transform: none; opacity: 1; animation-timing-function: var(--ease-out); }
+  22%  { transform: translate(var(--sx), var(--sy)) rotate(var(--sr)); opacity: 0.95;
+         animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.6); }
+  100% { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)); opacity: 0.55; }
 }
 
-.storm__note {
-  position: relative;
-  z-index: var(--z-raised);
-  max-inline-size: 30ch;
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  line-height: 1.55;
+.act__note {
+  position: absolute;
+  inset-inline: var(--page-gutter);
+  inset-block-end: clamp(var(--space-xl), 9vh, var(--space-3xl));
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+  opacity: 0;
+  transition: opacity 900ms var(--ease-in-out);
+}
+[data-phase="arrive"] .act__note--arrive,
+[data-phase="lose"]   .act__note--lose { opacity: 1; transition-delay: 600ms; }
+
+/* ------------------------------------------------------------
+   Act 2 · the statement, a word at a time.
+   ------------------------------------------------------------ */
+
+.act--statement {
+  min-block-size: 100dvh;
+  display: grid;
+  place-items: center;
+}
+.statement {
+  max-inline-size: 22ch;
+  text-align: center;
+  text-wrap: balance;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-turn);
+  line-height: 1.14;
+  letter-spacing: -0.012em;
   color: var(--color-ink);
 }
+.statement .w { display: inline-block; opacity: 0; transform: translateY(0.25em); }
+.statement.is-in .w { animation: word-in 700ms var(--ease-out) calc(var(--i) * 140ms) both; }
+@keyframes word-in { to { opacity: 1; transform: none; } }
 
-/* ============================================================
-   Beats · one fold each, hard surface changes between.
-   ============================================================ */
+/* ------------------------------------------------------------
+   Act 3 · the invitation, over the curtain.
+   Rows of everything ever said here drift slowly, faint, a few words
+   lit amber; the invitation sits on a small pool of clear paper.
+   ------------------------------------------------------------ */
 
-.beat {
-  position: relative;
+.act--invite {
   isolation: isolate;
   overflow: clip;
+  min-block-size: 80dvh;
+  display: grid;
+  place-items: center;
+}
+.curtain {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   display: grid;
   align-content: center;
-  gap: var(--space-2xl);
-  padding-block: clamp(var(--space-3xl), 17vh, var(--space-4xl));
-  padding-inline: var(--page-gutter);
-  min-block-size: clamp(22rem, 56dvh, 36rem);
+  row-gap: clamp(0.5rem, 1.6vh, 1.1rem);
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
 }
-
-/* The copy must out-paint the fields behind it. Those are positioned with a
-   z-index, so static flow content would otherwise sit underneath them. */
-.beat > :not(.swarm-dark):not(.plates) {
-  position: relative;
-  z-index: var(--z-raised);
-}
-
-.beat--light { background: var(--color-paper); color: var(--color-ink); }
-
-/* ============================================================
-   Night · dusk, two moments, dawn — one section.
-   The surface change is a gradient at each end, not a cut: the
-   narrative says the light goes out and comes back, so it does.
-   ============================================================ */
-
-.night {
-  --dusk: clamp(8rem, 18vh, 12rem);
-  --dawn: clamp(12rem, 30vh, 20rem);
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-content: space-between;
-  row-gap: clamp(var(--space-3xl), 16vh, var(--space-4xl));
-  min-block-size: 100dvh;
-  padding-block: calc(var(--dusk) + var(--space-2xl)) calc(var(--dawn) + var(--space-2xl));
-  padding-inline: var(--page-gutter);
-  color: var(--color-ink-paper);
-  background: linear-gradient(to bottom,
-    var(--color-paper)                       0,
-    var(--color-paper-3)                     calc(var(--dusk) * 0.35),
-    oklch(30% 0.012 66)                      calc(var(--dusk) * 0.78),
-    var(--color-ink)                         var(--dusk),
-    var(--color-ink)                         calc(100% - var(--dawn)),
-    oklch(30% 0.014 66)                      calc(100% - var(--dawn) * 0.74),
-    oklch(52% 0.035 66)                      calc(100% - var(--dawn) * 0.46),
-    color-mix(in oklch, var(--color-glow) 82%, var(--color-accent) 18%)
-                                             calc(100% - var(--dawn) * 0.2),
-    var(--color-paper)                       100%);
-}
-.night > :not(.swarm-dark):not(.plates) {
-  position: relative;
-  z-index: var(--z-raised);
-}
-.night__pain { grid-column: 1; grid-row: 1; }
-.night__turn { grid-column: 2; grid-row: 2; }
-
-.beat__lede {
-  max-inline-size: 46ch;
-  font-family: var(--font-body);
-  font-weight: 500;              /* light text on ink reads thinner; the medium compensates */
-  font-size: var(--text-lede);
-  line-height: 1.5;
-  color: var(--color-ink-paper);
-}
-
-.beat__turn {
-  max-inline-size: 19ch;
-  font-size: var(--text-turn);
-  line-height: 1.14;
-  letter-spacing: -0.012em;
-  overflow-wrap: anywhere;
-  min-inline-size: 0;
-}
-
-.beat__ask {
-  max-inline-size: 20ch;
-  font-size: var(--text-turn);
-  line-height: 1.14;
-  letter-spacing: -0.012em;
-  overflow-wrap: anywhere;
-  min-inline-size: 0;
-}
-
-/* ============================================================
-   Emphasis — accent + a drawn underline. Never italic (gate 38a),
-   and Instrument Serif has one weight, so weight is unavailable too.
-   ============================================================ */
-
-.lit {
-  color: var(--color-accent);
-  text-decoration: underline;
-  text-decoration-color: var(--color-accent);
-  text-decoration-thickness: 2px;
-  /* em-relative, not px: at display sizes a fixed 1–2px offset sits inside
-     the letterforms. skip-ink clears the descenders. */
-  text-underline-offset: 0.08em;
-  text-decoration-skip-ink: auto;
-}
-
-/* ============================================================
-   Motion primitive 2 · sink
-   The dark field. The same voice as the storm, but buried — drifting
-   down and dimming. The pain said in motion rather than in more copy.
-   ============================================================ */
-
-.sunk__t {
-  position: absolute;
-  inset-inline-start: var(--x);
-  inset-block-start: var(--y);
-  max-inline-size: min(24rem, 66vw);
+.curtain__row {
+  inline-size: max-content;
+  margin-inline-start: 50%;
+  white-space: nowrap;
   font-family: var(--font-voice);
   font-style: italic;
   font-size: var(--s);
-  line-height: 1.3;
-  color: var(--color-ink-paper);
-  opacity: 0;
-  will-change: transform, opacity;
-  animation: sink var(--t1) var(--ease-in-out) var(--d1) infinite;
-}
-/* Visible for 65% of the cycle, not 48%: with a dozen of these the field has
-   to read as full, and the previous timing left it two-thirds empty. */
-@keyframes sink {
-  0%   { opacity: 0;        transform: translateY(-2.5vh); }
-  15%  { opacity: var(--o); transform: translateY(0); }
-  80%  { opacity: 0;        transform: translateY(3vh); }
-  100% { opacity: 0;        transform: translateY(3vh); }
-}
-
-/* ============================================================
-   Motion primitive 3 · plates
-   Floating, heavily blurred photographs behind the turn.
-
-   These are SWAPPABLE SLOTS. Each plate takes its picture from --img;
-   with no --img set it falls back to a soft two-stop field, which at
-   this blur radius is what a photograph looks like anyway. Drop a real
-   image in (`--img: url(...)`) and nothing else needs to change.
-
-   Restraint is enforced structurally, not by eye: opacity is capped low,
-   saturation is pulled down, and the blur floor is high enough that no
-   plate can ever resolve into a subject that competes with the question.
-   ============================================================ */
-
-.plates {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-base);
-  pointer-events: none;
-  overflow: clip;
-}
-
-.plate {
-  position: absolute;
-  inset-inline-start: var(--x);
-  inset-block-start: var(--y);
-  inline-size: var(--w);
-  aspect-ratio: var(--ar);
-  border-radius: var(--radius-plate);
-  background-image: var(--img);
-  background-size: cover;
-  background-position: center;
-  filter: blur(var(--bl)) saturate(0.55);
+  line-height: 1.4;
+  color: var(--color-ink-2);
   opacity: var(--o);
   will-change: transform;
-  animation: plate-drift var(--t) var(--ease-in-out) var(--d) infinite alternate;
+  animation: curtain-drift var(--t) linear var(--d) infinite alternate;
 }
-/* Translate only. Scaling a filtered layer re-runs the blur at the new size on
-   every frame — with five plates this size it was the page's whole jank. */
-@keyframes plate-drift {
-  to { transform: translate(var(--dx), var(--dy)); }
+.curtain__row i { font-style: normal; margin-inline: 0.7em; color: var(--color-rule); }
+.curtain__row .lit { color: var(--color-accent); }
+@keyframes curtain-drift {
+  from { transform: translateX(calc(-50% - var(--dir) * 8%)); }
+  to   { transform: translateX(calc(-50% + var(--dir) * 8%)); }
+}
+.invite {
+  position: relative;
+  max-inline-size: 30ch;
+  padding: var(--space-xl) var(--space-2xl);
+  text-align: center;
+  text-wrap: balance;
+  font-family: var(--font-voice);
+  font-style: italic;
+  font-size: var(--text-display-s);
+  line-height: 1.3;
+  color: var(--color-ink);
+  background: radial-gradient(closest-side,
+    var(--color-paper) 45%,
+    color-mix(in oklch, var(--color-paper) 75%, transparent) 78%,
+    transparent);
 }
 
 /* ============================================================
-   Give · mostly whitespace, and where the invitation comes to rest.
+   The invitation docks under the last act.
    ============================================================ */
-
-.give {
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
-  min-block-size: clamp(14rem, 30dvh, 22rem);
-}
-
-/* Layer 01's haze, at about half its amplitude. The container is masked at
-   both edges: a blob larger than the fold fades out before the fold ends, so
-   the clip never leaves a straight edge. */
-.haze {
-  position: absolute; inset: 0; z-index: var(--z-base); pointer-events: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
-          mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
-}
-.haze__l, .haze__glow { position: absolute; display: block; border-radius: 50%; }
-.haze__l { mix-blend-mode: multiply; }
-.haze__l--a {
-  inset-block-start: -30%; inset-inline-start: 12%;
-  inline-size: min(62vw, 50rem); aspect-ratio: 1.7;
-  background: radial-gradient(closest-side,
-    color-mix(in oklch, var(--color-paper-3) 62%, transparent), transparent 78%);
-  filter: blur(40px);
-  animation: give-drift-a var(--dur-drift-a) var(--ease-in-out) infinite alternate;
-}
-.haze__l--c {
-  inset-block-start: 18%; inset-inline-start: 40%;
-  inline-size: min(40vw, 32rem); aspect-ratio: 2.4;
-  background: radial-gradient(closest-side,
-    color-mix(in oklch, var(--color-paper-3) 46%, transparent), transparent 76%);
-  filter: blur(34px);
-  animation: give-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
-}
-.haze__glow {
-  inset-block-start: 8%; inset-inline-start: 48%;
-  inline-size: min(22vw, 17rem); aspect-ratio: 1.3;
-  background: radial-gradient(closest-side, var(--color-glow), transparent 72%);
-  filter: blur(30px);
-  mix-blend-mode: screen;
-  animation: give-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
-}
-@keyframes give-drift-a { to { transform: translate3d(-3%, 2.5%, 0); } }
-@keyframes give-drift-c { to { transform: translate3d(-2.5%, -4%, 0); } }
 
 /* The dock is sticky against the viewport's bottom edge for as long as
    <main> is on screen, then sits in flow as main's last child. No fixed
@@ -728,7 +694,9 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   position: relative;
   isolation: isolate;
   margin-inline: var(--page-gutter);
-  padding-block: var(--space-xl) var(--space-lg);
+  padding-block: var(--space-md) 0;
+  display: flow-root;          /* so the canvas's negative bottom margin shortens this box */
+  overflow: clip;              /* and the lower half of the name hangs below it */
 }
 /* The deepest fog pools along the whole foot of the page. */
 .substrate::before {
@@ -741,7 +709,8 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
     color-mix(in oklch, var(--color-paper-3) 72%, transparent), transparent 72%);
   mix-blend-mode: multiply;
 }
-/* Gutter to gutter: the name is the width of the page here. */
+/* Gutter to gutter: the name is the width of the page here, and only its
+   upper half shows; the generator sets the negative bottom margin. */
 .substrate__px { display: block; inline-size: 100%; }
 
 /* ============================================================
@@ -749,18 +718,10 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
    ============================================================ */
 
 @media (max-width: 40rem) {
-  .storm { min-block-size: clamp(26rem, 62dvh, 38rem); }
-  .beat  { min-block-size: auto; padding-block: var(--space-3xl); }
-  .night { grid-template-columns: minmax(0, 1fr); min-block-size: auto;
-           row-gap: clamp(12rem, 36vh, 20rem); }   /* room for the sunk field between the two moments */
-  .night__pain, .night__turn { grid-column: 1; }
-  .night__turn { grid-row: 2; }
-  .give  { min-block-size: clamp(10rem, 24dvh, 14rem); }
-  .pop   { max-inline-size: 74vw; }
-
-  /* A fixed CTA on a full-width column will sit over body copy — that is the
-     cost of pinning it, not a bug to style away. Shrink it to roughly half the
-     area so it covers as little as possible, and keep the 44px hit target. */
+  .act--thoughts { min-block-size: 180dvh; }
+  .act--statement { min-block-size: 80dvh; }
+  .statement { max-inline-size: 16ch; }
+  .invite { padding: var(--space-lg) var(--space-md); }
   .dock { inset-block-end: var(--space-lg); }
   .cta {
     font-size: var(--text-base);
@@ -770,17 +731,18 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 }
 
 /* ============================================================
-   Reduced motion — the fields settle. Thoughts hold where they
-   landed, at the opacity they were dealt; nothing flashes or sinks.
+   Reduced motion — the thoughts are simply there; nothing falls,
+   drifts, or arrives. The statement is whole.
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .pop, .pop__t, .sunk__t, .plate, .haze__l, .haze__glow, .dock {
+  .thought, .thought .ch, .statement .w, .curtain__row, .dock {
     animation: none !important;
     transform: none !important;
   }
-  .pop__t  { opacity: var(--o); }
-  .sunk__t { opacity: var(--o); }
+  .thought, .statement .w { opacity: 1; }
+  .act__note { transition: none; }
+  .act--thoughts { min-block-size: 100dvh; }
   .cta { transition: none; }
   .cta::before { animation: none; opacity: 1; }
 }
@@ -800,6 +762,15 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 </svg>
 <div class="grain" aria-hidden="true"></div>
 
+<!-- The ground: one paper the whole way down. Haze, ghost letters, dust, and
+     one wandering point of light. Layer 01's field, settled. -->
+<div class="ground" aria-hidden="true">
+  <span class="ground__haze ground__haze--a"></span>
+  <span class="ground__haze ground__haze--c"></span>
+  <span class="ground__glow"></span>
+  <span class="ground__light"></span>
+</div>
+
 <header class="mast">
   <h1 class="mast__h"><a href="./index.html">Light on Light</a></h1>
   <p class="mast__layer">LAYER 02 &mdash; WHY THIS PROJECT</p>
@@ -807,44 +778,30 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 
 <main>
 
-  <!-- Thoughts arriving. Populated by the generator below. -->
-  <section class="storm">
-    <div class="storm__field" aria-hidden="true"></div>
-    <p class="storm__note">Thoughts arrive all day. You keep almost none of them.</p>
-  </section>
-
-  <!-- Night · one dark section, two moments. The light goes out over a dusk
-       band at the top, the pain and the turn share one field (so no thought
-       or plate is ever sliced at a seam), and the light comes back over a
-       dawn band at the bottom, into the idea. -->
-  <section class="night">
-    <div class="swarm-dark" aria-hidden="true"></div>
-    <div class="plates" aria-hidden="true"></div>
-    <p class="beat__lede night__pain">Thoughts arrive in the shower, on the platform, halfway
-      through someone else&rsquo;s sentence. Then the feed arrives, and by lunch
-      there is nothing left to remember.</p>
-    <h2 class="beat__turn night__turn">What if an image could <span class="lit">respond</span>
-      to a thought?</h2>
-  </section>
-
-  <!-- The idea. Paper, fully back. -->
-  <section class="beat beat--light">
-    <h2 class="beat__ask">How can fleeting thoughts become meaningful memories?</h2>
-  </section>
-
-  <!-- The last fold. Layer 01's haze comes back here, quieter, so the page
-       ends on the paper it began on. -->
-  <section class="give" id="invite">
-    <div class="haze" aria-hidden="true">
-      <span class="haze__l haze__l--a"></span>
-      <span class="haze__l haze__l--c"></span>
-      <span class="haze__glow"></span>
+  <!-- Act 1 · thoughts arrive, and are lost. Two beats on one sticky stage:
+       the thoughts come up one by one; scroll on, and each comes apart into
+       its letters, which fall to the foot of the stage. -->
+  <section class="act act--thoughts" data-phase="idle">
+    <div class="act__stage">
+      <div class="thoughts" id="thoughts" aria-hidden="true"></div>
+      <p class="act__note act__note--arrive">Something crossed your mind this morning.</p>
+      <p class="act__note act__note--lose">You can no longer remember what it was.</p>
+      <p class="sr">Thoughts arrive all day; by the afternoon you can no longer remember what they were.</p>
     </div>
   </section>
 
-  <!-- The invitation. Sticky, not fixed: it rides the bottom edge of the
-       viewport the whole way down, then settles here as the page's last
-       element instead of hovering over the colophon. -->
+  <!-- Act 2 · the statement, one word at a time. -->
+  <section class="act act--statement">
+    <h2 class="statement" id="statement">A thought you never answer is a thought you lose.</h2>
+  </section>
+
+  <!-- Act 3 · the invitation, over a curtain of everything that was ever
+       said here. The pill docks under it. -->
+  <section class="act act--invite" id="invite">
+    <div class="curtain" id="curtain" aria-hidden="true"></div>
+    <p class="invite">Give it one sentence, and let it answer back.</p>
+  </section>
+
   <div class="dock">
     <a class="cta" href="./make.html">Unwrap My Gift</a>
   </div>
@@ -864,198 +821,208 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 
 <script>
 /* ------------------------------------------------------------
-   Layer 02's two fields.
-
-   `storm`  — the thoughts arriving. Each is dealt a position, a size, a
-              blur, a drift, and its own flash cycle. The cycles are long
-              (18–34s) but the visible window inside each is short (~36%),
-              so at any moment only a handful are lit. That ratio is what
-              makes it read as "occasional" rather than "a marquee".
-   `sunk`   — the same voice, buried. Drifts down through the dark section
-              and dims out. The pain point, said in motion.
-
-   Runs once at load. After that it is all CSS — no rAF, no scroll listener.
+   The ground's loose parts: the name in ghost letters, and dust.
+   Dealt once at load, never animated — they are the paper, not weather.
    ------------------------------------------------------------ */
 (function () {
-  var R      = function (a, b) { return a + Math.random() * (b - a); };
-  var chance = function (p) { return Math.random() < p; };
-
-  /* The brief supplied the first three. The rest are written in the same
-     register — first person, fragmentary, specific enough to be somebody's. */
-  var THOUGHTS = [
-    'What if I grow as a plant?',
-    "What if I'm a poem?",
-    'I need some space\u2026',
-    'What if silence has a colour?',
-    'I should call my mother.',
-    'What if the sea remembers?',
-    'Why did I keep this?',
-    "What if I'm early, not late?",
-    'Something about the light today.',
-    'What if rest is the work?',
-    'I forgot what I was going to say.',
-    'What if I begin again on a Tuesday?',
-    'What if nobody is watching?',
-    'The word for this in another language.'
-  ];
-
-  function shuffled() {
-    var a = THOUGHTS.slice(), i, j, t;
-    for (i = a.length - 1; i > 0; i--) {
-      j = Math.floor(Math.random() * (i + 1));
-      t = a[i]; a[i] = a[j]; a[j] = t;
-    }
-    return a;
+  var g = document.querySelector('.ground');
+  if (!g) return;
+  var R = function (a, b) { return a + Math.random() * (b - a); };
+  var frag = document.createDocumentFragment();
+  var letters = ['L', 'i', 'g', 'h', 't', 'o', 'n', 'g', 'h', 'i'];
+  for (var i = 0; i < letters.length; i++) {
+    var c = document.createElement('span');
+    c.className = 'ground__ch';
+    c.textContent = letters[i];
+    c.style.setProperty('--x', R(2, 90).toFixed(1) + '%');
+    c.style.setProperty('--y', R(4, 86).toFixed(1) + '%');
+    c.style.setProperty('--s', R(7, 15).toFixed(1) + 'vw');
+    c.style.setProperty('--o', R(0.028, 0.06).toFixed(3));
+    frag.appendChild(c);
   }
+  var n = Math.round(Math.min(90, Math.max(30, window.innerWidth * window.innerHeight / 18000)));
+  for (var k = 0; k < n; k++) {
+    var d = document.createElement('span');
+    d.className = 'ground__dust';
+    d.style.setProperty('--x', R(0, 100).toFixed(2) + '%');
+    d.style.setProperty('--y', R(0, 100).toFixed(2) + '%');
+    d.style.setProperty('--s', R(1, 2.2).toFixed(2) + 'px');
+    d.style.setProperty('--o', R(0.12, 0.38).toFixed(2));
+    frag.appendChild(d);
+  }
+  g.appendChild(frag);
+})();
 
+/* ------------------------------------------------------------
+   Layer 02's three acts.
+
+   Act 1 · thoughts. Seven of them, dealt positions in bands so no two
+   collide, each split into letters. Phase "arrive": they come up one by
+   one. Phase "lose": every letter is thrown a little way out and falls to
+   the foot of the stage, turning as it goes, and settles in a drift there.
+   The phase follows the scroll position inside the act; the act is two
+   screens tall and its stage is sticky, so the reader scrolls the thoughts
+   into being and then scrolls them apart.
+
+   Act 2 · the statement is revealed a word at a time once it is in view.
+
+   Act 3 · the curtain: rows of everything ever said here, faint, drifting
+   slowly left and right behind the invitation.
+   ------------------------------------------------------------ */
+(function () {
+  var R = function (a, b) { return a + Math.random() * (b - a); };
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var narrow = window.innerWidth < 640;
 
-  /* ---- storm ---- */
-  var storm = document.querySelector('.storm__field');
-  if (storm) {
-    var pool  = shuffled();
-    var count = Math.min(pool.length, narrow ? 5 :
-                Math.max(7, Math.round(window.innerWidth * window.innerHeight / 105000)));
-    var frag  = document.createDocumentFragment();
-
-    /* Each thought owns a horizontal band and jitters inside it. Fully random
-       y collides constantly once the column is narrow — two thoughts lit in the
-       same place is unreadable, and no amount of tuning opacity fixes it.
-       Banding rules the collision out structurally. */
-    var band = 64 / count;
-
+  /* ---- Act 1 ---- */
+  var THOUGHTS = [
+    'what if a morning could be kept',
+    'light falls where you stood',
+    'what if a thought could answer',
+    'a thought is a small weather',
+    'what if you drew it instead',
+    'nothing you do not name stays',
+    'say it once and it stays'
+  ];
+  var act = document.querySelector('.act--thoughts');
+  var host = document.getElementById('thoughts');
+  if (act && host) {
+    var count = narrow ? 5 : THOUGHTS.length;
+    var band = 56 / count;
+    var frag = document.createDocumentFragment();
     for (var i = 0; i < count; i++) {
-      var p = document.createElement('span');
       var t = document.createElement('span');
-      p.className = 'pop';
-      t.className = 'pop__t';
-      t.textContent = pool[i];
-      p.appendChild(t);
-
-      var set = function (el) { return function (k, v) { el.style.setProperty(k, v); }; }(p);
-
-      /* Kept clear of the bottom-left corner, where the note sits. */
-      set('--x', (narrow ? R(3, 22) : R(4, 70)).toFixed(2) + '%');
-      set('--y', (10 + i * band + R(0.1, 0.55) * band).toFixed(2) + '%');   /* 10%: air under the wordmark */
-      /* Drift stays under half a band so it can't wander into a neighbour. */
-      set('--dx', R(-5, 5).toFixed(2) + 'vw');
-      set('--dy', (narrow ? R(-1.4, 1.4) : R(-3, 3)).toFixed(2) + 'vh');
-      set('--t1', R(20, 38).toFixed(1) + 's');
-      set('--d1', (-R(0, 38)).toFixed(1) + 's');
-
-      /* A few sit further back — smaller and fainter. (Not blurred: see the
-         note on .pop__t in concept.css.) */
-      var near = chance(0.55);
-      /* Capped under the note's size: a thought is texture behind the
-         narrator's line, never a second headline. And never amber — the
-         accent lands on the turn and the invitation, nowhere else. */
-      set('--s',  (near ? R(1.1, 1.5) : R(0.95, 1.1)).toFixed(2) + 'rem');
-      set('--o',  (near ? R(0.62, 0.9) : R(0.3, 0.5)).toFixed(2));
-      set('--c',  'var(--color-ink)');
-
-      set('--t2', R(18, 34).toFixed(1)   + 's');
-      set('--d2', (-R(0, 34)).toFixed(1) + 's');
-
-      frag.appendChild(p);
+      t.className = 'thought';
+      /* alternate left / right, each in its own horizontal band */
+      var left = i % 2 === 0;
+      t.style.setProperty('--x', (narrow ? R(4, 14) : (left ? R(4, 22) : R(50, 64))).toFixed(1) + '%');
+      t.style.setProperty('--y', (12 + i * band + R(0, 0.4) * band).toFixed(1) + '%');
+      t.style.setProperty('--s', (narrow ? R(1.05, 1.3) : R(1.15, 1.7)).toFixed(2) + 'rem');
+      t.style.setProperty('--d', (0.35 + i * 0.55).toFixed(2) + 's');
+      var text = THOUGHTS[i];
+      for (var j = 0; j < text.length; j++) {
+        var ch = document.createElement('span');
+        ch.className = 'ch';
+        ch.textContent = text[j];
+        /* thrown a little way out, then down to the drift at the foot */
+        ch.style.setProperty('--sx', R(-6, 6).toFixed(1) + 'vw');
+        ch.style.setProperty('--sy', R(-10, 2).toFixed(1) + 'vh');
+        ch.style.setProperty('--sr', R(-40, 40).toFixed(0) + 'deg');
+        ch.style.setProperty('--fx', R(-9, 9).toFixed(1) + 'vw');
+        ch.style.setProperty('--fr', R(-120, 120).toFixed(0) + 'deg');
+        ch.style.setProperty('--cd', R(0, 0.9).toFixed(2) + 's');
+        t.appendChild(ch);
+      }
+      frag.appendChild(t);
     }
-    storm.appendChild(frag);
+    host.appendChild(frag);
+
+    /* Every letter falls to the same drift line, however high it started. */
+    function measure() {
+      var stage = act.querySelector('.act__stage').getBoundingClientRect();
+      var floor = stage.top + stage.height * 0.8;
+      var chs = host.querySelectorAll('.ch');
+      for (var k = 0; k < chs.length; k++) {
+        var b = chs[k].getBoundingClientRect();
+        chs[k].style.setProperty('--fy', (floor - b.bottom + R(-8, 8)).toFixed(0) + 'px');
+      }
+    }
+
+    var phase = 'idle', measured = false;
+    function setPhase(p) {
+      if (p === phase) return;
+      if (p === 'lose' && !measured) { measure(); measured = true; }
+      phase = p;
+      act.dataset.phase = p;
+    }
+    function onScroll() {
+      var r = act.getBoundingClientRect();
+      var vh = window.innerHeight;
+      if (r.bottom <= 0 || r.top >= vh) return;             /* not on screen */
+      var travel = r.height - vh;                            /* one screen of scroll inside the act */
+      var progress = travel > 0 ? Math.min(1, Math.max(0, -r.top / travel)) : 1;
+      if (reduce) { setPhase('arrive'); return; }
+      setPhase(progress < 0.42 ? 'arrive' : 'lose');
+    }
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () { ticking = false; onScroll(); });
+    }, { passive: true });
+    window.addEventListener('resize', function () { measured = false; if (phase === 'lose') { measure(); measured = true; } });
+    onScroll();
   }
 
-  /* ---- the dark field ----
-     Dense on purpose: the whole pool of thoughts, popping in and sinking out
-     of the dark. This field IS the pain point — it replaces the sentence that
-     used to say it. Banded so nothing overlaps; held to one side of the copy
-     column so the lede always wins. */
-  var dark = document.querySelector('.swarm-dark');
-  if (dark) {
-    var pool2  = shuffled();
-    var many   = narrow ? 6 : 10;
-    /* Desktop: the upper 56% of the night — the lede is top-left, the turn
-       bottom-right, so the field lives beside the lede and above the turn.
-       Narrow: one column, so the field takes the gap between the two. */
-    /* Desktop: the top-right quarter only — beside the lede, and a clear
-       band above the turn, which owns the lower right. */
-    var sband  = (narrow ? 24 : 34) / many;
-    var sfrom  = narrow ? 36 : 6;
-    var frag2  = document.createDocumentFragment();
-    for (var k = 0; k < many; k++) {
-      var s = document.createElement('span');
-      s.className = 'sunk__t';
-      s.textContent = pool2[k];
-      s.style.setProperty('--x',  (narrow ? R(6, 40) : R(52, 88)).toFixed(2) + '%');
-      s.style.setProperty('--y',  (sfrom + k * sband + R(0.1, 0.5) * sband).toFixed(2) + '%');
-      s.style.setProperty('--s',  R(0.9, 1.15).toFixed(2) + 'rem');   /* texture, never a second headline */
-      s.style.setProperty('--o',  (narrow ? R(0.12, 0.24) : R(0.18, 0.36)).toFixed(2));
-      s.style.setProperty('--t1', R(9, 16).toFixed(1)    + 's');
-      s.style.setProperty('--d1', (-R(0, 16)).toFixed(1) + 's');
-      frag2.appendChild(s);
+  /* ---- Act 2 ---- */
+  var st = document.getElementById('statement');
+  if (st) {
+    var words = st.textContent.trim().split(/\s+/);
+    st.textContent = '';
+    for (var w = 0; w < words.length; w++) {
+      var span = document.createElement('span');
+      span.className = 'w';
+      span.style.setProperty('--i', w);
+      span.textContent = words[w];
+      st.appendChild(span);
+      if (w < words.length - 1) st.appendChild(document.createTextNode(' '));
     }
-    dark.appendChild(frag2);
+    /* Reveal once it is well inside the viewport. Checked on scroll rather
+       than through an observer so it also fires when the page is scrolled
+       by script, restored, or opened part-way down. */
+    function revealStatement() {
+      if (st.classList.contains('is-in')) return;
+      var b = st.getBoundingClientRect(), vh = window.innerHeight;
+      if (reduce || (b.top < vh * 0.7 && b.bottom > vh * 0.2)) st.classList.add('is-in');
+    }
+    window.addEventListener('scroll', revealStatement, { passive: true });
+    revealStatement();
   }
 
-  /* ---- plates ----
-     Floating, heavily blurred photographs behind the turn.
-
-     THESE ARE SWAPPABLE SLOTS. Each plate paints whatever is in --img.
-     With no --img it falls back to one of the soft two-stop fields below,
-     which at this blur is what a photograph looks like anyway. To use
-     real pictures, set --img on the plate:  --img: url('./photos/01.jpg')
-     Nothing else has to change.
-
-     Restraint is structural, not by eye: opacity is capped at 0.34,
-     saturation pulled to 0.55, and the blur floor is high enough that no
-     plate can resolve into a subject that competes with the question. */
-  var plates = document.querySelector('.plates');
-  if (plates) {
-    var FIELDS = [
-      'radial-gradient(118% 92% at 32% 26%, color-mix(in oklch, var(--color-accent) 16%, transparent), transparent 74%),' +
-      'radial-gradient(104% 84% at 74% 72%, color-mix(in oklch, var(--color-paper-3) 40%, transparent), transparent 72%)',
-
-      'radial-gradient(110% 96% at 68% 30%, color-mix(in oklch, var(--color-glow) 46%, transparent), transparent 70%),' +
-      'radial-gradient(96% 88% at 28% 74%, color-mix(in oklch, var(--color-neutral) 34%, transparent), transparent 74%)',
-
-      'radial-gradient(124% 88% at 46% 68%, color-mix(in oklch, var(--color-paper-3) 52%, transparent), transparent 72%),' +
-      'radial-gradient(90% 80% at 76% 22%, color-mix(in oklch, var(--color-accent) 12%, transparent), transparent 70%)',
-
-      'radial-gradient(112% 90% at 24% 58%, color-mix(in oklch, var(--color-glow) 38%, transparent), transparent 72%),' +
-      'radial-gradient(100% 86% at 70% 34%, color-mix(in oklch, var(--color-paper-3) 36%, transparent), transparent 74%)'
+  /* ---- Act 3 ---- */
+  var curtain = document.getElementById('curtain');
+  if (curtain) {
+    var SAID = [
+      'light falls where you were standing', 'a thought is a small weather',
+      'the day keeps nothing you do not name', 'memory is a room with the door left open',
+      'say it once and it stays', 'everything passing leaves a line',
+      'light on light on light', 'poetry is a moving space'
     ];
-    var RATIOS = ['4 / 3', '3 / 4', '1 / 1', '16 / 10', '5 / 4'];
-
-    var pcount = narrow ? 3 : 4;
-    var pband  = 50 / pcount;   /* from 42% down: the plates belong to the turn */
-    var frag3  = document.createDocumentFragment();
-    for (var n = 0; n < pcount; n++) {
-      var pl = document.createElement('span');
-      pl.className = 'plate';
-      var ps = function (el) { return function (k, v) { el.style.setProperty(k, v); }; }(pl);
-      ps('--img', FIELDS[n % FIELDS.length]);
-      ps('--ar',  RATIOS[Math.floor(Math.random() * RATIOS.length)]);
-      ps('--x',   R(-6, 74).toFixed(2) + '%');
-      ps('--y',   (42 + n * pband + R(0.05, 0.4) * pband).toFixed(2) + '%');
-      ps('--w',   (narrow ? R(46, 78) : R(20, 40)).toFixed(1) + 'vw');
-      ps('--bl',  R(34, 48).toFixed(1) + 'px');   /* light, not shape; scale is gone so this is cheap */
-      ps('--o',   R(0.12, 0.22).toFixed(2));
-      ps('--dx',  R(-4, 4).toFixed(2) + 'vw');
-      ps('--dy',  R(-3, 3).toFixed(2) + 'vh');
-      ps('--t',   R(26, 46).toFixed(1)   + 's');
-      ps('--d',   (-R(0, 46)).toFixed(1) + 's');
-      frag3.appendChild(pl);
+    var rows = narrow ? 7 : 9;
+    var frag3 = document.createDocumentFragment();
+    for (var r2 = 0; r2 < rows; r2++) {
+      var row = document.createElement('div');
+      row.className = 'curtain__row';
+      var start = (r2 * 3) % SAID.length, parts = [];
+      for (var q = 0; q < SAID.length * 2; q++) parts.push(SAID[(start + q) % SAID.length]);
+      var html = '';
+      for (var u = 0; u < parts.length; u++) {
+        var lit = (u + r2) % 7 === 3;
+        html += '<span' + (lit ? ' class="lit"' : '') + '>' + parts[u] + '</span><i>·</i>';
+      }
+      row.innerHTML = html;
+      row.style.setProperty('--t', R(70, 130).toFixed(0) + 's');
+      row.style.setProperty('--d', (-R(0, 130)).toFixed(0) + 's');
+      row.style.setProperty('--dir', r2 % 2 ? '1' : '-1');
+      row.style.setProperty('--o', R(0.16, 0.34).toFixed(2));
+      row.style.setProperty('--s', R(1.05, 1.5).toFixed(2) + 'rem');
+      frag3.appendChild(row);
     }
-    plates.appendChild(frag3);
+    curtain.appendChild(frag3);
   }
 })();
 
 /* ------------------------------------------------------------
    The substrate.
    Under the paper the name exists as a bitmap — the way the machine holds
-   it — gutter to gutter across the foot of the page, in ink so faint it
-   is a watermark until light passes over it. A read head sweeps through the word and, where it is, the
-   cells warm to amber and become legible; a cell dims for a frame or
-   three and recovers; a few cells are lit amber all along, the same
-   pixel lights as layer 01; a caret blinks after the last letter. Canvas,
-   ~12 fps, drawn only while on screen; one still frame under reduced
-   motion. Nothing here flickers faster than 0.6 Hz.
+   it — gutter to gutter across the foot of the page, and only the upper
+   half of it: the rest has sunk below the page's edge. Ink so faint it is
+   a watermark; a read head sweeps through and warms the cells it passes
+   to amber; single cells glint — a brief amber point with a faint cross,
+   the way light catches a grain — and a few stay lit, the same pixel
+   lights as layer 01. Canvas, ~12 fps, drawn only while on screen; one
+   still frame under reduced motion. Every glint is one cell, once, for
+   under half a second; nothing here flickers faster than 0.6 Hz.
    ------------------------------------------------------------ */
 (function () {
   var canvas = document.getElementById('substrate');
@@ -1063,14 +1030,15 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   var ctx = canvas.getContext('2d');
   /* Fewer, larger cells on a phone: a 3px cell is a texture, not a letter. */
   var narrow = window.innerWidth < 640;
-  var COLS = narrow ? 64 : 128, ROWS = narrow ? 13 : 24, GAP = 0.24, TEXT = 'Light on Light';
+  var COLS = narrow ? 72 : 160, ROWS = narrow ? 15 : 30, GAP = 0.26, TEXT = 'Light on Light';
+  var SHOW = 0.5;   /* the fraction of the bitmap's height left above the page's edge */
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var css = getComputedStyle(document.documentElement);
   var tok = function (name, fb) { var v = css.getPropertyValue(name).trim(); return v || fb; };
   var INK   = tok('--color-ink', '#2b2622');
   var AMBER = tok('--color-accent', '#c07a2a');
 
-  var cells = [], caret = { c: 0, r: 0 }, cw = 0;
+  var cells = [], cw = 0;
 
   /* Rasterise the wordmark at cell resolution and keep every cell the
      letters touch. Edge cells keep their partial coverage as a dimmer base,
@@ -1095,11 +1063,9 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
         var aa = Math.min(1, a * 1.15), amber = Math.random() < 0.025;
         /* Ink cells are a watermark; the amber ones are lights. */
         cells.push({ c: c, r: r, amber: amber,
-                     base: amber ? 0.5 + 0.35 * aa : 0.12 + 0.2 * aa, dip: 0, left: 0 });
+                     base: amber ? 0.5 + 0.35 * aa : 0.12 + 0.2 * aa, dip: 0, left: 0, g: 0 });
       }
     }
-    caret.c = Math.min(COLS - 2, Math.ceil(x + w) + 2);
-    caret.r = y;
   }
 
   function layout() {
@@ -1109,10 +1075,12 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
     canvas.width = Math.round(cssW * dpr);
     canvas.height = Math.round(cw * ROWS * dpr);
     canvas.style.height = (cw * ROWS) + 'px';
+    /* The lower part hangs below the footer's clipped box: cut in half. */
+    canvas.style.marginBlockEnd = (-cw * ROWS * (1 - SHOW)) + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  var sweep = -4, caretOn = true, frame = 0, last = 0, running = false, onScreen = false, raf = 0;
+  var sweep = -4, frame = 0, last = 0, running = false, onScreen = false, raf = 0;
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1120,20 +1088,28 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
     for (var i = 0; i < cells.length; i++) {
       var k = cells[i], b = k.base, col = k.amber ? AMBER : INK;
       if (!reduce) {
-        if (k.left > 0) { b = k.dip; k.left--; }
+        if (k.g > 0) {
+          /* A glint: bright amber for a frame, then out over four more. */
+          b = 0.3 + 0.65 * (k.g / 5); col = AMBER;
+          if (k.g >= 4) {
+            ctx.globalAlpha = b * 0.35; ctx.fillStyle = AMBER;
+            ctx.fillRect((k.c - 1) * cw + pad, k.r * cw + pad, s, s);
+            ctx.fillRect((k.c + 1) * cw + pad, k.r * cw + pad, s, s);
+            ctx.fillRect(k.c * cw + pad, (k.r - 1) * cw + pad, s, s);
+            ctx.fillRect(k.c * cw + pad, (k.r + 1) * cw + pad, s, s);
+          }
+          k.g--;
+        }
+        else if (k.left > 0) { b = k.dip; k.left--; }
+        else if (Math.random() < 0.0045) { k.g = 5; }
         else if (Math.random() < 0.002) { k.dip = k.base * 0.15; k.left = 1 + Math.floor(Math.random() * 3); }
         /* Where the light is passing, the word warms and can be read. */
         var dc = Math.abs(k.c - sweep);
-        if (dc < 3) { b = Math.min(0.72, b + (3 - dc) * 0.18); col = AMBER; }
+        if (dc < 3 && k.g === 0) { b = Math.min(0.72, b + (3 - dc) * 0.18); col = AMBER; }
       }
       ctx.globalAlpha = b;
       ctx.fillStyle = col;
       ctx.fillRect(k.c * cw + pad, k.r * cw + pad, s, s);
-    }
-    if (caretOn || reduce) {
-      ctx.globalAlpha = 0.75;
-      ctx.fillStyle = AMBER;
-      ctx.fillRect(caret.c * cw + pad, (caret.r - 3) * cw + pad, s, cw * 4 - pad * 2);
     }
     ctx.globalAlpha = 1;
   }
@@ -1144,7 +1120,6 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
     if (now - last < 83) return;            /* ~12 fps is plenty for a bitmap */
     last = now; frame++;
     sweep += 0.6; if (sweep > COLS + 6) sweep = -4;   /* one pass ≈ 16 s */
-    if (frame % 11 === 0) caretOn = !caretOn;         /* ≈ 0.55 Hz */
     draw();
   }
   function start() { if (running || reduce || !onScreen || document.hidden) return; running = true; raf = requestAnimationFrame(tick); }
