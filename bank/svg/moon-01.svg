@@ -1,0 +1,13 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  <g transform="rotate(1.8 340 340)">
+    <path d="M 180,310 A 30,30 0 0,1 180,370"
+          stroke="#1a1a1a" stroke-width="2.8" fill="none" stroke-linecap="round"
+          stroke-dasharray="3,2"/>
+    <circle cx="340" cy="340" r="30" stroke="#1a1a1a" stroke-width="2.8" fill="none"
+            stroke-dasharray="4,2.5"/>
+    <path d="M 500,310 A 30,30 0 0,0 500,370"
+          stroke="#1a1a1a" stroke-width="2.8" fill="none" stroke-linecap="round"
+          stroke-dasharray="3,2"/>
+  </g>
+</svg>

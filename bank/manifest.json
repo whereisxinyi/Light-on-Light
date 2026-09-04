@@ -1,0 +1,76 @@
+{
+ "items": [
+  {
+   "file": "moon-01.svg",
+   "anchor": "moon",
+   "sentence": "The moon does not owe us a full face.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 612
+  },
+  {
+   "file": "moon-02.svg",
+   "anchor": "moon",
+   "sentence": "Tonight I am mostly shadow.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 835
+  },
+  {
+   "file": "moon-03.svg",
+   "anchor": "moon",
+   "sentence": "Night keeps what the day drops.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1177
+  },
+  {
+   "file": "moon-04.svg",
+   "anchor": "moon",
+   "sentence": "What if I begin again at midnight?",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1006
+  },
+  {
+   "file": "moon-05.svg",
+   "anchor": "moon",
+   "sentence": "月亮不欠我们一张圆脸。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 565
+  },
+  {
+   "file": "moon-06.svg",
+   "anchor": "moon",
+   "sentence": "夜里把白天掉的都收起来。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1438
+  },
+  {
+   "file": "rings-01.svg",
+   "anchor": "rings",
+   "sentence": "Attention is the rarest kind of care.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 761
+  },
+  {
+   "file": "rings-02.svg",
+   "anchor": "rings",
+   "sentence": "I am trying to stay in the room I am in.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1013
+  },
+  {
+   "file": "rings-03.svg",
+   "anchor": "rings",
+   "sentence": "Listen, and the noise sorts itself.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 2790
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    <!-- 脸部轮廓 -->
+    <path d="M 280 140 Q 320 130 350 150 Q 360 170 350 200 Q 320 215 280 210 Q 260 190 270 160 Z" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    
+    <!-- 眼睛 -->
+    <circle cx="300" cy="170" r="3" fill="#1a1a1a"/>
+    
+    <!-- 身体虚线延伸到阴影中 -->
+    <path d="M 310 210 Q 315 280 310 360" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="4,3" fill="none" opacity="0.6"/>
+    
+    <!-- 大面积阴影 -->
+    <path d="M 260 200 Q 240 240 250 300 Q 230 360 280 420 Q 350 450 420 430 Q 450 390 440 320 Q 460 260 430 200 Q 390 160 330 180 Q 280 185 260 200 Z" fill="#1a1a1a" opacity="0.8"/>
+  </g>
+</svg>

@@ -1,0 +1,20 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.2 340 340)">
+    <!-- Outermost frame - the room -->
+    <path d="M 80 100 Q 90 95 600 100 Q 605 105 600 580 Q 590 585 80 580 Q 75 575 80 100" 
+          stroke="#1a1a1a" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Middle frame - the staying -->
+    <path d="M 150 150 Q 160 145 530 150 Q 540 155 535 530 Q 525 535 150 530 Q 140 525 150 150" 
+          stroke="#1a1a1a" stroke-width="1.6" fill="none" stroke-dasharray="5,3" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Inner frame - presence -->
+    <path d="M 220 215 Q 230 210 460 213 Q 468 218 465 470 Q 455 475 215 473 Q 210 468 220 215" 
+          stroke="#1a1a1a" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Center - the self -->
+    <circle cx="340" cy="343" r="1.5" fill="#1a1a1a"/>
+  </g>
+</svg>

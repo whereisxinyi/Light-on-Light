@@ -1,0 +1,71 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Bank — curate</title>
+<meta name="color-scheme" content="light">
+<style>
+  :root { --paper:#f5f1ec; --ink:#2b2622; --muted:#7d766b; --rule:#d9d3ca; --amber:#c58a3a; --bad:#b0483a; }
+  body { margin:0; background:var(--paper); color:var(--ink); font:14px/1.5 "Newsreader","Georgia",serif; padding:2rem clamp(1rem,4vw,4rem) 6rem; }
+  h1 { font-family:"Instrument Serif","Georgia",serif; font-weight:400; font-size:2rem; margin:0 0 .25rem; }
+  .sub { color:var(--muted); margin:0 0 1.5rem; font-family:ui-monospace,Menlo,monospace; font-size:12px; letter-spacing:.08em; }
+  .bar { position:sticky; top:0; background:var(--paper); padding:.6rem 0; border-bottom:1px solid var(--rule); display:flex; gap:1rem; align-items:center; z-index:2; font-family:ui-monospace,Menlo,monospace; font-size:12px; }
+  .bar button { font:inherit; padding:.4rem .8rem; border:1px solid var(--ink); background:#fff; border-radius:999px; cursor:pointer; }
+  h2 { font-family:ui-monospace,Menlo,monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:2.5rem 0 .8rem; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1rem; }
+  figure { margin:0; border:1px solid var(--rule); background:#fbf9f6; padding:.6rem; cursor:pointer; position:relative; }
+  figure img { display:block; width:100%; aspect-ratio:1; background:#fdfdfb; }
+  figure figcaption { font-size:12px; color:var(--muted); margin-top:.5rem; font-style:italic; min-height:2.6em; }
+  figure .k { position:absolute; top:.5rem; right:.5rem; font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.1em; padding:.15rem .45rem; border-radius:999px; background:#fff; border:1px solid var(--rule); }
+  figure[data-keep="true"] { outline:2px solid var(--amber); }
+  figure[data-keep="true"] .k { background:var(--amber); color:#fff; border-color:var(--amber); }
+  figure[data-keep="false"] { opacity:.35; }
+  figure[data-keep="false"] .k { color:var(--bad); }
+  textarea { width:100%; height:8rem; font:12px ui-monospace,Menlo,monospace; margin-top:1rem; }
+</style>
+<h1>The bank</h1>
+<p class="sub">CLICK A DRAWING TO KEEP IT · CLICK AGAIN TO DISCARD · A THIRD CLICK CLEARS · CHOICES SAVE IN THIS BROWSER</p>
+<div class="bar"><span id="count"></span><button id="export">Copy manifest with choices</button><button id="clear">Clear choices</button></div>
+<div id="root"></div>
+<textarea id="out" readonly hidden></textarea>
+<script>
+(async function () {
+  const m = await (await fetch('manifest.json?' + Date.now())).json();
+  const KEY = 'lol-bank-choices';
+  let choices = {};
+  try { choices = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+  const root = document.getElementById('root');
+  const byAnchor = {};
+  m.items.forEach(it => (byAnchor[it.anchor] = byAnchor[it.anchor] || []).push(it));
+  function count() {
+    const kept = m.items.filter(it => choices[it.file] === true).length;
+    const dropped = m.items.filter(it => choices[it.file] === false).length;
+    document.getElementById('count').textContent = `${m.items.length} drawings · ${kept} kept · ${dropped} discarded · ${m.items.length - kept - dropped} undecided`;
+  }
+  Object.keys(byAnchor).forEach(a => {
+    const h = document.createElement('h2'); h.textContent = a + ' — ' + byAnchor[a].length; root.appendChild(h);
+    const g = document.createElement('div'); g.className = 'grid'; root.appendChild(g);
+    byAnchor[a].forEach(it => {
+      const f = document.createElement('figure');
+      f.dataset.file = it.file;
+      f.dataset.keep = choices[it.file] === undefined ? '' : String(choices[it.file]);
+      f.innerHTML = `<img src="svg/${it.file}" loading="lazy" alt=""><span class="k">${it.engine}</span><figcaption>${it.sentence}</figcaption>`;
+      f.addEventListener('click', () => {
+        const cur = choices[it.file];
+        const next = cur === undefined ? true : (cur === true ? false : undefined);
+        if (next === undefined) delete choices[it.file]; else choices[it.file] = next;
+        f.dataset.keep = next === undefined ? '' : String(next);
+        localStorage.setItem(KEY, JSON.stringify(choices));
+        count();
+      });
+      g.appendChild(f);
+    });
+  });
+  count();
+  document.getElementById('export').addEventListener('click', async () => {
+    const out = { items: m.items.map(it => Object.assign({}, it, { keep: choices[it.file] === undefined ? null : choices[it.file] })) };
+    const json = JSON.stringify(out, null, 1);
+    const ta = document.getElementById('out'); ta.hidden = false; ta.value = json;
+    try { await navigator.clipboard.writeText(json); document.getElementById('export').textContent = 'Copied — paste into bank/manifest.json'; } catch (e) { ta.select(); }
+  });
+  document.getElementById('clear').addEventListener('click', () => { if (confirm('Clear every choice?')) { localStorage.removeItem(KEY); location.reload(); } });
+})();
+</script>

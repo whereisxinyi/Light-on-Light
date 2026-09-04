@@ -898,8 +898,24 @@ MAKE_JS = r"""
              'sentence write writing wrote read reading language name',
     scatter: 'forget forgot scatter gone lose lost disappear fade vanish leave leaving fleeting ' +
              'moment brief passing slip escape almost never',
-    weight:  'weight heavy carry hold burden load lift press down pull gravity anchor sink deep'
+    weight:  'weight heavy carry hold burden load lift press down pull gravity anchor sink deep',
+    /* The bank's own anchors. The built-in drawer borrows a shape for each
+       (see BORROW); the bank has drawings of its own. */
+    moon:    'moon night midnight dark darkness shadow shadows star stars evening sleep dream dreams tonight',
+    rain:    'rain rains rained raining drop drops weather storm cloud clouds wet umbrella',
+    window:  'window windows glass wall watch looking view outside inside frame',
+    door:    'door doors open opened close closed enter exit knock room key keys',
+    bridge:  'bridge bridges cross crossing between meet meeting us together apart shore',
+    mountain:'mountain mountains climb climbed hill hills summit peak high height steep',
+    fire:    'fire flame flames burn burning lit match candle warm warmth spark ember ash',
+    hand:    'hand hands touch touched palm finger fingers call mother father friend hug held',
+    home:    'home house roof kitchen table bed door stay family return',
+    wait:    'wait waiting rest slow patience pause still kettle tea sunday',
+    farewell:'goodbye farewell leave leaving left gone ending end last passing lose losing'
   };
+  var BORROW = { moon: 'rings', rain: 'scatter', window: 'contrast', door: 'horizon', bridge: 'thread',
+                 mountain: 'horizon', fire: 'sprout', hand: 'weight', home: 'horizon', wait: 'rings',
+                 farewell: 'scatter' };
 
   /* Words with a literal AND a figurative sense — the skill's Mode 2, its
      highest-priority mode. Drawing the literal one and letting the reader
@@ -924,7 +940,18 @@ MAKE_JS = r"""
     horizon: '呼吸 大海 天空 远方 距离 地平线 孤独 独自 空旷 辽阔 田野 清晨 阳光 黎明 自由 海 风 光 晨',
     thread:  '旅程 旅行 跟随 迷路 寻找 找到 故事 文字 句子 语言 名字 连接 线 路 诗 字 词 歌 信 写 读 桥',
     scatter: '忘记 遗忘 散落 消失 淡去 逝去 离开 瞬间 短暂 溜走 错过 飘散 流逝 来不及',
-    weight:  '重量 沉重 背负 负担 举起 下沉 深处 放下 扛 压 锚'
+    weight:  '重量 沉重 背负 负担 举起 下沉 深处 放下 扛 压 锚',
+    moon:    '月亮 月光 夜晚 深夜 午夜 黑暗 影子 星星 星空 睡 梦 今晚 月 夜 星',
+    rain:    '下雨 雨水 雨天 雨滴 乌云 天气 暴雨 伞 雨 云',
+    window:  '窗户 窗外 窗前 玻璃 墙 看着 望 窗',
+    door:    '门口 开门 关门 敲门 钥匙 房间 进来 出去 门',
+    bridge:  '桥 相遇 之间 一起 分开 岸 对岸 渡',
+    mountain:'山 爬山 登山 山顶 高处 陡 峰',
+    fire:    '火 火焰 燃烧 点燃 火柴 蜡烛 温暖 火花 灰烬',
+    hand:    '手 触碰 手掌 手指 打电话 妈妈 爸爸 朋友 拥抱 握',
+    home:    '家 房子 屋顶 厨房 餐桌 床 回家 家人',
+    wait:    '等待 等 休息 慢 耐心 停 水壶 茶 周日',
+    farewell:'再见 告别 离开 走了 结束 最后 经过 失去 道别'
   };
   var PUNS_ZH = '光 重 根 线 沉 深 流 落 散 长 断 种 背 转 空 浮 烧 触 折'.split(' ');
   var CONTRAST_ZH = ['但', '却', '而是', '而不是', '与其', '宁可', '宁愿', '还是', '可是',
@@ -1135,7 +1162,12 @@ MAKE_JS = r"""
 
   /* ---------- assemble the plate ---------- */
   function draw(text) {
-    var a = analyse(text);
+    var _a = analyse(text);
+    if (BORROW[_a.shape]) { _a.shape = BORROW[_a.shape]; }
+    return drawWith(text, _a);
+  }
+  function drawWith(text, a0) {
+    var a = a0;
     var r = rngFrom(hash(text.trim().toLowerCase()));
     var parts = SHAPES[a.shape](r);
     var tilt = (r() * 2 - 1) * 1.4;                    /* the skill's 1–2 degrees, once */
@@ -1375,6 +1407,35 @@ MAKE_JS = r"""
     });
   }
 
+  /* The bank: drawings the studio made earlier, kept on the site itself, so
+     a studio that is out of reach still answers in the same hand. Chosen by
+     anchor, then by the sentence's hash — the same sentence always finds
+     the same drawing. Once the bank is curated only kept drawings count. */
+  var bankIndex = null;
+  function bankDraw(text) {
+    var load = bankIndex ? Promise.resolve(bankIndex) :
+      fetch('./bank/manifest.json').then(function (r) {
+        if (!r.ok) throw new Error('no bank');
+        return r.json();
+      }).then(function (m) { bankIndex = m.items || []; return bankIndex; });
+    return load.then(function (items) {
+      var kept = items.filter(function (it) { return it.keep === true; });
+      var pool = kept.length ? kept : items.filter(function (it) { return it.keep !== false; });
+      if (!pool.length) throw new Error('empty bank');
+      var a = analyse(text);
+      var same = pool.filter(function (it) { return it.anchor === a.shape; });
+      var cands = same.length ? same : pool;
+      var pick = cands[hash(text) % cands.length];
+      return fetch('./bank/svg/' + pick.file).then(function (r) {
+        if (!r.ok) throw new Error('no drawing');
+        return r.text();
+      }).then(function (svg) {
+        return { svg: sanitizeSVG(svg), via: 'bank',
+                 meta: { anchor: a.anchor, mode: a.mode, shape: a.shape } };
+      });
+    });
+  }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var text = field.value.trim().replace(/\s+/g, ' ');
@@ -1393,7 +1454,10 @@ MAKE_JS = r"""
     /* Claude first; the built-in generator only when the studio is
        unreachable (double-clicked file, CLI missing, timeout). The gift
        always says which hand drew it. */
+    /* Studio → bank → built-in generator. Only the last is called offline. */
     var art = askClaude(text)['catch'](function () {
+      return bankDraw(text);
+    })['catch'](function () {
       var local = draw(text);
       return { svg: local.svg, via: 'local', meta: local.meta };
     });

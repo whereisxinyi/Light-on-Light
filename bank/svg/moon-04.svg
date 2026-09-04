@@ -1,0 +1,23 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.2 340 340)">
+    <!-- 主圆形钟盘 -->
+    <circle cx="340" cy="340" r="140" stroke="#1a1a1a" stroke-width="3" fill="none" stroke-dasharray="12,10"/>
+    
+    <!-- 中央光线 -->
+    <path d="M 340 195 Q 338 140 340 75" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="7,5"/>
+    
+    <!-- 左侧光线 -->
+    <path d="M 310 205 Q 298 140 328 70" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,6" opacity="0.75"/>
+    
+    <!-- 右侧光线 -->
+    <path d="M 370 205 Q 382 140 352 70" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,6" opacity="0.75"/>
+    
+    <!-- 外层涟漪 -->
+    <circle cx="340" cy="340" r="210" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-dasharray="8,12" opacity="0.4"/>
+    
+    <!-- 中心点 -->
+    <circle cx="340" cy="340" r="3" fill="#1a1a1a"/>
+  </g>
+</svg>
