@@ -30,6 +30,11 @@ FONTS = {
     "geistmono.woff2":
         "https://fonts.gstatic.com/s/geistmono/v6/"
         "or3yQ6H-1_WfwkMZI_qYPLs1a-t7PU0AbeE9KK5U5Cl4PuCTfNg.woff2",
+    # Newsreader — the text face. Static instances (no opsz axis: 22–25 KB each
+    # instead of 60), regular + medium + italic.
+    "newsreader.woff2":        "https://fonts.gstatic.com/s/newsreader/v26/cY9qfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBCzBDXXD9JVF438weI_wC-ZFHDWwgUii.woff2",
+    "newsreader-medium.woff2": "https://fonts.gstatic.com/s/newsreader/v26/cY9qfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBCzBDXXD9JVF438wSo_wC-ZFHDWwgUii.woff2",
+    "newsreader-italic.woff2": "https://fonts.gstatic.com/s/newsreader/v26/cY9kfjOCX1hbuyalUrK439vogqC9yFZCYg7oRZaLP4obnf7fTXglsMwoT9ZHFjSShVCjzSY.woff2",
 }
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/120.0 Safari/537.36")
@@ -47,10 +52,10 @@ def font_b64(name: str) -> str:
 
 
 FACES = """/* ------------------------------------------------------------
-   Fonts, embedded. Latin subsets of Instrument Serif and Geist Mono,
-   base64'd so this file needs no network at all — open it from Finder,
-   from a USB stick, from a plane. Both are SIL Open Font License 1.1,
-   which permits embedding.
+   Fonts, embedded. Latin subsets of Instrument Serif (display), Newsreader
+   (text: regular, medium, italic) and Geist Mono, base64'd so this file
+   needs no network at all — open it from Finder, from a USB stick, from a
+   plane. All three are SIL Open Font License 1.1, which permits embedding.
    ------------------------------------------------------------ */
 @font-face {
   font-family: "Instrument Serif";
@@ -61,6 +66,21 @@ FACES = """/* ------------------------------------------------------------
   font-family: "Geist Mono";
   font-style: normal; font-weight: 400; font-display: swap;
   src: url(data:font/woff2;base64,__MONO__) format("woff2");
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal; font-weight: 400; font-display: swap;
+  src: url(data:font/woff2;base64,__NR__) format("woff2");
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal; font-weight: 500; font-display: swap;
+  src: url(data:font/woff2;base64,__NRM__) format("woff2");
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: italic; font-weight: 400; font-display: swap;
+  src: url(data:font/woff2;base64,__NRI__) format("woff2");
 }
 """
 
@@ -243,18 +263,18 @@ CONCEPT_JS = """
 
       /* Kept clear of the bottom-left corner, where the note sits. */
       set('--x', (narrow ? R(3, 22) : R(4, 70)).toFixed(2) + '%');
-      set('--y', (2 + i * band + R(0.1, 0.55) * band).toFixed(2) + '%');
+      set('--y', (10 + i * band + R(0.1, 0.55) * band).toFixed(2) + '%');   /* 10%: air under the wordmark */
       /* Drift stays under half a band so it can't wander into a neighbour. */
       set('--dx', R(-5, 5).toFixed(2) + 'vw');
       set('--dy', (narrow ? R(-1.4, 1.4) : R(-3, 3)).toFixed(2) + 'vh');
       set('--t1', R(20, 38).toFixed(1) + 's');
       set('--d1', (-R(0, 38)).toFixed(1) + 's');
 
-      /* A few sit further back — smaller, softer, slightly blurred. */
+      /* A few sit further back — smaller and fainter. (Not blurred: see the
+         note on .pop__t in concept.css.) */
       var near = chance(0.55);
-      set('--s',  (near ? R(1.15, 1.9) : R(0.82, 1.12)).toFixed(2) + 'rem');
+      set('--s',  (near ? R(1.15, 1.9) : R(0.95, 1.12)).toFixed(2) + 'rem');
       set('--o',  (near ? R(0.72, 1) : R(0.3, 0.55)).toFixed(2));
-      set('--bl', (near ? 0 : R(0.4, 1.6)).toFixed(2) + 'px');
       set('--c',  chance(0.14) ? 'var(--color-accent)' : 'var(--color-ink)');
 
       set('--t2', R(18, 34).toFixed(1)   + 's');
@@ -273,20 +293,23 @@ CONCEPT_JS = """
   var dark = document.querySelector('.swarm-dark');
   if (dark) {
     var pool2  = shuffled();
-    var many   = narrow ? 6 : Math.min(pool2.length, 12);
-    var sband  = 84 / many;
+    var many   = narrow ? 6 : pool2.length;
+    /* Desktop: the upper 56% of the night — the lede is top-left, the turn
+       bottom-right, so the field lives beside the lede and above the turn.
+       Narrow: one column, so the field takes the gap between the two. */
+    var sband  = (narrow ? 24 : 52) / many;
+    var sfrom  = narrow ? 36 : 4;
     var frag2  = document.createDocumentFragment();
     for (var k = 0; k < many; k++) {
       var s = document.createElement('span');
       s.className = 'sunk__t';
       s.textContent = pool2[k];
-      s.style.setProperty('--x',  (narrow ? R(4, 26) : R(38, 80)).toFixed(2) + '%');
-      s.style.setProperty('--y',  (-4 + k * sband + R(0.1, 0.5) * sband).toFixed(2) + '%');
-      s.style.setProperty('--s',  R(0.85, 1.45).toFixed(2) + 'rem');
-      s.style.setProperty('--o',  (narrow ? R(0.1, 0.2) : R(0.16, 0.38)).toFixed(2));
-      s.style.setProperty('--bl', R(0, 1.4).toFixed(2) + 'px');
-      s.style.setProperty('--t1', R(13, 26).toFixed(1)   + 's');
-      s.style.setProperty('--d1', (-R(0, 26)).toFixed(1) + 's');
+      s.style.setProperty('--x',  (narrow ? R(6, 40) : R(38, 80)).toFixed(2) + '%');
+      s.style.setProperty('--y',  (sfrom + k * sband + R(0.1, 0.5) * sband).toFixed(2) + '%');
+      s.style.setProperty('--s',  R(0.95, 1.45).toFixed(2) + 'rem');
+      s.style.setProperty('--o',  (narrow ? R(0.12, 0.24) : R(0.24, 0.5)).toFixed(2));
+      s.style.setProperty('--t1', R(9, 16).toFixed(1)    + 's');
+      s.style.setProperty('--d1', (-R(0, 16)).toFixed(1) + 's');
       frag2.appendChild(s);
     }
     dark.appendChild(frag2);
@@ -297,7 +320,7 @@ CONCEPT_JS = """
 
      THESE ARE SWAPPABLE SLOTS. Each plate paints whatever is in --img.
      With no --img it falls back to one of the soft two-stop fields below,
-     which at a 26–46px blur is what a photograph looks like anyway. To use
+     which at this blur is what a photograph looks like anyway. To use
      real pictures, set --img on the plate:  --img: url('./photos/01.jpg')
      Nothing else has to change.
 
@@ -322,7 +345,7 @@ CONCEPT_JS = """
     var RATIOS = ['4 / 3', '3 / 4', '1 / 1', '16 / 10', '5 / 4'];
 
     var pcount = narrow ? 3 : 5;
-    var pband  = 88 / pcount;
+    var pband  = 66 / pcount;   /* from 24% down: the plates belong to the turn */
     var frag3  = document.createDocumentFragment();
     for (var n = 0; n < pcount; n++) {
       var pl = document.createElement('span');
@@ -331,13 +354,12 @@ CONCEPT_JS = """
       ps('--img', FIELDS[n % FIELDS.length]);
       ps('--ar',  RATIOS[Math.floor(Math.random() * RATIOS.length)]);
       ps('--x',   R(-6, 74).toFixed(2) + '%');
-      ps('--y',   (-6 + n * pband + R(0.05, 0.4) * pband).toFixed(2) + '%');
+      ps('--y',   (24 + n * pband + R(0.05, 0.4) * pband).toFixed(2) + '%');
       ps('--w',   (narrow ? R(46, 78) : R(20, 40)).toFixed(1) + 'vw');
-      ps('--bl',  R(26, 46).toFixed(1) + 'px');
+      ps('--bl',  R(14, 22).toFixed(1) + 'px');   /* the fields are already soft; heavy blur only cost frames */
       ps('--o',   R(0.18, 0.34).toFixed(2));
       ps('--dx',  R(-4, 4).toFixed(2) + 'vw');
       ps('--dy',  R(-3, 3).toFixed(2) + 'vh');
-      ps('--sc',  R(0.94, 1.09).toFixed(3));
       ps('--t',   R(26, 46).toFixed(1)   + 's');
       ps('--d',   (-R(0, 46)).toFixed(1) + 's');
       frag3.appendChild(pl);
@@ -349,6 +371,15 @@ CONCEPT_JS = """
 
 CONCEPT_BODY = """
 <a class="skip" href="#invite">Skip to the invitation</a>
+
+<!-- Grain source — the same paper as layer 01. -->
+<svg class="filters" aria-hidden="true" focusable="false" width="0" height="0">
+  <filter id="grain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+</svg>
+<div class="grain" aria-hidden="true"></div>
 
 <header class="mast">
   <h1 class="mast__h"><a href="./index.html">Light on Light</a></h1>
@@ -363,33 +394,43 @@ CONCEPT_BODY = """
     <p class="storm__note">Thoughts arrive all day. You keep almost none of them.</p>
   </section>
 
-  <!-- Beat 1 · the pain. The surface drops to near-black: the light goes out,
-       and a dense field of thoughts pops in and out of it. -->
-  <section class="beat beat--dark">
+  <!-- Night · one dark section, two moments. The light goes out over a dusk
+       band at the top, the pain and the turn share one field (so no thought
+       or plate is ever sliced at a seam), and the light comes back over a
+       dawn band at the bottom, into the idea. -->
+  <section class="night">
     <div class="swarm-dark" aria-hidden="true"></div>
-    <p class="beat__lede">Thoughts arrive in the shower, on the platform, halfway
+    <div class="plates" aria-hidden="true"></div>
+    <p class="beat__lede night__pain">Thoughts arrive in the shower, on the platform, halfway
       through someone else&rsquo;s sentence. Then the feed arrives, and by lunch
       there is nothing left to remember.</p>
-  </section>
-
-  <!-- Beat 2 · the turn. One question, over floating blurred plates. -->
-  <section class="beat beat--dark">
-    <div class="plates" aria-hidden="true"></div>
-    <h2 class="beat__turn">What if an image could <span class="lit">respond</span>
+    <h2 class="beat__turn night__turn">What if an image could <span class="lit">respond</span>
       to a thought?</h2>
   </section>
 
-  <!-- Beat 3 · the idea. Paper returns. -->
+  <!-- The idea. Paper, fully back. -->
   <section class="beat beat--light">
     <h2 class="beat__ask">How can fleeting thoughts become meaningful memories?</h2>
   </section>
 
-  <!-- Left empty on purpose. The invitation is fixed, bottom-right. -->
-  <section class="give" id="invite"></section>
+  <!-- The last fold. Layer 01's haze comes back here, quieter, so the page
+       ends on the paper it began on. -->
+  <section class="give" id="invite">
+    <div class="haze" aria-hidden="true">
+      <span class="haze__l haze__l--a"></span>
+      <span class="haze__l haze__l--c"></span>
+      <span class="haze__glow"></span>
+    </div>
+  </section>
+
+  <!-- The invitation. Sticky, not fixed: it rides the bottom edge of the
+       viewport the whole way down, then settles here as the page's last
+       element instead of hovering over the colophon. -->
+  <div class="dock">
+    <a class="cta" href="./make.html">Unwrap My Gift</a>
+  </div>
 
 </main>
-
-<a class="cta" href="./make.html">Unwrap My Gift</a>
 
 <footer class="colophon">
   <span>Light on Light</span>
@@ -441,35 +482,51 @@ BODY = """
 MAKE_BODY = """
 <a class="skip" href="#field">Skip to writing</a>
 
+<!-- Grain source — the same paper as layers 01 and 02. -->
+<svg class="filters" aria-hidden="true" focusable="false" width="0" height="0">
+  <filter id="grain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+</svg>
+<div class="grain" aria-hidden="true"></div>
+
 <header class="mast">
   <h1 class="mast__h"><a href="./index.html">Light on Light</a></h1>
-  <p class="mast__layer">LAYER 03 &mdash; YOUR VISUAL GIFT</p>
+  <p class="mast__layer" id="stamp">LAYER 03 &mdash; YOUR VISUAL GIFT</p>
 </header>
 
 <main class="stage">
 
-  <!-- INPUT -->
+  <!-- Layer 01's haze, quieter. You write on the paper the name settled on. -->
+  <div class="haze" aria-hidden="true">
+    <span class="haze__l haze__l--a"></span>
+    <span class="haze__l haze__l--c"></span>
+    <span class="haze__glow"></span>
+  </div>
+
+  <!-- INPUT · low and left, where layer 01 put the wordmark. -->
   <section class="panel panel--ask">
     <form class="ask" id="ask" autocomplete="off">
       <h2 class="ask__greet">What passed through your mind today?</h2>
-      <label class="sr" for="field">Your thought</label>
-      <textarea class="ask__field" id="field" name="thought" rows="1" maxlength="180"
-                placeholder="Please type here, one sentence is enough"></textarea>
-      <div class="ask__foot">
+      <div class="ask__row">
+        <label class="sr" for="field">Your thought</label>
+        <textarea class="ask__field" id="field" name="thought" rows="1" maxlength="180"
+                  placeholder="One sentence is enough"></textarea>
         <button class="ask__go" id="go" type="submit" disabled>Translate it</button>
       </div>
     </form>
   </section>
 
-  <!-- FORMING — no spinner. The sentence comes apart and gathers,
-       with one quiet mono note saying what is happening. -->
+  <!-- FORMING — no spinner. The sentence comes apart and gathers; the
+       stamp in the masthead says what is happening. -->
   <div class="forming" aria-hidden="true">
     <div class="forming__field" id="sparks"></div>
     <p class="forming__echo" id="echo"></p>
-    <p class="forming__note">GENERATING&hellip;</p>
   </div>
 
-  <!-- GIFT -->
+  <!-- GIFT · the mount. Sentence, date and the two actions on one side,
+       the plate on the other; the whole thing sized to sit inside one screen. -->
   <section class="panel panel--gift">
     <figure class="gift" id="gift">
       <figcaption class="gift__line" id="giftLine"></figcaption>
@@ -478,15 +535,15 @@ MAKE_BODY = """
         <span class="gift__rule" aria-hidden="true"></span>
         <span id="giftDate"></span>
         <span class="gift__via" id="giftVia"></span>
-        <button class="gift__again" id="again" type="button">WRITE ANOTHER</button>
+      </div>
+      <div class="gift__actions">
+        <button class="cta" id="export" type="button">Export</button>
+        <button class="gift__again" id="again" type="button">Write another</button>
       </div>
     </figure>
-
   </section>
 
 </main>
-
-<button class="cta" id="export" type="button">Export</button>
 
 <p class="sr" id="live" role="status" aria-live="polite"></p>
 
@@ -842,8 +899,10 @@ MAKE_JS = r"""
   var field = $('field'), go = $('go'), live = $('live'), form = $('ask');
   var current = { text: '', date: '' };
 
+  var layerStamp = $('stamp'), LAYER_STAMP = layerStamp.textContent;
   function setState(s) {
     body.dataset.state = s;
+    layerStamp.textContent = s === 'forming' ? 'LAYER 03 \u2014 GENERATING\u2026' : LAYER_STAMP;
     if (s === 'forming') { live.textContent = 'Translating your sentence.'; }
     if (s === 'gift') { live.textContent = 'Your gift is ready. Export saves it as a JPG.'; }
   }
@@ -930,7 +989,8 @@ MAKE_JS = r"""
     /* One universal stamp — the gift is signed by the project, not the
        engine. Which hand actually drew it stays recorded on
        plate.dataset.via (claude / gemini / local) for anyone who inspects. */
-    $('giftVia').textContent = 'DRAWN BY \u201CLight on Light\u201D';
+    $('giftVia').textContent = 'DRAWN BY \u201CLight on Light\u201D' +
+      (art.via === 'local' ? ' \u00B7 OFFLINE' : '');   /* the built-in floor is not the product's ceiling; say so */
     setState('gift');
   }
 
@@ -1052,7 +1112,7 @@ MAKE_JS = r"""
       ctx.rotate(-0.7 * Math.PI / 180);
       ctx.fillStyle = cssVar('--color-plate-ink') || '#1a1a1a';
       ctx.textAlign = 'center';
-      ctx.font = '40px ' + (cssVar('--font-hand') || 'cursive');
+      ctx.font = 'italic 40px ' + (cssVar('--font-voice') || 'serif');   /* same voice as on screen */
       var lines = wrap(ctx, current.text, CARD.w - 220);
       var top = 156 - (lines.length - 1) * 27;
       lines.forEach(function (l, i) { ctx.fillText(l, 0, top + i * 54); });
@@ -1450,7 +1510,10 @@ def main() -> None:
 
     faces = (FACES
              .replace("__SERIF__", font_b64("instrumentserif.woff2"))
-             .replace("__MONO__",  font_b64("geistmono.woff2")))
+             .replace("__MONO__",  font_b64("geistmono.woff2"))
+             .replace("__NR__",    font_b64("newsreader.woff2"))
+             .replace("__NRM__",   font_b64("newsreader-medium.woff2"))
+             .replace("__NRI__",   font_b64("newsreader-italic.woff2")))
 
     render("index.html", "Light on Light", "Light on Light.",
            "styles.css", BODY, SWARM_JS, faces, tokens)

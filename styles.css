@@ -44,6 +44,23 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/* Cross-document view transitions. Same-origin, so the wordmark can travel
+   from its place here to the masthead of the next layer instead of the page
+   simply being replaced. Browsers without support just navigate. */
+@view-transition { navigation: auto; }
+.mark__link { view-transition-name: wordmark; }
+.haze       { view-transition-name: haze; }
+::view-transition-group(wordmark) {
+  animation-duration: 720ms;
+  animation-timing-function: var(--ease-in-out);
+}
+::view-transition-old(haze) { animation-duration: 720ms; }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}
+
 html {
   overflow-x: clip;
   -webkit-text-size-adjust: 100%;
@@ -346,7 +363,7 @@ h1, p { margin: 0; font-weight: 400; }
   z-index: var(--z-raised);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  letter-spacing: 0.24em;
+  letter-spacing: 0.16em;
   color: var(--color-muted);
   white-space: nowrap;
 }

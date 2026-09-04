@@ -43,25 +43,25 @@
   --color-focus:       oklch(60%   0.19  65);
 
   /* ---------- Type ---------- */
-  /* Two families. Noto Serif SC carries display (200) and body (400);
-   * Geist Mono is the single outlier — wordmark + page furniture only. */
+  /* Three roles. Instrument Serif is a display face and stays at display
+   * sizes only (wordmark, statements). Newsreader carries everything meant to
+   * be read at text size; its italic is the interior voice — the thoughts —
+   * so the narrator is always upright and a thought is always italic.
+   * Geist Mono is the single outlier — page furniture only. */
   --font-wordmark: "Instrument Serif", ui-serif, Georgia, serif;
-  --font-display:  "Noto Serif SC", "Songti SC", ui-serif, Georgia, serif;
-  --font-body:     "Noto Serif SC", "Songti SC", ui-serif, Georgia, serif;
+  --font-display:  "Instrument Serif", ui-serif, Georgia, serif;
+  --font-body:     "Newsreader", "Songti SC", ui-serif, Georgia, serif;
+  --font-voice:    "Newsreader", "Songti SC", ui-serif, Georgia, serif;   /* + font-style: italic */
   --font-mono:     "Geist Mono", ui-monospace, SFMono-Regular, "SF Mono", monospace;
-  /* The skill's handwriting stack, verbatim. System faces only — the plate has
-   * to render identically in the browser and on the export canvas, and a
-   * webfont would not survive rasterisation the same way. CJK fallbacks are
-   * appended because the stack itself carries no Chinese. */
-  --font-hand:     "Segoe Print", "Bradley Hand", "Comic Sans MS",
-                   "Hanzipen SC", "Yuanti SC", cursive;
-  /* --font-display / --font-body carry CJK for the layers behind the opening.
-   * The opening itself loads only Instrument Serif + Geist Mono. */
+  /* Every page embeds all three families (latin subsets); the CJK names in
+   * --font-body are system fallbacks for a Chinese sentence on the gift. */
 
   /* 1.25 major third, floored at 12.8px because CJK dies below that */
   --text-xs:        0.8rem;      /* 12.8px — mono furniture */
   --text-base:      1rem;
-  --text-md:        1.25rem;     /* 20px — body */
+  --text-md:        1.25rem;     /* 20px */
+  --text-body:      1.15rem;     /* 18.4px — Newsreader text; its x-height is larger than Instrument's */
+  --text-label:     1.2rem;      /* 19.2px — buttons and verbs, Newsreader 500 */
   --text-lg:        1.5625rem;   /* 25px */
   --text-display-s: clamp(1.6rem, 3.6vw, 2.4414rem);
   --text-display:   clamp(2.75rem, 7vw, 5.25rem);
@@ -95,9 +95,6 @@
   --radius-none: 0;
   --radius-plate: 3px;    /* photographs have corners, barely */
   --radius-pill: 999px;   /* the invitation is the one rounded thing here */
-
-  /* Bottom clearance so the fixed invitation can never cover the colophon. */
-  --cta-clearance: 7.5rem;
 
   /* ---------- Motion ---------- */
   --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
