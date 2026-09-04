@@ -1,0 +1,27 @@
+<svg viewBox="0 0 680 680">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(-1.2 340 340)">
+    <!-- 左半边：火柴（稳定、简洁、持久） -->
+    <g transform="translate(200, 340)">
+      <!-- 火柴杆 -->
+      <line x1="0" y1="-100" x2="0" y2="100" stroke="#1a1a1a" stroke-width="4" stroke-dasharray="8,2"/>
+      <!-- 火柴头 -->
+      <circle cx="0" cy="-110" r="13" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-dasharray="7,4"/>
+    </g>
+    
+    <!-- 中间分割线 -->
+    <path d="M 340 150 Q 348 340 340 530" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="4,3"/>
+    
+    <!-- 右半边：火焰（不规则、涂鸦、短暂） -->
+    <g transform="translate(480, 340)">
+      <!-- 火焰外轮廓 -->
+      <path d="M 0 85 Q -22 45 -30 5 Q -32 -35 -18 -65 Q -2 -82 12 -72 Q 26 -65 32 -25 Q 35 10 28 50 Q 18 82 0 85" 
+            fill="none" stroke="#1a1a1a" stroke-width="3" stroke-dasharray="5,4"/>
+      <!-- 火焰内部线条 -->
+      <path d="M -12 -45 Q 2 -65 14 -38" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="3,2"/>
+      <path d="M -18 -8 Q -8 -28 8 -5" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+      <path d="M -8 38 Q 6 18 12 45" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="3,2"/>
+    </g>
+  </g>
+</svg>

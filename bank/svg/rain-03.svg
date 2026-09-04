@@ -1,0 +1,19 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    <!-- ascent line -->
+    <line x1="340" y1="100" x2="340" y2="220" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="5,5" stroke-linecap="round"/>
+    
+    <!-- water drop -->
+    <path d="M 340 220 C 318 242 305 280 308 315 C 312 352 328 375 340 385 C 352 375 368 348 372 310 C 375 280 362 248 340 220 Z" 
+          fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
+    
+    <!-- descent line -->
+    <line x1="340" y1="385" x2="340" y2="520" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="5,5" stroke-linecap="round"/>
+    
+    <!-- landing point -->
+    <circle cx="340" cy="545" r="22" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <circle cx="340" cy="545" r="13" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="4,4"/>
+  </g>
+</svg>

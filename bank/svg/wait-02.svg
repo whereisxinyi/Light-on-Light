@@ -1,0 +1,19 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="translate(340, 340) rotate(1.5) translate(-340, -340)">
+    <!-- Outer circle: dashed, representing the cycle of waiting -->
+    <circle cx="340" cy="340" r="155" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="14,11" stroke-linecap="round"/>
+    
+    <!-- Middle circle: dotted, layering the passage of time -->
+    <circle cx="340" cy="340" r="85" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="7,6" stroke-linecap="round"/>
+    
+    <!-- Center point: "I" at the heart of waiting -->
+    <circle cx="340" cy="340" r="8" fill="#1a1a1a"/>
+    
+    <!-- Subtle hand-drawn marks for organic feel -->
+    <path d="M 328 210 Q 340 205 352 210" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="5,4" stroke-linecap="round"/>
+    <path d="M 470 330 Q 475 340 470 350" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="5,4" stroke-linecap="round"/>
+    <path d="M 328 470 Q 340 475 352 470" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="5,4" stroke-linecap="round"/>
+  </g>
+</svg>

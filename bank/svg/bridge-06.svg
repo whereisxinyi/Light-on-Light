@@ -1,0 +1,24 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    <!-- 下方被忽视的虚弱曲线 -->
+    <path d="M 260 420 Q 340 520 420 480" 
+          stroke="#1a1a1a" 
+          stroke-width="2" 
+          fill="none" 
+          stroke-dasharray="4,6"
+          opacity="0.15"/>
+    
+    <!-- 上升的主路线 -->
+    <path d="M 140 520 Q 240 380 340 280 Q 440 180 540 120" 
+          stroke="#1a1a1a" 
+          stroke-width="3.5" 
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    
+    <!-- 中点标记 -->
+    <circle cx="340" cy="280" r="6" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+  </g>
+</svg>

@@ -1,0 +1,45 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    
+    <!-- Left: ordered sky (the window's view) -->
+    <g>
+      <!-- Sun arc -->
+      <path d="M 130 370 A 110 110 0 0 1 350 370" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-dasharray="5,2"/>
+      
+      <!-- Horizon line -->
+      <line x1="80" y1="410" x2="400" y2="410" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="6,3"/>
+      
+      <!-- Vertical structure -->
+      <line x1="160" y1="450" x2="160" y2="240" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="8,2"/>
+      <line x1="270" y1="455" x2="270" y2="235" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="8,2"/>
+    </g>
+    
+    <!-- Window frame dividing line -->
+    <line x1="420" y1="160" x2="420" y2="520" stroke="#1a1a1a" stroke-width="4"/>
+    
+    <!-- Right: my sky (free, scattered) -->
+    <g>
+      <!-- Irregular curves -->
+      <path d="M 480 200 Q 520 250 550 220 Q 580 190 620 270" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="4,3"/>
+      
+      <!-- Scattered line -->
+      <path d="M 460 360 L 500 350 Q 540 340 560 370 L 590 360" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,3"/>
+      
+      <!-- Scattered dots -->
+      <circle cx="550" cy="310" r="3" fill="#1a1a1a"/>
+      <circle cx="490" cy="400" r="2" fill="#1a1a1a"/>
+      <circle cx="600" cy="340" r="2.5" fill="#1a1a1a"/>
+      <circle cx="520" cy="470" r="2" fill="#1a1a1a"/>
+      
+      <!-- Loose sketchy lines -->
+      <path d="M 475 280 Q 495 295 510 275 Q 525 260 535 285" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="2,2"/>
+      <path d="M 560 420 Q 580 435 600 415" fill="none" stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="3,2"/>
+      
+      <!-- Broken arc -->
+      <path d="M 620 280 A 25 25 0 0 1 615 330" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="4,2"/>
+    </g>
+    
+  </g>
+</svg>

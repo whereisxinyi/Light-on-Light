@@ -1,0 +1,24 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="translate(340, 340) rotate(-1.5) translate(-340, -340)">
+    <!-- Left shore -->
+    <circle cx="140" cy="340" r="50" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="5,3"/>
+    
+    <!-- Left shore wave details -->
+    <path d="M 95 370 Q 115 360 135 370 Q 155 360 175 370" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>
+    <path d="M 100 390 Q 120 383 140 390 Q 160 383 180 390" stroke="#1a1a1a" stroke-width="1" fill="none" opacity="0.5"/>
+    
+    <!-- Crossing line -->
+    <path d="M 195 340 L 485 340" stroke="#1a1a1a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    
+    <!-- Arrow head -->
+    <polygon points="495,340 475,330 480,340 475,350" fill="#1a1a1a"/>
+    
+    <!-- Right shore -->
+    <circle cx="540" cy="340" r="50" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="5,3"/>
+    
+    <!-- Right shore wave detail -->
+    <path d="M 495 370 Q 515 360 535 370 Q 555 360 575 370" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>
+  </g>
+</svg>

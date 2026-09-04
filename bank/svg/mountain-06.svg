@@ -1,0 +1,29 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    <!-- 地平线：从观察者位置延向远方 -->
+    <path d="M 60 540 Q 240 400, 400 280 Q 540 180, 620 100" 
+          stroke="#1a1a1a" stroke-width="2.5" fill="none" 
+          stroke-dasharray="8,4" stroke-linecap="round"/>
+    
+    <!-- 远处的点（稀疏，淡远感） -->
+    <circle cx="100" cy="110" r="2" fill="#1a1a1a" opacity="0.6"/>
+    <circle cx="280" cy="50" r="1.8" fill="#1a1a1a" opacity="0.5"/>
+    <circle cx="400" cy="80" r="2.2" fill="#1a1a1a" opacity="0.65"/>
+    <circle cx="520" cy="60" r="1.8" fill="#1a1a1a" opacity="0.5"/>
+    <circle cx="200" cy="140" r="1.6" fill="#1a1a1a" opacity="0.55"/>
+    <circle cx="450" cy="150" r="1.7" fill="#1a1a1a" opacity="0.56"/>
+    
+    <!-- 近处的点（密集，鲜明） -->
+    <circle cx="50" cy="620" r="2.5" fill="#1a1a1a" opacity="0.75"/>
+    <circle cx="130" cy="605" r="2.2" fill="#1a1a1a" opacity="0.7"/>
+    <circle cx="200" cy="625" r="2.4" fill="#1a1a1a" opacity="0.77"/>
+    <circle cx="280" cy="610" r="2.2" fill="#1a1a1a" opacity="0.7"/>
+    <circle cx="350" cy="630" r="2.5" fill="#1a1a1a" opacity="0.75"/>
+    <circle cx="430" cy="615" r="2.2" fill="#1a1a1a" opacity="0.7"/>
+    <circle cx="500" cy="628" r="2.4" fill="#1a1a1a" opacity="0.77"/>
+    <circle cx="570" cy="620" r="2.2" fill="#1a1a1a" opacity="0.7"/>
+    <circle cx="640" cy="615" r="2.3" fill="#1a1a1a" opacity="0.72"/>
+  </g>
+</svg>

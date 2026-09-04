@@ -1,0 +1,25 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.3 340 340)">
+    <!-- Spiral path representing learning process -->
+    <path d="M 340 160 Q 410 180 440 250 Q 450 330 400 380 Q 320 440 240 410 Q 180 380 170 300 Q 165 220 230 180 Q 300 150 340 160" 
+          stroke="#1a1a1a" stroke-width="2.2" fill="none" stroke-dasharray="5,4" stroke-linecap="round"/>
+    
+    <!-- Simple house geometry -->
+    <!-- Roof -->
+    <path d="M 310 320 L 340 250 L 370 320" 
+          stroke="#1a1a1a" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Walls -->
+    <line x1="310" y1="320" x2="310" y2="410" stroke="#1a1a1a" stroke-width="2.8" stroke-linecap="round"/>
+    <line x1="370" y1="320" x2="370" y2="410" stroke="#1a1a1a" stroke-width="2.8" stroke-linecap="round"/>
+    
+    <!-- Foundation -->
+    <line x1="310" y1="410" x2="370" y2="410" stroke="#1a1a1a" stroke-width="2.8" stroke-linecap="round"/>
+    
+    <!-- Door -->
+    <rect x="328" y="360" width="24" height="50" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>
+    <circle cx="349" cy="385" r="2" fill="#1a1a1a"/>
+  </g>
+</svg>

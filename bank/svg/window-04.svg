@@ -1,0 +1,57 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    
+    <!-- Glass frame - top line -->
+    <line x1="200" y1="250" x2="480" y2="250" 
+          stroke="#1a1a1a" stroke-width="2.5" fill="none" 
+          stroke-dasharray="8,4"/>
+    
+    <!-- Glass frame - bottom line -->
+    <line x1="200" y1="430" x2="480" y2="430" 
+          stroke="#1a1a1a" stroke-width="2.5" fill="none" 
+          stroke-dasharray="8,4"/>
+    
+    <!-- Glass center divider -->
+    <path d="M 340 250 Q 341 340 340 430" 
+          stroke="#1a1a1a" stroke-width="2" fill="none" 
+          opacity="0.4" stroke-dasharray="6,3"/>
+    
+    <!-- Inside: interior presence - scattered points -->
+    <circle cx="260" cy="300" r="1.5" fill="#1a1a1a" opacity="0.6"/>
+    <circle cx="280" cy="320" r="1.5" fill="#1a1a1a" opacity="0.6"/>
+    <circle cx="270" cy="350" r="1.5" fill="#1a1a1a" opacity="0.6"/>
+    <circle cx="290" cy="370" r="1.5" fill="#1a1a1a" opacity="0.6"/>
+    <circle cx="265" cy="390" r="1.5" fill="#1a1a1a" opacity="0.6"/>
+    
+    <!-- Outside: morning light - radiating lines top -->
+    <line x1="340" y1="250" x2="420" y2="200" 
+          stroke="#1a1a1a" stroke-width="1.5" fill="none" 
+          opacity="0.7" stroke-dasharray="4,2"/>
+    <line x1="360" y1="250" x2="450" y2="180" 
+          stroke="#1a1a1a" stroke-width="1.5" fill="none" 
+          opacity="0.7" stroke-dasharray="4,2"/>
+    <line x1="380" y1="250" x2="480" y2="190" 
+          stroke="#1a1a1a" stroke-width="1.5" fill="none" 
+          opacity="0.7" stroke-dasharray="4,2"/>
+    <line x1="400" y1="250" x2="500" y2="220" 
+          stroke="#1a1a1a" stroke-width="1.5" fill="none" 
+          opacity="0.7" stroke-dasharray="4,2"/>
+    
+    <!-- Outside: morning light - radiating lines bottom -->
+    <line x1="340" y1="430" x2="420" y2="480" 
+          stroke="#1a1a1a" stroke-width="1.5" fill="none" 
+          opacity="0.7" stroke-dasharray="4,2"/>
+    <line x1="360" y1="430" x2="450" y2="500" 
+          stroke="#1a1a1a" stroke-width="1.5" fill="none" 
+          opacity="0.7" stroke-dasharray="4,2"/>
+    <line x1="380" y1="430" x2="480" y2="510" 
+          stroke="#1a1a1a" stroke-width="1.5" fill="none" 
+          opacity="0.7" stroke-dasharray="4,2"/>
+    <line x1="400" y1="430" x2="500" y2="470" 
+          stroke="#1a1a1a" stroke-width="1.5" fill="none" 
+          opacity="0.7" stroke-dasharray="4,2"/>
+    
+  </g>
+</svg>

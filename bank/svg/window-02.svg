@@ -1,0 +1,18 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    <!-- wall -->
+    <line x1="300" y1="100" x2="300" y2="600" stroke="#1a1a1a" stroke-width="2" opacity="0.5"/>
+    
+    <!-- light trajectory -->
+    <path d="M 200 180 Q 280 280, 380 380 Q 460 450, 520 520" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-dasharray="6,4" opacity="0.5"/>
+    
+    <!-- light footprints across time -->
+    <circle cx="240" cy="240" r="2.5" fill="#1a1a1a" opacity="0.5"/>
+    <circle cx="300" cy="300" r="3.5" fill="#1a1a1a" opacity="0.8"/>
+    <circle cx="360" cy="360" r="3" fill="#1a1a1a" opacity="0.7"/>
+    <circle cx="420" cy="420" r="2.5" fill="#1a1a1a" opacity="0.5"/>
+    <circle cx="480" cy="480" r="2" fill="#1a1a1a" opacity="0.3"/>
+  </g>
+</svg>

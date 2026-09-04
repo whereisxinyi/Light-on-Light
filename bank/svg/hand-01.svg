@@ -1,0 +1,27 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <!-- ripple effect: sound expanding outward -->
+  <circle cx="340" cy="340" r="65" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="4,2" opacity="0.75"/>
+  <circle cx="340" cy="340" r="105" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-dasharray="6,3" opacity="0.55"/>
+  <circle cx="340" cy="340" r="145" stroke="#1a1a1a" stroke-width="1" fill="none" stroke-dasharray="8,4" opacity="0.35"/>
+  
+  <!-- hand holding -->
+  <g transform="translate(340, 350) rotate(-1.8)">
+    <!-- palm -->
+    <path d="M -38 -48 Q -48 -22 -44 18 Q -32 52 0 56 Q 32 54 46 18 Q 50 -22 38 -48 Z" 
+          stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- fingers -->
+    <path d="M -28 -55 Q -30 -98 -26 -132" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M -10 -58 Q -8 -108 -4 -148" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M 10 -58 Q 12 -115 18 -152" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M 30 -56 Q 34 -103 42 -138" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    
+    <!-- thumb -->
+    <path d="M -44 -12 Q -68 -2 -78 18" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    
+    <!-- palm line -->
+    <path d="M -15 -10 Q 0 0 15 -5" stroke="#1a1a1a" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="3,2"/>
+  </g>
+</svg>

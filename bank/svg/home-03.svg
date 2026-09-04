@@ -1,0 +1,36 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.2 340 340)">
+    <!-- The mark: act of naming -->
+    <path d="M 250 280 L 430 280" stroke="#1a1a1a" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="7,4"/>
+    
+    <!-- Roots: what stays -->
+    <g stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Left roots -->
+      <path d="M 285 280 Q 270 350 280 430 Q 285 490 265 550" stroke-dasharray="6,3"/>
+      <path d="M 265 280 Q 248 360 262 440 Q 268 510 245 570" stroke-dasharray="6,3"/>
+      
+      <!-- Center root -->
+      <path d="M 340 280 Q 328 370 343 460 Q 355 540 340 600" stroke-dasharray="6,3"/>
+      
+      <!-- Right roots -->
+      <path d="M 395 280 Q 412 350 400 430 Q 393 490 415 550" stroke-dasharray="6,3"/>
+      <path d="M 415 280 Q 432 360 418 440 Q 410 510 435 570" stroke-dasharray="6,3"/>
+      
+      <!-- Root hairs -->
+      <g stroke-width="1.5">
+        <path d="M 265 550 L 248 575"/>
+        <path d="M 265 550 L 282 575"/>
+        <path d="M 245 570 L 228 595"/>
+        <path d="M 245 570 L 262 595"/>
+        <path d="M 340 600 L 318 630"/>
+        <path d="M 340 600 L 362 630"/>
+        <path d="M 415 550 L 398 575"/>
+        <path d="M 415 550 L 432 575"/>
+        <path d="M 435 570 L 418 595"/>
+        <path d="M 435 570 L 452 595"/>
+      </g>
+    </g>
+  </g>
+</svg>

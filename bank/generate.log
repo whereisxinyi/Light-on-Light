@@ -168,3 +168,55 @@ engine: claude · anchors: 20
   ✓ contrast-05.svg    697 B  91.0s  想休息，可清单还在变长。
   ✓ contrast-06.svg   1020 B  76.1s  一半想走，一半想留。
   ✓ rain-01.svg   2136 B  75.5s  It rained and I let it.
+  ✓ rain-02.svg   1086 B  48.2s  Small rain, all afternoon, no reason.
+  ✓ rain-03.svg    975 B  29.0s  Every drop lands where it was always going.
+  ✓ rain-04.svg   1925 B  67.0s  I like weather that admits it is weather.
+  ✓ rain-05.svg   1253 B  48.2s  下雨了，我就让它下。
+  ✓ rain-06.svg    850 B  63.4s  每一滴都落在它本来要去的地方。
+  ✓ window-01.svg   2025 B  72.4s  The window keeps a different sky than mine.
+  ✓ window-02.svg    853 B  59.5s  I watched the light move across the wall.
+  ✓ window-03.svg   1086 B  41.4s  Something about the light today.
+  ✓ window-04.svg   2504 B  50.9s  Glass between me and the morning.
+  ✓ window-05.svg   1901 B  64.4s  窗户留着另一片天。
+  ✓ window-06.svg   2368 B  60.9s  今天的光有点不一样。
+  ✓ door-01.svg   2552 B  73.8s  Memory is a room with the door left open.
+  ✓ door-02.svg    967 B  55.9s  I keep a door I never close.
+  ✓ door-03.svg   1372 B  70.3s  Not every exit is a leaving.
+  ✓ door-04.svg    803 B  66.8s  Someone knocked and I answered late.
+  ✓ door-05.svg   1647 B  67.7s  记忆是一间门没关的房间。
+  ✓ door-06.svg    900 B  72.9s  不是每次出门都是离开。
+  ✓ bridge-01.svg    767 B  43.2s  Between us there is a bridge nobody built.
+  ✓ bridge-02.svg   2416 B  69.2s  I am halfway across and not looking down.
+  ✓ bridge-03.svg   1186 B  66.8s  Words are the bridge I keep repairing.
+  ✓ bridge-04.svg   1138 B  59.4s  Two shores, one crossing.
+  ✓ bridge-05.svg   1582 B  43.2s  我们之间有一座没人修的桥。
+  ✓ bridge-06.svg    717 B  58.3s  走到一半，不往下看。
+  ✓ mountain-01.svg    771 B  66.2s  The mountain does not hurry.
+  ✓ mountain-02.svg   1038 B  48.6s  I climbed nothing today and that is fine.
+  ✓ mountain-03.svg    949 B  49.8s  Some distances are meant to stay distant.
+  ✓ mountain-04.svg   1269 B  44.5s  Rest is also a summit.
+  ✓ mountain-05.svg   1114 B  43.8s  山不着急。
+  ✓ mountain-06.svg   1472 B  63.7s  有些远是用来看的。
+  ✓ fire-01.svg   1238 B  40.8s  A small fire is still a fire.
+  ✓ fire-02.svg   1259 B  46.4s  I kept the match, not the flame.
+  ✓ fire-03.svg   1794 B  56.8s  Something in me is still lit.
+  ✓ fire-04.svg    994 B  42.7s  Burn slow, last long.
+  ✓ fire-05.svg    538 B  58.5s  小火也是火。
+  ✓ fire-06.svg   1784 B  85.3s  我留着火柴，没留火。
+  ✓ hand-01.svg   1598 B  49.7s  Say it once and it stays in the hand.
+  ✓ hand-02.svg   1012 B  57.4s  I should call my mother.
+  ✓ hand-03.svg    939 B  53.4s  What we hold, holds us back a little.
+  ✓ hand-04.svg   1316 B  39.2s  An open hand is also a shape.
+  ✓ hand-05.svg    565 B  51.3s  我该给妈妈打个电话。
+  ✓ hand-06.svg   1437 B  51.1s  手张开也是一种形状。
+  ✓ home-01.svg   1619 B  36.9s  Home is where the light is left on.
+  ✓ home-02.svg   1220 B  57.0s  I am learning to be a house.
+  ✓ home-03.svg   1482 B  60.7s  Nothing you do not name stays.
+  ✓ home-04.svg   1429 B  34.1s  A roof is a promise about rain.
+  ✓ home-05.svg   1707 B  64.4s  家是留着灯的地方。
+  ✓ home-06.svg   1808 B  96.1s  没有名字的东西留不下来。
+  ✓ wait-01.svg   1970 B  53.8s  What if rest is the work?
+  ✓ wait-02.svg   1193 B  44.8s  I am waiting, and the waiting is also mine.
+  ✓ wait-03.svg    620 B  64.1s  Patience is a slow kind of speed.
+  ✓ wait-04.svg   1636 B  82.0s  The kettle knows something I don't.
+  ✓ wait-05.svg    614 B  65.4s  等待也是我的。

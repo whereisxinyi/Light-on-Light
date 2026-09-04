@@ -1,0 +1,35 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <!-- Invisible baseline for composition -->
+  
+  <!-- Two platforms/edges with hand-drawn irregularity -->
+  <circle cx="120" cy="340" r="35" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="4,3"/>
+  <circle cx="560" cy="340" r="35" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="4,3"/>
+  
+  <!-- Path crossing - deliberately slightly wavy to suggest walking/tension -->
+  <path d="M 155 340 Q 250 320 340 318 Q 430 316 525 340" 
+        stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,4"/>
+  
+  <!-- Halfway point marker - small filled circle with emphasis -->
+  <circle cx="340" cy="318" r="6" fill="#1a1a1a"/>
+  <circle cx="340" cy="318" r="12" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,2"/>
+  
+  <!-- Implied void below - suggested by scattered marks, NOT a solid shape -->
+  <path d="M 300 420 Q 305 450 310 480" stroke="#1a1a1a" stroke-width="1.5" opacity="0.4" fill="none" stroke-dasharray="2,3"/>
+  <path d="M 340 440 Q 342 470 345 500" stroke="#1a1a1a" stroke-width="1.5" opacity="0.4" fill="none" stroke-dasharray="2,3"/>
+  <path d="M 380 425 Q 375 455 370 485" stroke="#1a1a1a" stroke-width="1.5" opacity="0.4" fill="none" stroke-dasharray="2,3"/>
+  
+  <!-- Entire composition rotated for hand-drawn feel -->
+  <g transform="translate(340, 340) rotate(-1.5) translate(-340, -340)">
+    <circle cx="120" cy="340" r="35" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="4,3"/>
+    <circle cx="560" cy="340" r="35" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="4,3"/>
+    <path d="M 155 340 Q 250 320 340 318 Q 430 316 525 340" 
+          stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,4"/>
+    <circle cx="340" cy="318" r="6" fill="#1a1a1a"/>
+    <circle cx="340" cy="318" r="12" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <path d="M 300 420 Q 305 450 310 480" stroke="#1a1a1a" stroke-width="1.5" opacity="0.4" fill="none" stroke-dasharray="2,3"/>
+    <path d="M 340 440 Q 342 470 345 500" stroke="#1a1a1a" stroke-width="1.5" opacity="0.4" fill="none" stroke-dasharray="2,3"/>
+    <path d="M 380 425 Q 375 455 370 485" stroke="#1a1a1a" stroke-width="1.5" opacity="0.4" fill="none" stroke-dasharray="2,3"/>
+  </g>
+</svg>

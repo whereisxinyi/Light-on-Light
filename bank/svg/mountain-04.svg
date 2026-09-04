@@ -1,0 +1,52 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.2 340 340)">
+    
+    <!-- Left: Rest (horizontal stillness) -->
+    <path
+      d="M 100 360 L 280 360"
+      stroke="#1a1a1a"
+      stroke-width="3"
+      fill="none"
+      stroke-linecap="round"
+      stroke-dasharray="12,8"
+    />
+    
+    <!-- Grounding elements -->
+    <circle cx="140" cy="410" r="2.5" fill="#1a1a1a" opacity="0.5"/>
+    <circle cx="190" cy="415" r="2" fill="#1a1a1a" opacity="0.4"/>
+    <circle cx="240" cy="410" r="2" fill="#1a1a1a" opacity="0.45"/>
+    
+    <!-- Right: Summit (peak reaching) -->
+    <path
+      d="M 420 480 L 510 260 L 600 480"
+      stroke="#1a1a1a"
+      stroke-width="2.5"
+      fill="none"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+    />
+    
+    <!-- Peak detail -->
+    <path
+      d="M 505 275 L 510 260 L 515 280"
+      stroke="#1a1a1a"
+      stroke-width="1"
+      fill="none"
+      stroke-dasharray="2,2"
+      opacity="0.6"
+    />
+    
+    <!-- Shared baseline -->
+    <path
+      d="M 80 480 Q 340 478 620 480"
+      stroke="#1a1a1a"
+      stroke-width="1.2"
+      fill="none"
+      opacity="0.35"
+      stroke-dasharray="6,5"
+    />
+    
+  </g>
+</svg>

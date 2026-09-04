@@ -1,0 +1,44 @@
+<svg viewBox="0 0 680 680">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.4 340 340)">
+    
+    <!-- 标签卡片上边 -->
+    <path d="M 200 270 Q 250 265 480 270" stroke="#1a1a1a" stroke-width="2.5" fill="none" 
+          stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- 标签左边 - 清晰 -->
+    <path d="M 200 270 L 200 450" stroke="#1a1a1a" stroke-width="2.5" fill="none" 
+          stroke-linecap="round"/>
+    
+    <!-- 标签下边 - 左清右虚 -->
+    <path d="M 200 450 L 400 450" stroke="#1a1a1a" stroke-width="2.5" fill="none" 
+          stroke-linecap="round"/>
+    <path d="M 400 450 L 480 450" stroke="#1a1a1a" stroke-width="2" fill="none" 
+          stroke-dasharray="10,7" opacity="0.6" stroke-linecap="round"/>
+    
+    <!-- 标签右边 - 消失过程 -->
+    <path d="M 480 270 Q 485 340 480 410" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+    <path d="M 480 410 L 480 450" stroke="#1a1a1a" stroke-width="1.5" fill="none" 
+          stroke-dasharray="6,8" opacity="0.4" stroke-linecap="round"/>
+    
+    <!-- 标签的折叠角 -->
+    <path d="M 460 270 L 490 245 L 485 275 Q 483 272 480 270" stroke="#1a1a1a" stroke-width="2" 
+          fill="none" stroke-dasharray="5,4" opacity="0.7" stroke-linecap="round"/>
+    
+    <!-- 打孔 -->
+    <circle cx="190" cy="360" r="5" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>
+    
+    <!-- 内部虚化的笔画 - 被擦掉的名字 -->
+    <path d="M 240 310 Q 300 308 410 315" stroke="#1a1a1a" stroke-width="1.5" fill="none" 
+          stroke-dasharray="7,5" opacity="0.4"/>
+    
+    <path d="M 230 360 Q 280 365 420 360" stroke="#1a1a1a" stroke-width="1.5" fill="none" 
+          stroke-dasharray="5,7" opacity="0.3"/>
+    
+    <path d="M 250 405 L 380 410" stroke="#1a1a1a" stroke-width="1" fill="none" 
+          stroke-dasharray="4,8" opacity="0.2"/>
+    
+  </g>
+  
+</svg>

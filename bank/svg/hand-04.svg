@@ -1,0 +1,28 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  <g transform="translate(340, 340) rotate(1)">
+    <!-- Wrist -->
+    <path d="M -22,40 L -18,65 L 18,65 L 22,40" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,4"/>
+    
+    <!-- Palm -->
+    <path d="M -22,40 Q -48,20 -50,-8 Q -45,-28 -20,-32 Q 0,-33 20,-32 Q 45,-28 50,-8 Q 48,20 22,40" stroke="#1a1a1a" stroke-width="2" fill="none"/>
+    
+    <!-- Thumb -->
+    <path d="M -22,12 Q -62,8 -72,-25" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+    
+    <!-- Index finger -->
+    <path d="M -15,-32 L -18,-88 Q -16,-105 -10,-105" stroke="#1a1a1a" stroke-width="2" fill="none"/>
+    
+    <!-- Middle finger -->
+    <path d="M 0,-35 L 0,-100 Q 2,-125 8,-125" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,4"/>
+    
+    <!-- Ring finger -->
+    <path d="M 15,-32 L 18,-90 Q 20,-108 26,-108" stroke="#1a1a1a" stroke-width="2" fill="none"/>
+    
+    <!-- Pinky -->
+    <path d="M 30,8 Q 55,0 68,-35" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+    
+    <!-- Subtle palm line -->
+    <path d="M -18,8 Q -8,12 2,14" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-dasharray="3,2" opacity="0.7"/>
+  </g>
+</svg>

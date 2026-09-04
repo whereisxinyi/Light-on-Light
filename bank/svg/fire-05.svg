@@ -1,0 +1,9 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  <g transform="rotate(1.8 340 340)">
+    <path d="M 340 100 Q 295 190 310 280 Q 270 370 315 460 L 365 460 Q 410 370 370 280 Q 385 190 340 100 Z" 
+          fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="9,5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 340 300 Q 325 335 332 365 Q 315 400 340 440 L 348 440 Q 363 400 356 365 Q 363 335 340 300 Z"
+          fill="#1a1a1a"/>
+  </g>
+</svg>

@@ -1,0 +1,41 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.3 340 340)">
+    <!-- 外层柔和光晕 -->
+    <circle cx="340" cy="300" r="160" fill="none" stroke="#1a1a1a" stroke-width="0.6" 
+            stroke-dasharray="15,10" opacity="0.35"/>
+    
+    <!-- 中层光晕 -->
+    <circle cx="340" cy="300" r="105" fill="none" stroke="#1a1a1a" stroke-width="1.3" 
+            stroke-dasharray="8,5"/>
+    
+    <!-- 内层光晕 -->
+    <circle cx="340" cy="300" r="65" fill="none" stroke="#1a1a1a" stroke-width="1.8" 
+            stroke-dasharray="5,3"/>
+    
+    <!-- 灯泡主体 -->
+    <path d="M 340 235 Q 368 242 372 270 Q 374 288 365 305 Q 356 318 340 320 Q 324 318 315 305 Q 306 288 308 270 Q 312 242 340 235" 
+          fill="none" stroke="#1a1a1a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- 灯泡高光 -->
+    <path d="M 345 258 Q 348 256 350 260" fill="none" stroke="#1a1a1a" stroke-width="1" 
+          stroke-dasharray="2,1" stroke-linecap="round"/>
+    
+    <!-- 灯泡底部接口 -->
+    <path d="M 337 320 Q 340 324 343 320" fill="none" stroke="#1a1a1a" stroke-width="1.8" 
+          stroke-linecap="round"/>
+    
+    <!-- 灯座颈部 -->
+    <rect x="333" y="324" width="14" height="5" rx="1" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    
+    <!-- 灯座左支架 -->
+    <path d="M 335 329 L 332 362" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+    
+    <!-- 灯座右支架 -->
+    <path d="M 345 329 L 348 362" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+    
+    <!-- 灯座底座 -->
+    <ellipse cx="340" cy="362" rx="13" ry="3" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+</svg>

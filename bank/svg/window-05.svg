@@ -1,0 +1,40 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    
+    <!-- 窗框 -->
+    <rect x="160" y="160" width="360" height="360" stroke="#1a1a1a" stroke-width="5" fill="none" stroke-dasharray="12,6"/>
+    
+    <!-- 窗户十字分隔 -->
+    <line x1="340" y1="160" x2="340" y2="520" stroke="#1a1a1a" stroke-width="4" stroke-dasharray="8,4"/>
+    <line x1="160" y1="340" x2="520" y2="340" stroke="#1a1a1a" stroke-width="4" stroke-dasharray="8,4"/>
+    
+    <!-- 星辰 -->
+    <circle cx="235" cy="235" r="2.5" fill="#1a1a1a"/>
+    <circle cx="290" cy="210" r="2" fill="#1a1a1a" opacity="0.6"/>
+    <circle cx="270" cy="300" r="1.5" fill="#1a1a1a" opacity="0.5"/>
+    <circle cx="210" cy="270" r="2" fill="#1a1a1a" opacity="0.7"/>
+    
+    <circle cx="430" cy="245" r="2" fill="#1a1a1a" opacity="0.6"/>
+    <circle cx="390" cy="210" r="2.5" fill="#1a1a1a"/>
+    <circle cx="460" cy="280" r="1.5" fill="#1a1a1a" opacity="0.5"/>
+    <circle cx="405" cy="300" r="2" fill="#1a1a1a" opacity="0.7"/>
+    
+    <circle cx="220" cy="420" r="2" fill="#1a1a1a" opacity="0.7"/>
+    <circle cx="290" cy="460" r="2.5" fill="#1a1a1a"/>
+    <circle cx="250" cy="380" r="1.5" fill="#1a1a1a" opacity="0.5"/>
+    <circle cx="320" cy="425" r="2" fill="#1a1a1a" opacity="0.6"/>
+    
+    <circle cx="430" cy="410" r="2" fill="#1a1a1a" opacity="0.6"/>
+    <circle cx="390" cy="470" r="2.5" fill="#1a1a1a"/>
+    <circle cx="470" cy="435" r="1.5" fill="#1a1a1a" opacity="0.7"/>
+    <circle cx="410" cy="380" r="2" fill="#1a1a1a" opacity="0.5"/>
+    
+    <!-- 云迹 -->
+    <path d="M 200 340 Q 230 320 270 340" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-dasharray="3,2" opacity="0.5"/>
+    <path d="M 410 340 Q 440 360 480 340" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-dasharray="3,2" opacity="0.4"/>
+    
+  </g>
+  
+</svg>

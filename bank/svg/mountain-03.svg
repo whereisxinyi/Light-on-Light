@@ -1,0 +1,17 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.4 340 340)">
+    <!-- Left circle with hand-drawn irregularity -->
+    <path d="M 190 315 Q 208 308 222 318 Q 228 335 223 352 Q 210 368 190 373 Q 172 365 167 348 Q 162 332 167 318 Q 175 308 190 315" 
+          fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Right circle with hand-drawn irregularity -->
+    <path d="M 490 315 Q 508 308 522 318 Q 528 335 523 352 Q 510 368 490 373 Q 472 365 467 348 Q 462 332 467 318 Q 475 308 490 315" 
+          fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Central gap with subtle broken line -->
+    <path d="M 225 340 L 465 340" 
+          fill="none" stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="9,11" opacity="0.28"/>
+  </g>
+</svg>

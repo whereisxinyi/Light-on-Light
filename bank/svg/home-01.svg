@@ -1,0 +1,25 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  <g transform="rotate(1.8 340 340)">
+    <!-- Radiant light rays -->
+    <line x1="340" y1="80" x2="340" y2="20" stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="5,4"/>
+    <line x1="570" y1="340" x2="630" y2="340" stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="5,4"/>
+    <line x1="110" y1="340" x2="50" y2="340" stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="5,4"/>
+    <line x1="500" y1="180" x2="550" y2="130" stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="5,4"/>
+    <line x1="180" y1="500" x2="130" y2="550" stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="5,4"/>
+    <line x1="500" y1="500" x2="550" y2="550" stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="5,4"/>
+    <line x1="180" y1="180" x2="130" y2="130" stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="5,4"/>
+    
+    <!-- Lightbulb sphere -->
+    <circle cx="340" cy="300" r="78" fill="none" stroke="#1a1a1a" stroke-width="2.6" stroke-dasharray="7,3"/>
+    
+    <!-- Filament -->
+    <path d="M 318 268 Q 332 252 340 268 Q 348 284 362 268" fill="none" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round"/>
+    
+    <!-- Socket -->
+    <ellipse cx="340" cy="388" rx="36" ry="13" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <line x1="320" y1="388" x2="318" y2="408" stroke="#1a1a1a" stroke-width="1.5"/>
+    <line x1="340" y1="388" x2="340" y2="412" stroke="#1a1a1a" stroke-width="1.5"/>
+    <line x1="360" y1="388" x2="362" y2="408" stroke="#1a1a1a" stroke-width="1.5"/>
+  </g>
+</svg>

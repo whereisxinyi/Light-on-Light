@@ -1,0 +1,23 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    
+    <!-- 水滴 1 -->
+    <circle cx="180" cy="150" r="17" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="3,2.5"/>
+    
+    <!-- 水滴 2 -->
+    <circle cx="520" cy="200" r="16" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="3,3"/>
+    
+    <!-- 水滴 3 -->
+    <circle cx="340" cy="340" r="18" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="4,2.5"/>
+    
+    <!-- 水滴 4 -->
+    <circle cx="200" cy="520" r="16" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="3.5,2.5"/>
+    
+    <!-- 水滴 5 -->
+    <circle cx="500" cy="480" r="17" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="3,3.5"/>
+    
+  </g>
+  
+</svg>

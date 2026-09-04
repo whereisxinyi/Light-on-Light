@@ -1,0 +1,20 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    <!-- Sound waves - calling out -->
+    <circle cx="340" cy="280" r="70" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="7,5" opacity="0.9"/>
+    <circle cx="340" cy="280" r="110" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="6,6" opacity="0.7"/>
+    <circle cx="340" cy="280" r="150" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="5,7" opacity="0.5"/>
+    
+    <!-- Head -->
+    <circle cx="340" cy="380" r="32" fill="none" stroke="#1a1a1a" stroke-width="2.5"/>
+    
+    <!-- Open mouth calling -->
+    <ellipse cx="340" cy="388" rx="14" ry="16" fill="#1a1a1a" opacity="0.75"/>
+    
+    <!-- Hand to mouth gesture -->
+    <path d="M 308 370 Q 290 365 285 380" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="285" cy="380" r="4" fill="#1a1a1a"/>
+  </g>
+</svg>

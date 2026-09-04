@@ -487,6 +487,422 @@
    "engine": "claude",
    "keep": null,
    "bytes": 2136
+  },
+  {
+   "file": "rain-02.svg",
+   "anchor": "rain",
+   "sentence": "Small rain, all afternoon, no reason.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1086
+  },
+  {
+   "file": "rain-03.svg",
+   "anchor": "rain",
+   "sentence": "Every drop lands where it was always going.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 975
+  },
+  {
+   "file": "rain-04.svg",
+   "anchor": "rain",
+   "sentence": "I like weather that admits it is weather.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1925
+  },
+  {
+   "file": "rain-05.svg",
+   "anchor": "rain",
+   "sentence": "下雨了，我就让它下。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1253
+  },
+  {
+   "file": "rain-06.svg",
+   "anchor": "rain",
+   "sentence": "每一滴都落在它本来要去的地方。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 870
+  },
+  {
+   "file": "window-01.svg",
+   "anchor": "window",
+   "sentence": "The window keeps a different sky than mine.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 2025
+  },
+  {
+   "file": "window-02.svg",
+   "anchor": "window",
+   "sentence": "I watched the light move across the wall.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 853
+  },
+  {
+   "file": "window-03.svg",
+   "anchor": "window",
+   "sentence": "Something about the light today.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1086
+  },
+  {
+   "file": "window-04.svg",
+   "anchor": "window",
+   "sentence": "Glass between me and the morning.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 2504
+  },
+  {
+   "file": "window-05.svg",
+   "anchor": "window",
+   "sentence": "窗户留着另一片天。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1925
+  },
+  {
+   "file": "window-06.svg",
+   "anchor": "window",
+   "sentence": "今天的光有点不一样。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 2482
+  },
+  {
+   "file": "door-01.svg",
+   "anchor": "door",
+   "sentence": "Memory is a room with the door left open.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 2552
+  },
+  {
+   "file": "door-02.svg",
+   "anchor": "door",
+   "sentence": "I keep a door I never close.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1039
+  },
+  {
+   "file": "door-03.svg",
+   "anchor": "door",
+   "sentence": "Not every exit is a leaving.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1420
+  },
+  {
+   "file": "door-04.svg",
+   "anchor": "door",
+   "sentence": "Someone knocked and I answered late.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 803
+  },
+  {
+   "file": "door-05.svg",
+   "anchor": "door",
+   "sentence": "记忆是一间门没关的房间。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1705
+  },
+  {
+   "file": "door-06.svg",
+   "anchor": "door",
+   "sentence": "不是每次出门都是离开。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 954
+  },
+  {
+   "file": "bridge-01.svg",
+   "anchor": "bridge",
+   "sentence": "Between us there is a bridge nobody built.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 767
+  },
+  {
+   "file": "bridge-02.svg",
+   "anchor": "bridge",
+   "sentence": "I am halfway across and not looking down.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 2416
+  },
+  {
+   "file": "bridge-03.svg",
+   "anchor": "bridge",
+   "sentence": "Words are the bridge I keep repairing.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1254
+  },
+  {
+   "file": "bridge-04.svg",
+   "anchor": "bridge",
+   "sentence": "Two shores, one crossing.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1138
+  },
+  {
+   "file": "bridge-05.svg",
+   "anchor": "bridge",
+   "sentence": "我们之间有一座没人修的桥。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1668
+  },
+  {
+   "file": "bridge-06.svg",
+   "anchor": "bridge",
+   "sentence": "走到一半，不往下看。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 757
+  },
+  {
+   "file": "mountain-01.svg",
+   "anchor": "mountain",
+   "sentence": "The mountain does not hurry.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 771
+  },
+  {
+   "file": "mountain-02.svg",
+   "anchor": "mountain",
+   "sentence": "I climbed nothing today and that is fine.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1038
+  },
+  {
+   "file": "mountain-03.svg",
+   "anchor": "mountain",
+   "sentence": "Some distances are meant to stay distant.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 949
+  },
+  {
+   "file": "mountain-04.svg",
+   "anchor": "mountain",
+   "sentence": "Rest is also a summit.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1269
+  },
+  {
+   "file": "mountain-05.svg",
+   "anchor": "mountain",
+   "sentence": "山不着急。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1114
+  },
+  {
+   "file": "mountain-06.svg",
+   "anchor": "mountain",
+   "sentence": "有些远是用来看的。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1546
+  },
+  {
+   "file": "fire-01.svg",
+   "anchor": "fire",
+   "sentence": "A small fire is still a fire.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1238
+  },
+  {
+   "file": "fire-02.svg",
+   "anchor": "fire",
+   "sentence": "I kept the match, not the flame.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1369
+  },
+  {
+   "file": "fire-03.svg",
+   "anchor": "fire",
+   "sentence": "Something in me is still lit.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1902
+  },
+  {
+   "file": "fire-04.svg",
+   "anchor": "fire",
+   "sentence": "Burn slow, last long.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 994
+  },
+  {
+   "file": "fire-05.svg",
+   "anchor": "fire",
+   "sentence": "小火也是火。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 538
+  },
+  {
+   "file": "fire-06.svg",
+   "anchor": "fire",
+   "sentence": "我留着火柴，没留火。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1852
+  },
+  {
+   "file": "hand-01.svg",
+   "anchor": "hand",
+   "sentence": "Say it once and it stays in the hand.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1598
+  },
+  {
+   "file": "hand-02.svg",
+   "anchor": "hand",
+   "sentence": "I should call my mother.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1012
+  },
+  {
+   "file": "hand-03.svg",
+   "anchor": "hand",
+   "sentence": "What we hold, holds us back a little.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 939
+  },
+  {
+   "file": "hand-04.svg",
+   "anchor": "hand",
+   "sentence": "An open hand is also a shape.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1316
+  },
+  {
+   "file": "hand-05.svg",
+   "anchor": "hand",
+   "sentence": "我该给妈妈打个电话。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 565
+  },
+  {
+   "file": "hand-06.svg",
+   "anchor": "hand",
+   "sentence": "手张开也是一种形状。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1481
+  },
+  {
+   "file": "home-01.svg",
+   "anchor": "home",
+   "sentence": "Home is where the light is left on.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1619
+  },
+  {
+   "file": "home-02.svg",
+   "anchor": "home",
+   "sentence": "I am learning to be a house.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1220
+  },
+  {
+   "file": "home-03.svg",
+   "anchor": "home",
+   "sentence": "Nothing you do not name stays.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1482
+  },
+  {
+   "file": "home-04.svg",
+   "anchor": "home",
+   "sentence": "A roof is a promise about rain.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1429
+  },
+  {
+   "file": "home-05.svg",
+   "anchor": "home",
+   "sentence": "家是留着灯的地方。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1799
+  },
+  {
+   "file": "home-06.svg",
+   "anchor": "home",
+   "sentence": "没有名字的东西留不下来。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1906
+  },
+  {
+   "file": "wait-01.svg",
+   "anchor": "wait",
+   "sentence": "What if rest is the work?",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1970
+  },
+  {
+   "file": "wait-02.svg",
+   "anchor": "wait",
+   "sentence": "I am waiting, and the waiting is also mine.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1193
+  },
+  {
+   "file": "wait-03.svg",
+   "anchor": "wait",
+   "sentence": "Patience is a slow kind of speed.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 620
+  },
+  {
+   "file": "wait-04.svg",
+   "anchor": "wait",
+   "sentence": "The kettle knows something I don't.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1636
+  },
+  {
+   "file": "wait-05.svg",
+   "anchor": "wait",
+   "sentence": "等待也是我的。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 614
   }
  ]
 }

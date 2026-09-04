@@ -1,0 +1,16 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg" transform="rotate(1.5 340 340)">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <circle cx="340" cy="340" r="5" fill="#1a1a1a"/>
+  
+  <line x1="340" y1="340" x2="340" y2="180" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="340" y1="340" x2="480" y2="340" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="340" y1="340" x2="340" y2="500" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="340" y1="340" x2="200" y2="340" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="5,3"/>
+  
+  <path d="M 340 340 Q 375 305 420 270" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-dasharray="5,3"/>
+  <path d="M 340 340 Q 405 375 460 410" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-dasharray="5,3"/>
+  <path d="M 340 340 Q 295 385 250 430" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-dasharray="5,3"/>
+  <path d="M 340 340 Q 305 305 270 270" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-dasharray="5,3"/>
+  
+</svg>

@@ -1,0 +1,38 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  <g transform="rotate(1.3 340 340)">
+    <!-- 左岸支点 -->
+    <circle cx="70" cy="410" r="11" stroke="#1a1a1a" stroke-width="2.2" fill="none"/>
+    
+    <!-- 右岸支点 -->
+    <circle cx="610" cy="290" r="11" stroke="#1a1a1a" stroke-width="2.2" fill="none"/>
+    
+    <!-- 桥身主线 - 上部弧线 -->
+    <path d="M 81 410 Q 340 140 599 290" 
+          stroke="#1a1a1a" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+    
+    <!-- 桥身底部 - 虚线 -->
+    <path d="M 90 405 Q 340 175 595 298" 
+          stroke="#1a1a1a" stroke-width="2" fill="none" 
+          stroke-dasharray="15,10" stroke-linecap="round"/>
+    
+    <!-- 桥的竖直支撑 - 有的完整，有的虚线 -->
+    <line x1="160" y1="365" x2="160" y2="390" stroke="#1a1a1a" stroke-width="1.8"/>
+    
+    <line x1="260" y1="260" x2="260" y2="300" stroke="#1a1a1a" stroke-width="1.8" 
+          stroke-dasharray="6,5"/>
+    
+    <line x1="340" y1="155" x2="340" y2="210" stroke="#1a1a1a" stroke-width="1.8" 
+          stroke-dasharray="7,4"/>
+    
+    <line x1="440" y1="235" x2="440" y2="280" stroke="#1a1a1a" stroke-width="1.8" 
+          stroke-dasharray="6,5"/>
+    
+    <line x1="520" y1="310" x2="520" y2="335" stroke="#1a1a1a" stroke-width="1.8"/>
+    
+    <!-- 破损纹理细节 -->
+    <path d="M 220 295 L 225 310" stroke="#1a1a1a" stroke-width="0.9" opacity="0.7"/>
+    <path d="M 380 200 L 375 215" stroke="#1a1a1a" stroke-width="0.9" opacity="0.7"/>
+    <path d="M 480 270 L 485 285" stroke="#1a1a1a" stroke-width="0.9" opacity="0.7"/>
+  </g>
+</svg>
