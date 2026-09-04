@@ -435,6 +435,31 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   100% { opacity: 0;        transform: translate(var(--bx), var(--by)) scale(0.4); }
 }
 
+/* The signature: the light, crossing from the field to the plate. */
+.signlight {
+  position: fixed;
+  z-index: var(--z-sticky);
+  inline-size: 18px;
+  block-size: 18px;
+  border-radius: 50%;
+  translate: -50% -50%;
+  pointer-events: none;
+  background: radial-gradient(circle,
+    color-mix(in oklch, var(--color-accent) 72%, white) 0,
+    color-mix(in oklch, var(--color-accent) 42%, transparent) 38%,
+    transparent 70%);
+  filter: blur(1.2px);
+}
+.ground__light { transition: opacity 900ms var(--ease-in-out); }
+.is-signing .ground__light { opacity: 0; transition-duration: 500ms; }
+.gift__plate svg .signature { animation: sign-in 700ms var(--ease-out) both; }
+@keyframes sign-in { from { opacity: 0; transform: scale(2.4); transform-box: fill-box; transform-origin: center; } }
+
+/* A print you can pick up: the card tilts a little under the pointer. */
+[data-state="gift"] .card { perspective: 1200px; }
+[data-state="gift"] .card__paper { transition: opacity 600ms var(--ease-in-out) 400ms, transform 700ms var(--ease-out); }
+[data-state="gift"] .card:hover .card__paper { transform: rotateX(1.5deg) rotateY(-2.5deg) translateY(-2px); }
+
 /* Strokes assemble centre-outward once the leaves have parted. */
 .gift__plate [data-i] {
   opacity: 0;
@@ -621,7 +646,9 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   }
   .gift__plate [data-i], .gift__actions, .card__line, .card__meta { opacity: 1; }
   .card__edge rect { stroke-dashoffset: 0; }
-  [data-state="gift"] .gift__wrap, .card__glint, .burst { display: none; }
+  [data-state="gift"] .gift__wrap, .card__glint, .burst, .signlight { display: none; }
+  .gift__plate svg .signature { animation: none; }
+  [data-state="gift"] .card:hover .card__paper { transform: none; }
   .card, .card__paper, .gift__wrap, .forming__echo, .ask__field, .ask__go, .cta, .forming__field { transition: none; }
   .cta::before { animation: none; opacity: 1; }
 }

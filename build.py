@@ -1258,6 +1258,48 @@ MAKE_JS = r"""
     $('redraw').hidden = art.via !== 'local';
     setState('gift');
     burst();
+    setTimeout(sign, 1900);   /* once the leaves have opened */
+  }
+
+  /* The signature. When the gift is open, the light that wanders the field
+     comes across to the plate and settles in the corner of the drawing as
+     one amber cell — light on light. It is written into the SVG, so the
+     export carries it too. */
+  function sign() {
+    var plate = $('plate'), svg = plate.querySelector('svg');
+    if (!svg || body.dataset.state !== 'gift') return;
+    var mark = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    mark.setAttribute('class', 'signature');
+    mark.setAttribute('x', '622'); mark.setAttribute('y', '622');
+    mark.setAttribute('width', '12'); mark.setAttribute('height', '12');
+    mark.setAttribute('fill', '#c58a3a');
+    mark.setAttribute('opacity', '0');
+    svg.appendChild(mark);
+    var settle = function () { mark.setAttribute('opacity', '0.9'); };
+    var light = document.querySelector('.ground__light');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !light || !light.animate) { settle(); return; }
+    var from = light.getBoundingClientRect(), pr = plate.getBoundingClientRect();
+    var fx = from.left + from.width / 2, fy = from.top + from.height / 2;
+    var tx = pr.left + pr.width * 0.923, ty = pr.top + pr.height * 0.923;
+    var el = document.createElement('span');
+    el.className = 'signlight';
+    el.style.left = fx + 'px'; el.style.top = fy + 'px';
+    document.body.appendChild(el);
+    body.classList.add('is-signing');
+    /* An arc, not a straight line: out and up a little first, then in. */
+    var mx = (fx + tx) / 2 - fx, my = Math.min(fy, ty) - fy - 60;
+    var a = el.animate([
+      { transform: 'translate(0, 0) scale(1)', opacity: 0.95, offset: 0 },
+      { transform: 'translate(' + mx.toFixed(0) + 'px, ' + my.toFixed(0) + 'px) scale(0.85)', opacity: 1, offset: 0.55 },
+      { transform: 'translate(' + (tx - fx).toFixed(0) + 'px, ' + (ty - fy).toFixed(0) + 'px) scale(0.4)', opacity: 1, offset: 1 }
+    ], { duration: 2800, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', fill: 'forwards' });
+    a.onfinish = function () {
+      settle();
+      el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'forwards' })
+        .onfinish = function () { el.remove(); };
+      setTimeout(function () { body.classList.remove('is-signing'); }, 1400);
+    };
   }
 
   /* The light the sentence became, let out of the card as it opens. */
@@ -1375,6 +1417,8 @@ MAKE_JS = r"""
 
   $('again').addEventListener('click', function () {
     $('burst').textContent = '';
+    body.classList.remove('is-signing');
+    var stray = document.querySelector('.signlight'); if (stray) stray.remove();
     field.value = '';
     body.dataset.ready = 'no';
     go.disabled = true;

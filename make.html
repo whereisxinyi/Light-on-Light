@@ -725,6 +725,31 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   100% { opacity: 0;        transform: translate(var(--bx), var(--by)) scale(0.4); }
 }
 
+/* The signature: the light, crossing from the field to the plate. */
+.signlight {
+  position: fixed;
+  z-index: var(--z-sticky);
+  inline-size: 18px;
+  block-size: 18px;
+  border-radius: 50%;
+  translate: -50% -50%;
+  pointer-events: none;
+  background: radial-gradient(circle,
+    color-mix(in oklch, var(--color-accent) 72%, white) 0,
+    color-mix(in oklch, var(--color-accent) 42%, transparent) 38%,
+    transparent 70%);
+  filter: blur(1.2px);
+}
+.ground__light { transition: opacity 900ms var(--ease-in-out); }
+.is-signing .ground__light { opacity: 0; transition-duration: 500ms; }
+.gift__plate svg .signature { animation: sign-in 700ms var(--ease-out) both; }
+@keyframes sign-in { from { opacity: 0; transform: scale(2.4); transform-box: fill-box; transform-origin: center; } }
+
+/* A print you can pick up: the card tilts a little under the pointer. */
+[data-state="gift"] .card { perspective: 1200px; }
+[data-state="gift"] .card__paper { transition: opacity 600ms var(--ease-in-out) 400ms, transform 700ms var(--ease-out); }
+[data-state="gift"] .card:hover .card__paper { transform: rotateX(1.5deg) rotateY(-2.5deg) translateY(-2px); }
+
 /* Strokes assemble centre-outward once the leaves have parted. */
 .gift__plate [data-i] {
   opacity: 0;
@@ -911,7 +936,9 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   }
   .gift__plate [data-i], .gift__actions, .card__line, .card__meta { opacity: 1; }
   .card__edge rect { stroke-dashoffset: 0; }
-  [data-state="gift"] .gift__wrap, .card__glint, .burst { display: none; }
+  [data-state="gift"] .gift__wrap, .card__glint, .burst, .signlight { display: none; }
+  .gift__plate svg .signature { animation: none; }
+  [data-state="gift"] .card:hover .card__paper { transform: none; }
   .card, .card__paper, .gift__wrap, .forming__echo, .ask__field, .ask__go, .cta, .forming__field { transition: none; }
   .cta::before { animation: none; opacity: 1; }
 }
@@ -1494,6 +1521,48 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     $('redraw').hidden = art.via !== 'local';
     setState('gift');
     burst();
+    setTimeout(sign, 1900);   /* once the leaves have opened */
+  }
+
+  /* The signature. When the gift is open, the light that wanders the field
+     comes across to the plate and settles in the corner of the drawing as
+     one amber cell — light on light. It is written into the SVG, so the
+     export carries it too. */
+  function sign() {
+    var plate = $('plate'), svg = plate.querySelector('svg');
+    if (!svg || body.dataset.state !== 'gift') return;
+    var mark = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    mark.setAttribute('class', 'signature');
+    mark.setAttribute('x', '622'); mark.setAttribute('y', '622');
+    mark.setAttribute('width', '12'); mark.setAttribute('height', '12');
+    mark.setAttribute('fill', '#c58a3a');
+    mark.setAttribute('opacity', '0');
+    svg.appendChild(mark);
+    var settle = function () { mark.setAttribute('opacity', '0.9'); };
+    var light = document.querySelector('.ground__light');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !light || !light.animate) { settle(); return; }
+    var from = light.getBoundingClientRect(), pr = plate.getBoundingClientRect();
+    var fx = from.left + from.width / 2, fy = from.top + from.height / 2;
+    var tx = pr.left + pr.width * 0.923, ty = pr.top + pr.height * 0.923;
+    var el = document.createElement('span');
+    el.className = 'signlight';
+    el.style.left = fx + 'px'; el.style.top = fy + 'px';
+    document.body.appendChild(el);
+    body.classList.add('is-signing');
+    /* An arc, not a straight line: out and up a little first, then in. */
+    var mx = (fx + tx) / 2 - fx, my = Math.min(fy, ty) - fy - 60;
+    var a = el.animate([
+      { transform: 'translate(0, 0) scale(1)', opacity: 0.95, offset: 0 },
+      { transform: 'translate(' + mx.toFixed(0) + 'px, ' + my.toFixed(0) + 'px) scale(0.85)', opacity: 1, offset: 0.55 },
+      { transform: 'translate(' + (tx - fx).toFixed(0) + 'px, ' + (ty - fy).toFixed(0) + 'px) scale(0.4)', opacity: 1, offset: 1 }
+    ], { duration: 2800, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', fill: 'forwards' });
+    a.onfinish = function () {
+      settle();
+      el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'forwards' })
+        .onfinish = function () { el.remove(); };
+      setTimeout(function () { body.classList.remove('is-signing'); }, 1400);
+    };
   }
 
   /* The light the sentence became, let out of the card as it opens. */
@@ -1611,6 +1680,8 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 
   $('again').addEventListener('click', function () {
     $('burst').textContent = '';
+    body.classList.remove('is-signing');
+    var stray = document.querySelector('.signlight'); if (stray) stray.remove();
     field.value = '';
     body.dataset.ready = 'no';
     go.disabled = true;
