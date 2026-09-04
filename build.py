@@ -437,9 +437,6 @@ CONCEPT_BODY = """
 
 <footer class="colophon">
   <span>Light on Light</span>
-  <span class="colophon__sep" aria-hidden="true">&middot;</span>
-  <span>Layer 02</span>
-  <span class="colophon__sep" aria-hidden="true">&middot;</span>
   <a href="./index.html">Back to the beginning</a>
 </footer>
 
@@ -559,9 +556,6 @@ MAKE_BODY = """
 
 <footer class="colophon">
   <span>Light on Light</span>
-  <span class="colophon__sep" aria-hidden="true">&middot;</span>
-  <span>Layer 03</span>
-  <span class="colophon__sep" aria-hidden="true">&middot;</span>
   <a href="./concept.html">Why this project</a>
 </footer>
 
@@ -577,8 +571,8 @@ SUBSTRATE_JS = r"""
 /* ------------------------------------------------------------
    The substrate.
    Under the paper the name exists as a bitmap — the way the machine holds
-   it — set small, in ink so faint it is a watermark until light passes
-   over it. A read head sweeps through the word and, where it is, the
+   it — gutter to gutter across the foot of the page, in ink so faint it
+   is a watermark until light passes over it. A read head sweeps through the word and, where it is, the
    cells warm to amber and become legible; a cell dims for a frame or
    three and recovers; a few cells are lit amber all along, the same
    pixel lights as layer 01; a caret blinks after the last letter. Canvas,
@@ -591,7 +585,7 @@ SUBSTRATE_JS = r"""
   var ctx = canvas.getContext('2d');
   /* Fewer, larger cells on a phone: a 3px cell is a texture, not a letter. */
   var narrow = window.innerWidth < 640;
-  var COLS = narrow ? 64 : 84, ROWS = narrow ? 13 : 16, GAP = 0.22, TEXT = 'Light on Light';
+  var COLS = narrow ? 64 : 128, ROWS = narrow ? 13 : 24, GAP = 0.24, TEXT = 'Light on Light';
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var css = getComputedStyle(document.documentElement);
   var tok = function (name, fb) { var v = css.getPropertyValue(name).trim(); return v || fb; };
@@ -609,7 +603,7 @@ SUBSTRATE_JS = r"""
     var o = off.getContext('2d');
     var size = ROWS * 0.86, face = '"Instrument Serif", Georgia, serif';
     o.font = size + 'px ' + face;
-    var w = o.measureText(TEXT).width, maxW = COLS - 8;
+    var w = o.measureText(TEXT).width, maxW = COLS - 2;   /* edge to edge of the footer */
     if (w > maxW) { size *= maxW / w; o.font = size + 'px ' + face; w = o.measureText(TEXT).width; }
     var x = Math.floor((COLS - w) / 2), y = Math.round(ROWS * 0.74);
     o.fillStyle = '#fff';

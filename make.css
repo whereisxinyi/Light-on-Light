@@ -491,7 +491,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
    ============================================================ */
 
 .colophon {
-  display: flex; flex-wrap: wrap;
+  display: flex; flex-wrap: wrap; justify-content: space-between;
   gap: var(--space-sm) var(--space-lg); align-items: baseline;
   margin-inline: var(--page-gutter);
   padding-block: var(--space-lg) var(--space-lg);
@@ -499,7 +499,6 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   font-family: var(--font-mono); font-size: var(--text-xs);
   letter-spacing: 0.12em; color: var(--color-muted);
 }
-.colophon__sep { color: var(--color-rule); }
 .colophon a {
   color: var(--color-muted); text-decoration: none; white-space: nowrap;
   border-block-end: var(--rule-hair) solid transparent;
@@ -523,20 +522,21 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   position: relative;
   isolation: isolate;
   margin-inline: var(--page-gutter);
-  padding-block: var(--space-md) clamp(var(--space-2xl), 8vh, var(--space-3xl));
+  padding-block: var(--space-xl) var(--space-lg);
 }
+/* The deepest fog pools along the whole foot of the page. */
 .substrate::before {
   content: "";
   position: absolute;
-  inset: -60% -14% -40% -16%;
+  inset: -50% -8% -30% -8%;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(52% 70% at 20% 62%,
+  background: radial-gradient(64% 76% at 50% 68%,
     color-mix(in oklch, var(--color-paper-3) 72%, transparent), transparent 72%);
   mix-blend-mode: multiply;
 }
-/* About the width of the wordmark in the masthead. */
-.substrate__px { display: block; inline-size: min(26rem, 100%); }
+/* Gutter to gutter: the name is the width of the page here. */
+.substrate__px { display: block; inline-size: 100%; }
 
 /* ============================================================
    ≤ 40rem
