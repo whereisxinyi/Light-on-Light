@@ -1246,29 +1246,46 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
      which is what makes it read as the serif face and not a blob. */
   function sample() {
     var face = '"Instrument Serif", Georgia, serif';
-    /* Size the name to the full width — edge to edge — and let the height
-       follow: the rows are however tall those letters are. */
     var probe = document.createElement('canvas').getContext('2d');
     probe.font = '100px ' + face;
-    var unit = probe.measureText(TEXT).width / 100;
-    var size = (COLS - 2) / unit;
-    ROWS = Math.ceil(size * 1.15);
-    var off = document.createElement('canvas');
-    off.width = COLS; off.height = ROWS;
-    var o = off.getContext('2d');
-    o.font = size + 'px ' + face;
-    var x = 1, y = Math.round(size * 0.82);
-    o.fillStyle = '#fff';
-    o.fillText(TEXT, x, y);
-    var d = o.getImageData(0, 0, COLS, ROWS).data;
+    var unit = probe.measureText(TEXT).width / 100;      /* width per px of size */
+    var size = (COLS - 2) / unit;                         /* edge to edge, by the metrics */
+    var pass, d, minx, maxx;
+    /* Two passes: fit by the font's metrics, then measure what was actually
+       rasterised and correct once. A browser that measures with one face
+       and paints with another (a webfont arriving late, a canvas that has
+       not seen the face yet) would otherwise paint the word wider than the
+       canvas and lose its last letter off the right edge. */
+    for (pass = 0; pass < 2; pass++) {
+      ROWS = Math.ceil(size * 1.15);
+      var off = document.createElement('canvas');
+      off.width = COLS; off.height = ROWS;
+      var o = off.getContext('2d');
+      o.font = size + 'px ' + face;
+      o.fillStyle = '#fff';
+      o.fillText(TEXT, 1, Math.round(size * 0.82));
+      d = o.getImageData(0, 0, COLS, ROWS).data;
+      minx = COLS; maxx = -1;
+      for (var yy = 0; yy < ROWS; yy++) {
+        for (var xx = 0; xx < COLS; xx++) {
+          if (d[(yy * COLS + xx) * 4 + 3] / 255 >= 0.22) { if (xx < minx) minx = xx; if (xx > maxx) maxx = xx; }
+        }
+      }
+      var painted = maxx - minx + 1;
+      if (maxx < 0 || Math.abs(painted - (COLS - 2)) <= 2) break;
+      size *= (COLS - 2) / painted;
+    }
+    var shift = maxx >= 0 ? 1 - minx : 0;                 /* the word starts one cell in */
     cells = [];
     for (var r = 0; r < ROWS; r++) {
       for (var c = 0; c < COLS; c++) {
         var a = d[(r * COLS + c) * 4 + 3] / 255;
         if (a < 0.22) continue;
+        var cc = c + shift;
+        if (cc < 0 || cc >= COLS) continue;
         var aa = Math.min(1, a * 1.15), amber = Math.random() < 0.025;
         /* Ink cells are a watermark; the amber ones are lights. */
-        cells.push({ c: c, r: r, amber: amber,
+        cells.push({ c: cc, r: r, amber: amber,
                      base: amber ? 0.5 + 0.35 * aa : 0.12 + 0.2 * aa, dip: 0, left: 0, g: 0 });
       }
     }
@@ -1346,6 +1363,10 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   /* Sample only once the real face is in, or the bitmap is Georgia's. */
   var ready = (document.fonts && document.fonts.load) ? document.fonts.load('20px "Instrument Serif"') : Promise.resolve();
   ready.then(boot, boot);
+  if (document.fonts && document.fonts.addEventListener) {
+    /* A face that lands after the first paint: sample again, in that face. */
+    document.fonts.addEventListener('loadingdone', function () { sample(); layout(); draw(); });
+  }
 })();
 </script>
 </body>
