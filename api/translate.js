@@ -62,10 +62,12 @@ OUTPUT RULES — these override anything else:
   outside the SVG.
 - viewBox="0 0 680 680". First child: <rect width="680" height="680"
   fill="#fdfdfb"/>. Ink is #1a1a1a only.
-- Text uses font-family="Segoe Print, Bradley Hand, Comic Sans MS, cursive".
-  If the sentence is Chinese, hand-set the Chinese directly.
+- NO TEXT of any kind in the SVG — no <text>, no lettering drawn as paths,
+  no quotation marks. The page sets the sentence beneath the drawing itself.
+- NO frame, border or box around the drawing. The drawing floats on the
+  paper; the page provides the plate.
 - Hand-drawn feel per the skill: stroke-dasharray breaks, irregular beziers,
-  the whole text block rotated 1-2 degrees (once, not per glyph).
+  the whole drawing rotated 1-2 degrees (once).
 - No <script>, no event handlers, no external references, no <image>.
 `;
 

@@ -766,17 +766,6 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   display: flow-root;          /* so the canvas's negative bottom margin shortens this box */
   overflow: clip;              /* and the lower half of the name hangs below it */
 }
-/* The deepest fog pools along the whole foot of the page. */
-.substrate::before {
-  content: "";
-  position: absolute;
-  inset: -50% -8% -30% -8%;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(64% 76% at 50% 68%,
-    color-mix(in oklch, var(--color-paper-3) 72%, transparent), transparent 72%);
-  mix-blend-mode: multiply;
-}
 /* Edge to edge: the name is the width of the viewport here, and only its
    upper half shows; the generator sets the negative bottom margin. */
 .substrate__px { display: block; inline-size: 100%; }
@@ -1152,7 +1141,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   var wide = canvas.parentNode.clientWidth || window.innerWidth;
   var COLS = Math.max(64, Math.min(256, Math.round(wide / 8))), ROWS = 16;
   var GAP = 0.26, TEXT = 'Light on Light';
-  var SHOW = 0.5;   /* the fraction of the bitmap's height left above the page's edge */
+  var SHOW = 0.62;  /* the fraction of the bitmap's height left above the page's edge */
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var css = getComputedStyle(document.documentElement);
   var tok = function (name, fb) { var v = css.getPropertyValue(name).trim(); return v || fb; };

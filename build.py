@@ -578,11 +578,6 @@ MAKE_BODY = """
       <button class="cta ask__go" id="go" type="submit" disabled>Translate it</button>
     </form>
     <p class="said" id="said"></p>
-    <div class="gift__actions">
-      <button class="cta" id="export" type="button">Save as image</button>
-      <button class="gift__again" id="again" type="button">Write another</button>
-      <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
-    </div>
   </section>
 
   <!-- Right · the card: the print itself, at every moment. While forming, a
@@ -606,6 +601,11 @@ MAKE_BODY = """
       </div>
       <div class="gift__wrap" aria-hidden="true"></div>
     </figure>
+    <div class="gift__actions">
+      <button class="cta" id="export" type="button">Save as image</button>
+      <button class="gift__again" id="again" type="button">Write another</button>
+      <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
+    </div>
     <div class="burst" id="burst" aria-hidden="true"></div>
   </section>
 
@@ -689,7 +689,7 @@ SUBSTRATE_JS = r"""
   var wide = canvas.parentNode.clientWidth || window.innerWidth;
   var COLS = Math.max(64, Math.min(256, Math.round(wide / 8))), ROWS = 16;
   var GAP = 0.26, TEXT = 'Light on Light';
-  var SHOW = 0.5;   /* the fraction of the bitmap's height left above the page's edge */
+  var SHOW = 0.62;  /* the fraction of the bitmap's height left above the page's edge */
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var css = getComputedStyle(document.documentElement);
   var tok = function (name, fb) { var v = css.getPropertyValue(name).trim(); return v || fb; };
@@ -1212,6 +1212,7 @@ MAKE_JS = r"""
   /* Injected markup is injected markup, whoever drew it. */
   function sanitizeSVG(raw) {
     return raw
+      .replace(/<text[\s\S]*?<\/text>/gi, '')          /* the sentence is set by the page, never drawn */
       .replace(/<script[\s\S]*?<\/script>/gi, '')
       .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
       .replace(/javascript:/gi, '');
@@ -1537,10 +1538,12 @@ OUTPUT RULES — these override anything else:
   outside the SVG.
 - viewBox="0 0 680 680". First child: <rect width="680" height="680"
   fill="#fdfdfb"/>. Ink is #1a1a1a only.
-- Text uses font-family="Segoe Print, Bradley Hand, Comic Sans MS, cursive".
-  If the sentence is Chinese, hand-set the Chinese directly.
+- NO TEXT of any kind in the SVG — no <text>, no lettering drawn as paths,
+  no quotation marks. The page sets the sentence beneath the drawing itself.
+- NO frame, border or box around the drawing. The drawing floats on the
+  paper; the page provides the plate.
 - Hand-drawn feel per the skill: stroke-dasharray breaks, irregular beziers,
-  the whole text block rotated 1-2 degrees (once, not per glyph).
+  the whole drawing rotated 1-2 degrees (once).
 - No <script>, no event handlers, no external references, no <image>.
 `;
 

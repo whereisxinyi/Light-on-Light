@@ -233,6 +233,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 .gift__actions {
   display: none;
   flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: var(--space-lg);
 }
@@ -377,8 +378,6 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   inline-size: var(--plate);
   aspect-ratio: 1;
   background: var(--color-plate-paper);
-  border: var(--rule-hair) solid var(--color-rule);
-  border-radius: var(--radius-plate);
   overflow: hidden;
 }
 .gift__plate svg { display: block; inline-size: 100%; block-size: 100%; }
@@ -581,17 +580,6 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   padding-block: var(--space-md) 0;
   display: flow-root;          /* so the canvas's negative bottom margin shortens this box */
   overflow: clip;              /* and the lower half of the name hangs below it */
-}
-/* The deepest fog pools along the whole foot of the page. */
-.substrate::before {
-  content: "";
-  position: absolute;
-  inset: -50% -8% -30% -8%;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(64% 76% at 50% 68%,
-    color-mix(in oklch, var(--color-paper-3) 72%, transparent), transparent 72%);
-  mix-blend-mode: multiply;
 }
 /* Edge to edge: the name is the width of the viewport here, and only its
    upper half shows; the generator sets the negative bottom margin. */
