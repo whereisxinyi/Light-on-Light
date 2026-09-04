@@ -136,8 +136,8 @@ export default async function handler(req, res) {
 
   // Free-tier Gemini 503s ("high demand") come and go per model, so one
   // model, one attempt means one bad minute drops every visitor to the
-  // page's built-in generator. Walk a chain instead — two tries per model,
-  // a short breath between — before giving up.
+  // page's fallbacks. Walk a chain instead — one try per model, each on a
+  // short leash — before giving up; the page's bank answers after that.
   // Aliases first (they track whatever Google currently points them at),
   // then pinned stable models. Retired ids 404 and the chain just moves on.
   const MODELS = [...new Set([
@@ -158,6 +158,9 @@ export default async function handler(req, res) {
           "Content-Type": "application/json",
           "x-goog-api-key": key,
         },
+        // A model that hangs is worse than one that fails: the page has a
+        // bank of drawings waiting behind this call.
+        signal: AbortSignal.timeout(22000),
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: SKILL + RULES }] },
           contents: [
@@ -182,7 +185,7 @@ export default async function handler(req, res) {
     let r = null;
     const errs = [];
     outer: for (const model of MODELS) {
-      for (let attempt = 0; attempt < 2; attempt++) {
+      for (let attempt = 0; attempt < 1; attempt++) {
         let resp;
         try {
           resp = await ask(model);
