@@ -27,13 +27,13 @@ FONTS = {
     "instrumentserif.woff2":
         "https://fonts.gstatic.com/s/instrumentserif/v5/"
         "jizBRFtNs2ka5fXjeivQ4LroWlx-6zUTjnTLgNs.woff2",
-    "geistmono.woff2":
-        "https://fonts.gstatic.com/s/geistmono/v6/"
-        "or3yQ6H-1_WfwkMZI_qYPLs1a-t7PU0AbeE9KK5U5Cl4PuCTfNg.woff2",
-    # Newsreader — the text face. Static instances (no opsz axis: 22–25 KB each
-    # instead of 60), regular + medium + italic.
+    # Instrument Serif's own italic — the voice of the thoughts.
+    "instrumentserif-italic.woff2": "https://fonts.gstatic.com/s/instrumentserif/v5/jizHRFtNs2ka5fXjeivQ4LroWlx-6zAjjH7Motmp5g.woff2",
+    # Courier Prime — the typewriter: stamps, dates, colophon.
+    "courierprime.woff2": "https://fonts.gstatic.com/s/courierprime/v11/u-450q2lgwslOqpF_6gQ8kELawFpWs39pvk.woff2",
+    # Newsreader — the narrator's text face. Static instances (no opsz axis:
+    # 22–25 KB each instead of 60), regular + italic.
     "newsreader.woff2":        "https://fonts.gstatic.com/s/newsreader/v26/cY9qfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBCzBDXXD9JVF438weI_wC-ZFHDWwgUii.woff2",
-    "newsreader-medium.woff2": "https://fonts.gstatic.com/s/newsreader/v26/cY9qfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBCzBDXXD9JVF438wSo_wC-ZFHDWwgUii.woff2",
     "newsreader-italic.woff2": "https://fonts.gstatic.com/s/newsreader/v26/cY9kfjOCX1hbuyalUrK439vogqC9yFZCYg7oRZaLP4obnf7fTXglsMwoT9ZHFjSShVCjzSY.woff2",
 }
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
@@ -52,10 +52,11 @@ def font_b64(name: str) -> str:
 
 
 FACES = """/* ------------------------------------------------------------
-   Fonts, embedded. Latin subsets of Instrument Serif (display), Newsreader
-   (text: regular, medium, italic) and Geist Mono, base64'd so this file
-   needs no network at all — open it from Finder, from a USB stick, from a
-   plane. All three are SIL Open Font License 1.1, which permits embedding.
+   Fonts, embedded. Latin subsets of Instrument Serif (roman for the name and
+   the statements, italic for the thoughts), Newsreader (the narrator) and
+   Courier Prime (the typewriter: stamps, dates, colophon), base64'd so this
+   file needs no network at all — open it from Finder, from a USB stick, from
+   a plane. All three are SIL Open Font License 1.1, which permits embedding.
    ------------------------------------------------------------ */
 @font-face {
   font-family: "Instrument Serif";
@@ -63,7 +64,12 @@ FACES = """/* ------------------------------------------------------------
   src: url(data:font/woff2;base64,__SERIF__) format("woff2");
 }
 @font-face {
-  font-family: "Geist Mono";
+  font-family: "Instrument Serif";
+  font-style: italic; font-weight: 400; font-display: swap;
+  src: url(data:font/woff2;base64,__SERIFI__) format("woff2");
+}
+@font-face {
+  font-family: "Courier Prime";
   font-style: normal; font-weight: 400; font-display: swap;
   src: url(data:font/woff2;base64,__MONO__) format("woff2");
 }
@@ -71,11 +77,6 @@ FACES = """/* ------------------------------------------------------------
   font-family: "Newsreader";
   font-style: normal; font-weight: 400; font-display: swap;
   src: url(data:font/woff2;base64,__NR__) format("woff2");
-}
-@font-face {
-  font-family: "Newsreader";
-  font-style: normal; font-weight: 500; font-display: swap;
-  src: url(data:font/woff2;base64,__NRM__) format("woff2");
 }
 @font-face {
   font-family: "Newsreader";
@@ -290,7 +291,7 @@ CONCEPT_JS = """
       /* Capped under the note's size: a thought is texture behind the
          narrator's line, never a second headline. And never amber — the
          accent lands on the turn and the invitation, nowhere else. */
-      set('--s',  (near ? R(1.1, 1.5) : R(0.95, 1.1)).toFixed(2) + 'rem');
+      set('--s',  (near ? R(1.25, 1.6) : R(1.1, 1.25)).toFixed(2) + 'rem');
       set('--o',  (near ? R(0.62, 0.9) : R(0.3, 0.5)).toFixed(2));
       set('--c',  'var(--color-ink)');
 
@@ -356,7 +357,7 @@ CONCEPT_JS = """
       s.textContent = pool2[k];
       s.style.setProperty('--x',  (narrow ? R(6, 40) : R(52, 88)).toFixed(2) + '%');
       s.style.setProperty('--y',  (sfrom + k * sband + R(0.1, 0.5) * sband).toFixed(2) + '%');
-      s.style.setProperty('--s',  R(0.9, 1.15).toFixed(2) + 'rem');   /* texture, never a second headline */
+      s.style.setProperty('--s',  R(1.05, 1.3).toFixed(2) + 'rem');   /* texture, never a second headline */
       s.style.setProperty('--o',  (narrow ? R(0.12, 0.24) : R(0.18, 0.36)).toFixed(2));
       s.style.setProperty('--t1', R(9, 16).toFixed(1)    + 's');
       s.style.setProperty('--d1', (-R(0, 16)).toFixed(1) + 's');
@@ -607,7 +608,7 @@ MAKE_BODY = """
       <div class="gift__wrap" aria-hidden="true"></div>
     </figure>
     <div class="gift__actions">
-      <button class="cta" id="export" type="button">Export</button>
+      <button class="cta cta--export" id="export" type="button">Export</button>
       <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
     </div>
     <div class="burst" id="burst" aria-hidden="true"></div>
@@ -1583,6 +1584,8 @@ MAKE_JS = r"""
       URL.revokeObjectURL(blobUrl);
       btn.disabled = false;
       live.textContent = 'Saved as JPG.';
+      btn.firstChild.textContent = 'Saved';
+      setTimeout(function () { btn.firstChild.textContent = 'Export'; }, 1800);
     };
     img.onerror = function () {
       URL.revokeObjectURL(blobUrl);
@@ -1958,9 +1961,9 @@ def main() -> None:
 
     faces = (FACES
              .replace("__SERIF__", font_b64("instrumentserif.woff2"))
-             .replace("__MONO__",  font_b64("geistmono.woff2"))
+             .replace("__SERIFI__", font_b64("instrumentserif-italic.woff2"))
+             .replace("__MONO__",  font_b64("courierprime.woff2"))
              .replace("__NR__",    font_b64("newsreader.woff2"))
-             .replace("__NRM__",   font_b64("newsreader-medium.woff2"))
              .replace("__NRI__",   font_b64("newsreader-italic.woff2")))
 
     render("index.html", "Light on Light", "Light on Light.",

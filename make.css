@@ -113,7 +113,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 .mast__h a:hover { color: var(--color-ink-2); }
 .mast__layer {
   font-family: var(--font-mono); font-size: var(--text-xs);
-  letter-spacing: 0.16em; color: var(--color-muted); white-space: nowrap;
+  letter-spacing: 0.1em; color: var(--color-muted); white-space: nowrap;
 }
 /* While the sentence is being drawn the stamp reads GENERATING and breathes. */
 [data-state="forming"] .mast__layer { animation: note-breathe 2s var(--ease-in-out) infinite alternate; }
@@ -166,7 +166,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 .label {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  letter-spacing: 0.16em;
+  letter-spacing: 0.1em;
   color: var(--color-muted);
 }
 
@@ -339,7 +339,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   margin: 0;
   font-family: var(--font-voice);
   font-style: italic;
-  font-size: var(--text-body);
+  font-size: var(--text-md);
   line-height: 1.5;
   color: var(--color-muted);
   text-align: center;
@@ -371,7 +371,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   max-inline-size: var(--plate);
   font-family: var(--font-voice);
   font-style: italic;
-  font-size: var(--text-base);
+  font-size: var(--text-body);
   line-height: 1.4;
   color: var(--color-ink-2);
   text-align: center;
@@ -392,7 +392,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   gap: var(--space-2xs);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  letter-spacing: 0.16em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-muted);
   text-align: center;
@@ -499,7 +499,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   text-align: center;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   color: var(--color-muted);
 }
 .stage__caption--ready, .stage__caption--gift { display: none; }
@@ -512,7 +512,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 .gift__again {
   position: relative;
   appearance: none; border: 0; background: none; padding: 0 0 var(--space-2xs);
-  font-family: var(--font-body); font-weight: 500; font-size: var(--text-base);
+  font-family: var(--font-body); font-size: var(--text-base);
   line-height: 1.5; color: var(--color-ink-2);
   cursor: pointer; white-space: nowrap;
   transition: color var(--dur-short) var(--ease-out);
@@ -544,10 +544,9 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   backdrop-filter: blur(6px);
   color: var(--color-ink);
   font-family: var(--font-body);
-  font-weight: 500;
   font-size: var(--text-label);
   line-height: 1;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   white-space: nowrap;
   cursor: pointer;
   border: var(--rule-hair) solid var(--color-ink);
@@ -569,6 +568,57 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 .cta:active { transform: translateY(1px); }
 .cta:disabled { cursor: default; opacity: 0.6; }
 
+/* Export is the one action that takes the gift away, so it is the card's
+   own button: the card's paper and hairline, a shadow like the card's, and in
+   place of the dot a tiny plate with the signature cell in its corner. On
+   hover the plate tilts as if lifted and a light passes over the whole pill;
+   pressed, the plate goes down; done, the word says Saved for a breath. */
+.cta--export {
+  position: relative;
+  overflow: hidden;
+  gap: var(--space-sm);
+  background: color-mix(in oklch, var(--color-paper) 50%, white);
+  border-color: var(--color-rule);
+  box-shadow: 0 1rem 2rem -1.4rem color-mix(in oklch, var(--color-ink) 45%, transparent);
+  transition: border-color var(--dur-short) var(--ease-out),
+              box-shadow   var(--dur-long)  var(--ease-out),
+              transform    110ms var(--ease-out);
+}
+.cta--export::before {
+  inline-size: 14px;
+  block-size: 14px;
+  border-radius: 2px;
+  border: var(--rule-hair) solid var(--color-rule);
+  background:
+    linear-gradient(var(--color-accent), var(--color-accent)) no-repeat right 2px bottom 2px / 3px 3px,
+    var(--color-plate-paper);
+  animation: none;
+  transition: transform var(--dur-long) var(--ease-out);
+}
+.cta--export::after {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  pointer-events: none;
+  background: linear-gradient(115deg,
+    transparent 44%,
+    color-mix(in oklch, var(--color-glow) 85%, transparent) 50%,
+    transparent 56%);
+  transform: translateX(-130%);
+}
+.cta--export:hover,
+.cta--export:focus-visible {
+  color: var(--color-ink);
+  border-color: var(--color-ink-2);
+  box-shadow: 0 1.3rem 2.4rem -1.4rem color-mix(in oklch, var(--color-ink) 60%, transparent);
+}
+.cta--export:hover::before,
+.cta--export:focus-visible::before { transform: rotate(-8deg) translateY(-1px); }
+.cta--export:hover::after,
+.cta--export:focus-visible::after { animation: glint-pass 900ms var(--ease-in-out) forwards; }
+.cta--export:active::before { transform: translateY(2px); }
+.cta--export:disabled { opacity: 1; color: var(--color-muted); }
+
 /* ============================================================
    Footer
    ============================================================ */
@@ -580,7 +630,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   padding-block: var(--space-lg) var(--space-lg);
   border-block-start: var(--rule-hair) solid var(--color-rule);
   font-family: var(--font-mono); font-size: var(--text-xs);
-  letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-muted);
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-muted);
 }
 .colophon a {
   color: var(--color-muted); text-decoration: none; white-space: nowrap;
@@ -651,4 +701,5 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   [data-state="gift"] .card:hover .card__paper { transform: none; }
   .card, .card__paper, .gift__wrap, .forming__echo, .ask__field, .ask__go, .cta, .forming__field { transition: none; }
   .cta::before { animation: none; opacity: 1; }
+  .cta--export::before, .cta--export::after { transition: none; animation: none !important; }
 }

@@ -43,16 +43,16 @@
   --color-focus:       oklch(60%   0.19  65);
 
   /* ---------- Type ---------- */
-  /* Three roles. Instrument Serif is a display face and stays at display
-   * sizes only (wordmark, statements). Newsreader carries everything meant to
-   * be read at text size; its italic is the interior voice — the thoughts —
-   * so the narrator is always upright and a thought is always italic.
-   * Geist Mono is the single outlier — page furniture only. */
+  /* Three faces, four roles. Instrument Serif roman is the name and the
+   * statements; its italic is the interior voice — every thought, in the same
+   * hand as the name. Newsreader is the narrator, always upright. Courier
+   * Prime is the typewriter: stamps, dates, the colophon — a date typed on the
+   * back of a photograph, not a terminal. */
   --font-wordmark: "Instrument Serif", ui-serif, Georgia, serif;
   --font-display:  "Instrument Serif", ui-serif, Georgia, serif;
   --font-body:     "Newsreader", "Songti SC", ui-serif, Georgia, serif;
-  --font-voice:    "Newsreader", "Songti SC", ui-serif, Georgia, serif;   /* + font-style: italic */
-  --font-mono:     "Geist Mono", ui-monospace, SFMono-Regular, "SF Mono", monospace;
+  --font-voice:    "Instrument Serif", "Songti SC", ui-serif, Georgia, serif;   /* + font-style: italic */
+  --font-mono:     "Courier Prime", "Courier New", Courier, monospace;
   /* Every page embeds all three families (latin subsets); the CJK names in
    * --font-body are system fallbacks for a Chinese sentence on the gift. */
 
@@ -61,7 +61,7 @@
   --text-base:      1rem;
   --text-md:        1.25rem;     /* 20px */
   --text-body:      1.15rem;     /* 18.4px — Newsreader text; its x-height is larger than Instrument's */
-  --text-label:     1.2rem;      /* 19.2px — buttons and verbs, Newsreader 500 */
+  --text-label:     1.2rem;      /* 19.2px — buttons and verbs, Newsreader with a little tracking */
   --text-lg:        1.5625rem;   /* 25px */
   --text-display-s: clamp(1.6rem, 3.6vw, 2.4414rem);
   --text-display:   clamp(2.75rem, 7vw, 5.25rem);

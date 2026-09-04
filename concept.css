@@ -136,7 +136,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 .mast__layer {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  letter-spacing: 0.16em;
+  letter-spacing: 0.1em;
   color: var(--color-muted);
   white-space: nowrap;
 }
@@ -305,7 +305,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 .beat__lede {
   max-inline-size: 46ch;
   font-family: var(--font-body);
-  font-weight: 500;              /* light text on ink reads thinner; the medium compensates */
+               /* light text on ink reads thinner; the medium compensates */
   font-size: var(--text-lede);
   line-height: 1.5;
   color: var(--color-ink-paper);
@@ -463,10 +463,9 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   backdrop-filter: blur(6px);
   color: var(--color-ink);
   font-family: var(--font-body);
-  font-weight: 500;
   font-size: var(--text-label);
   line-height: 1;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   text-decoration: none;
   white-space: nowrap;
   border: var(--rule-hair) solid var(--color-ink);
@@ -505,7 +504,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   border-block-start: var(--rule-hair) solid var(--color-rule);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  letter-spacing: 0.16em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-muted);
 }
