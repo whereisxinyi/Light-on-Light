@@ -65,7 +65,7 @@ body {
   font-family: var(--font-wordmark);
   -webkit-font-smoothing: antialiased;
   display: grid;
-  grid-template-rows: auto 1fr auto;   /* mast · stage · footer — footer at the true bottom */
+  grid-template-rows: auto 1fr auto auto;   /* mast · stage · footer · substrate */
 }
 
 /* The paper's tooth, same as layers 01 and 02. */
@@ -126,6 +126,9 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   position: relative;
   isolation: isolate;
   overflow: clip;
+  /* The first screen is still mast + stage + colophon; the substrate lives
+     below the fold. 12.5rem is what the masthead and colophon take. */
+  min-block-size: calc(100dvh - 12.5rem);
   display: grid;
   align-content: end;
   padding: var(--space-3xl) var(--page-gutter) clamp(var(--space-2xl), 18vh, var(--space-4xl));
@@ -199,9 +202,9 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
    the end of what you wrote, not on a line of its own further down. */
 .ask__row {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: var(--space-lg);
-  inline-size: min(100%, 40rem);
+  inline-size: min(100%, 46rem);
 }
 
 /* No box. A line to write on, the way paper has one — and the words sit ON
@@ -235,38 +238,27 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 /* Keyboard users still get a ring — on the line, not around the box. */
 .ask__field:focus-visible { border-block-end: 2px solid var(--color-focus); }
 
-/* The verb does not exist until there is something to send. When it does, its
-   seam draws in from the left — the same motion as the wordmark's underline. */
-.ask__go {
-  position: relative;
-  appearance: none;
-  border: 0; background: none; padding: 0 0 var(--space-2xs);
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: var(--text-label);
-  line-height: 1.5;
-  color: var(--color-ink);
-  cursor: pointer;
-  white-space: nowrap;
+/* The verb is the same glass pill as Unwrap and Export — one primary action,
+   one shape, on every layer. It does not exist until there is something to
+   send; then it arrives at the end of the line. */
+.ask__row .ask__go {
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--dur-long) var(--ease-out);
+  transform: translateX(-6px);
+  transition: opacity   var(--dur-long) var(--ease-out),
+              transform var(--dur-long) var(--ease-out),
+              visibility 0s var(--dur-long);
 }
-.ask__go::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  inset-block-end: 0;
-  block-size: var(--rule-hair);
-  background: var(--color-accent);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  transition: transform var(--dur-slow) var(--ease-in-out);
+[data-ready="yes"] .ask__row .ask__go {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity     var(--dur-long) var(--ease-out),
+              transform   var(--dur-long) var(--ease-out),
+              border-color var(--dur-short) var(--ease-out),
+              color        var(--dur-short) var(--ease-out);
 }
-.ask__go:disabled { cursor: default; }
-[data-ready="yes"] .ask__go { opacity: 1; visibility: visible; }
-[data-ready="yes"] .ask__go::after { transform: scaleX(1); }
-.ask__go:hover:not(:disabled) { color: var(--color-accent); }
+.ask__row .ask__go:disabled { cursor: default; opacity: 0; }
 
 /* While the sentence gathers, the line it was written on empties. */
 .panel--ask { transition: opacity 600ms var(--ease-in-out); }
@@ -518,6 +510,33 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 /* Live region for the state changes — announced, never drawn. */
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
+
+/* ============================================================
+   The substrate — the page's last thing. Beneath the paper, the name
+   as the machine holds it: a bitmap, flickering like a process that
+   never finished. Drawn on a canvas by the generator; this only sets
+   the room it sits in.
+   ============================================================ */
+
+.substrate {
+  position: relative;
+  background: var(--color-ink);
+  padding:
+    clamp(var(--space-3xl), 14vh, var(--space-4xl))
+    var(--page-gutter)
+    clamp(var(--space-2xl), 10vh, var(--space-3xl));
+  overflow: clip;
+}
+/* The paper lifts: a short fall into the dark rather than a cut. */
+.substrate::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  block-size: 3.5rem;
+  background: linear-gradient(to bottom, var(--color-paper), var(--color-ink));
+}
+.substrate__px { display: block; inline-size: 100%; }
+
 /* ============================================================
    ≤ 40rem
    ============================================================ */
@@ -549,7 +568,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     transform: none !important;
   }
   .haze__l, .haze__glow { animation: none !important; }
-  .cta, .ask__field, .ask__go, .ask__go::after, .panel--ask, .forming { transition: none; }
+  .cta, .ask__field, .ask__go, .panel--ask, .forming { transition: none; }
   .panel--ask { animation: none !important; }
   .forming { visibility: visible; }
   [data-state="input"] .forming, [data-state="gift"] .forming { visibility: hidden; }

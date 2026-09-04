@@ -536,6 +536,33 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 }
 .colophon a:hover { color: var(--color-ink); border-block-end-color: var(--color-rule); }
 
+
+/* ============================================================
+   The substrate — the page's last thing. Beneath the paper, the name
+   as the machine holds it: a bitmap, flickering like a process that
+   never finished. Drawn on a canvas by the generator; this only sets
+   the room it sits in.
+   ============================================================ */
+
+.substrate {
+  position: relative;
+  background: var(--color-ink);
+  padding:
+    clamp(var(--space-3xl), 14vh, var(--space-4xl))
+    var(--page-gutter)
+    clamp(var(--space-2xl), 10vh, var(--space-3xl));
+  overflow: clip;
+}
+/* The paper lifts: a short fall into the dark rather than a cut. */
+.substrate::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  block-size: 3.5rem;
+  background: linear-gradient(to bottom, var(--color-paper), var(--color-ink));
+}
+.substrate__px { display: block; inline-size: 100%; }
+
 /* ============================================================
    ≤ 40rem
    ============================================================ */

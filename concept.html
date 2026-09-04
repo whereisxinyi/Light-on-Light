@@ -715,6 +715,33 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 }
 .colophon a:hover { color: var(--color-ink); border-block-end-color: var(--color-rule); }
 
+
+/* ============================================================
+   The substrate — the page's last thing. Beneath the paper, the name
+   as the machine holds it: a bitmap, flickering like a process that
+   never finished. Drawn on a canvas by the generator; this only sets
+   the room it sits in.
+   ============================================================ */
+
+.substrate {
+  position: relative;
+  background: var(--color-ink);
+  padding:
+    clamp(var(--space-3xl), 14vh, var(--space-4xl))
+    var(--page-gutter)
+    clamp(var(--space-2xl), 10vh, var(--space-3xl));
+  overflow: clip;
+}
+/* The paper lifts: a short fall into the dark rather than a cut. */
+.substrate::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  block-size: 3.5rem;
+  background: linear-gradient(to bottom, var(--color-paper), var(--color-ink));
+}
+.substrate__px { display: block; inline-size: 100%; }
+
 /* ============================================================
    ≤ 40rem
    ============================================================ */
@@ -829,6 +856,12 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   <span class="colophon__sep" aria-hidden="true">&middot;</span>
   <a href="./index.html">Back to the beginning</a>
 </footer>
+
+<!-- The substrate. Beneath the paper, the name as the machine holds it:
+     a bitmap that flickers like something still running. -->
+<aside class="substrate" aria-hidden="true">
+  <canvas class="substrate__px" id="substrate"></canvas>
+</aside>
 
 <script>
 /* ------------------------------------------------------------
@@ -1010,6 +1043,122 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
     }
     plates.appendChild(frag3);
   }
+})();
+
+/* ------------------------------------------------------------
+   The substrate.
+   Beneath the paper the name exists as a bitmap — the way the machine
+   holds it — and it flickers the way something still running does: a
+   cell dims for a frame or three and recovers, a read head sweeps through
+   the word, a caret blinks after the last letter. Canvas, ~12 fps, drawn
+   only while on screen; one still frame under reduced motion. No cell
+   ever flickers faster than the read head passes, well under 3 Hz.
+   ------------------------------------------------------------ */
+(function () {
+  var canvas = document.getElementById('substrate');
+  if (!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  /* Fewer, larger cells on a phone: a 3px cell is a texture, not a letter. */
+  var narrow = window.innerWidth < 640;
+  var COLS = narrow ? 72 : 112, ROWS = narrow ? 15 : 22, GAP = 0.18, TEXT = 'Light on Light';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var css = getComputedStyle(document.documentElement);
+  var tok = function (name, fb) { var v = css.getPropertyValue(name).trim(); return v || fb; };
+  var LIGHT = tok('--color-ink-paper', '#e8e2da');
+  var AMBER = tok('--color-accent', '#c07a2a');
+
+  var cells = [], caret = { c: 0, r: 0 }, cw = 0;
+
+  /* Rasterise the wordmark at cell resolution and keep every cell the
+     letters touch. Edge cells keep their partial coverage as a dimmer base,
+     which is what makes it read as the serif face and not a blob. */
+  function sample() {
+    var off = document.createElement('canvas');
+    off.width = COLS; off.height = ROWS;
+    var o = off.getContext('2d');
+    var size = ROWS * 0.86, face = '"Instrument Serif", Georgia, serif';
+    o.font = size + 'px ' + face;
+    var w = o.measureText(TEXT).width, maxW = COLS - 8;
+    if (w > maxW) { size *= maxW / w; o.font = size + 'px ' + face; w = o.measureText(TEXT).width; }
+    var x = Math.floor((COLS - w) / 2), y = Math.round(ROWS * 0.74);
+    o.fillStyle = '#fff';
+    o.fillText(TEXT, x, y);
+    var d = o.getImageData(0, 0, COLS, ROWS).data;
+    cells = [];
+    for (var r = 0; r < ROWS; r++) {
+      for (var c = 0; c < COLS; c++) {
+        var a = d[(r * COLS + c) * 4 + 3] / 255;
+        if (a < 0.22) continue;
+        cells.push({ c: c, r: r, base: 0.45 + 0.5 * Math.min(1, a * 1.15),
+                     amber: Math.random() < 0.025, dip: 0, left: 0 });
+      }
+    }
+    caret.c = Math.min(COLS - 2, Math.ceil(x + w) + 2);
+    caret.r = y;
+  }
+
+  function layout() {
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var cssW = canvas.clientWidth || canvas.parentNode.clientWidth || 600;
+    cw = cssW / COLS;
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cw * ROWS * dpr);
+    canvas.style.height = (cw * ROWS) + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  var sweep = -4, caretOn = true, frame = 0, last = 0, running = false, onScreen = false, raf = 0;
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var pad = cw * GAP, s = cw - pad * 2;
+    for (var i = 0; i < cells.length; i++) {
+      var k = cells[i], b = k.base;
+      if (!reduce) {
+        if (k.left > 0) { b = k.dip; k.left--; }
+        else if (Math.random() < 0.002) { k.dip = 0.06 + Math.random() * 0.24; k.left = 1 + Math.floor(Math.random() * 3); }
+        var dc = Math.abs(k.c - sweep);
+        if (dc < 3) b = Math.min(1, b + (3 - dc) * 0.14);
+      }
+      ctx.globalAlpha = b;
+      ctx.fillStyle = k.amber ? AMBER : LIGHT;
+      ctx.fillRect(k.c * cw + pad, k.r * cw + pad, s, s);
+    }
+    if (caretOn || reduce) {
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = AMBER;
+      ctx.fillRect(caret.c * cw + pad, (caret.r - 3) * cw + pad, s, cw * 4 - pad * 2);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function tick(now) {
+    if (!running) return;
+    raf = requestAnimationFrame(tick);
+    if (now - last < 83) return;            /* ~12 fps is plenty for a bitmap */
+    last = now; frame++;
+    sweep += 0.6; if (sweep > COLS + 6) sweep = -4;   /* one pass ≈ 16 s */
+    if (frame % 11 === 0) caretOn = !caretOn;         /* ≈ 0.55 Hz */
+    draw();
+  }
+  function start() { if (running || reduce || !onScreen || document.hidden) return; running = true; raf = requestAnimationFrame(tick); }
+  function stop()  { running = false; cancelAnimationFrame(raf); }
+
+  function boot() {
+    layout(); sample(); draw();
+    if (reduce) return;
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        onScreen = es[0].isIntersecting; onScreen ? start() : stop();
+      }, { threshold: 0.05 }).observe(canvas);
+    } else { onScreen = true; start(); }
+    document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
+    var rt;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { layout(); draw(); }, 120); });
+  }
+  /* Sample only once the real face is in, or the bitmap is Georgia's. */
+  var ready = (document.fonts && document.fonts.load) ? document.fonts.load('20px "Instrument Serif"') : Promise.resolve();
+  ready.then(boot, boot);
 })();
 </script>
 </body>
