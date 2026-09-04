@@ -431,6 +431,15 @@ CONCEPT_BODY = """
 </svg>
 <div class="grain" aria-hidden="true"></div>
 
+<!-- The ground: one paper the whole way down. Haze, ghost letters, dust, and
+     one wandering point of light. Layer 01's field, settled. -->
+<div class="ground" aria-hidden="true">
+  <span class="ground__haze ground__haze--a"></span>
+  <span class="ground__haze ground__haze--c"></span>
+  <span class="ground__glow"></span>
+  <span class="ground__light"></span>
+</div>
+
 <header class="mast">
   <h1 class="mast__h"><a href="./index.html">Light on Light</a></h1>
   <p class="mast__layer">LAYER 02 &mdash; WHY THIS PROJECT</p>
@@ -454,26 +463,15 @@ CONCEPT_BODY = """
   <section class="night">
     <div class="swarm-dark" aria-hidden="true"></div>
     <div class="plates" aria-hidden="true"></div>
-    <p class="beat__lede night__pain">Thoughts arrive in the shower, on the platform, halfway
-      through someone else&rsquo;s sentence. Then the feed arrives, and by lunch
-      there is nothing left to remember.</p>
+    <p class="beat__lede night__pain">A thought you never answer is a thought you lose.</p>
     <h2 class="beat__turn night__turn">What if an image could <span class="lit">respond</span>
       to a thought?</h2>
   </section>
 
-  <!-- The idea. Paper, fully back. -->
-  <section class="beat beat--light">
-    <h2 class="beat__ask">How can fleeting thoughts become meaningful memories?</h2>
-  </section>
-
-  <!-- The last fold. Layer 01's haze comes back here, quieter, so the page
-       ends on the paper it began on. -->
+  <!-- The last fold. Paper, fully back; one line, and the invitation docks
+       beneath it. -->
   <section class="give" id="invite">
-    <div class="haze" aria-hidden="true">
-      <span class="haze__l haze__l--a"></span>
-      <span class="haze__l haze__l--c"></span>
-      <span class="haze__glow"></span>
-    </div>
+    <p class="invite">Give it one sentence, and let it answer back.</p>
   </section>
 
   <!-- The invitation. Sticky, not fixed: it rides the bottom edge of the
@@ -505,6 +503,11 @@ BODY = """
     <feColorMatrix type="saturate" values="0"/>
   </filter>
 </svg>
+
+<!-- The ground's settled parts — the name in ghost letters, and dust — so this
+     field is the same paper as the layers beneath it. Its haze and lights
+     are its own, alive. -->
+<div class="ground" aria-hidden="true"></div>
 
 <main class="field">
 
@@ -574,8 +577,8 @@ MAKE_BODY = """
     <form class="ask" id="ask" autocomplete="off">
       <label class="sr" for="field">Your thought</label>
       <textarea class="ask__field" id="field" name="thought" rows="1" maxlength="180"
-                placeholder="What passed through your mind today?"></textarea>
-      <button class="cta ask__go" id="go" type="submit" disabled>Translate it</button>
+                placeholder="One sentence is enough."></textarea>
+      <button class="cta ask__go" id="go" type="submit" disabled>Wrap it</button>
     </form>
     <p class="said" id="said"></p>
   </section>
@@ -602,15 +605,15 @@ MAKE_BODY = """
       <div class="gift__wrap" aria-hidden="true"></div>
     </figure>
     <div class="gift__actions">
-      <button class="cta" id="export" type="button">Save as image</button>
-      <button class="gift__again" id="again" type="button">Write another</button>
+      <button class="cta" id="export" type="button">Keep it</button>
+      <button class="gift__again" id="again" type="button">One more thought</button>
       <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
     </div>
     <div class="burst" id="burst" aria-hidden="true"></div>
   </section>
 
   <p class="stage__caption" aria-hidden="true">
-    <span class="stage__caption--ask">One sentence is enough.</span>
+    <span class="stage__caption--ready">Wrap it, or press Enter.</span>
     <span class="stage__caption--gift">It answers you in a picture.</span>
   </p>
 
@@ -648,8 +651,8 @@ GROUND_JS = r"""
     c.textContent = letters[i];
     c.style.setProperty('--x', R(2, 90).toFixed(1) + '%');
     c.style.setProperty('--y', R(4, 86).toFixed(1) + '%');
-    c.style.setProperty('--s', R(7, 15).toFixed(1) + 'vw');
-    c.style.setProperty('--o', R(0.028, 0.06).toFixed(3));
+    c.style.setProperty('--s', R(5, 10).toFixed(1) + 'vw');
+    c.style.setProperty('--o', R(0.022, 0.045).toFixed(3));
     frag.appendChild(c);
   }
   var n = Math.round(Math.min(90, Math.max(30, window.innerWidth * window.innerHeight / 18000)));
@@ -1157,7 +1160,7 @@ MAKE_JS = r"""
       s === 'wrapped' ? 'LAYER 03 \u2014 READY' : LAYER_STAMP;
     if (s === 'forming') { live.textContent = 'Translating your sentence.'; }
     if (s === 'wrapped') { live.textContent = 'Your gift is wrapped, and opening.'; }
-    if (s === 'gift') { live.textContent = 'Your gift is open. Save as image downloads a JPG.'; }
+    if (s === 'gift') { live.textContent = 'Your gift is open. Keep it downloads a JPG.'; }
   }
 
   field.addEventListener('input', function () {
@@ -1411,15 +1414,15 @@ MAKE_JS = r"""
       var ctx = c.getContext('2d');
       ctx.scale(CARD.scale, CARD.scale);
 
-      /* ground — the site's warm paper; the plate is a print in a mount */
-      ctx.fillStyle = cssVar('--color-paper') || '#f7f3ee';
+      /* ground — the card's paper, exactly as on screen */
+      var paper = $('gift').querySelector('.card__paper');
+      ctx.fillStyle = (paper && getComputedStyle(paper).backgroundColor) || cssVar('--color-paper') || '#f7f3ee';
       ctx.fillRect(0, 0, CARD.w, CARD.h);
 
-      /* the sentence, in the skill's hand, tilted once */
+      /* the sentence, the card's caption */
       ctx.save();
       ctx.translate(CARD.w / 2, 0);
-      ctx.rotate(-0.7 * Math.PI / 180);
-      ctx.fillStyle = cssVar('--color-plate-ink') || '#1a1a1a';
+      ctx.fillStyle = cssVar('--color-ink-2') || '#4a443c';
       ctx.textAlign = 'center';
       ctx.font = 'italic 40px ' + (cssVar('--font-voice') || 'serif');   /* same voice as on screen */
       var lines = wrap(ctx, current.text, CARD.w - 220);
@@ -1433,13 +1436,8 @@ MAKE_JS = r"""
       ctx.fillStyle = cssVar('--color-plate-paper') || '#fdfdfb';
       ctx.fillRect(P.x, P.y, P.s, P.s);
       ctx.drawImage(img, P.x, P.y, P.s, P.s);
-      ctx.strokeStyle = cssVar('--color-rule') || '#d8d2c8';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(P.x + 0.5, P.y + 0.5, P.s - 1, P.s - 1);
 
-      /* rule, date, series mark */
-      ctx.fillStyle = cssVar('--color-rule') || '#d8d2c8';
-      ctx.fillRect(CARD.w / 2 - 20, 1218, 40, 1);
+      /* date, series mark — as on the card */
       ctx.textAlign = 'center';
       ctx.fillStyle = cssVar('--color-ink-2') || '#4a443c';
       ctx.font = '17px ' + (cssVar('--font-mono') || 'monospace');
@@ -1485,6 +1483,13 @@ PAGE = """<!doctype html>
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
 <meta name="color-scheme" content="light">
+<meta property="og:type" content="website">
+<meta property="og:title" content="__TITLE__">
+<meta property="og:description" content="__DESC__">
+<meta property="og:image" content="https://light-on-light.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <!-- The mark: the same semicolon whereisxinyi.github.io wears, verbatim, so the
      two sites share one icon. Inline SVG: still zero network requests. -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='1.5' y='1.5' width='61' height='61' rx='14' fill='%23ffffff' stroke='%23dcdad6' stroke-width='2'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='Fraunces,Georgia,serif' font-size='44' font-weight='600' fill='%23241f1c'%3E;%3C/text%3E%3C/svg%3E">
@@ -1829,12 +1834,12 @@ def main() -> None:
              .replace("__NRI__",   font_b64("newsreader-italic.woff2")))
 
     render("index.html", "Light on Light", "Light on Light.",
-           "styles.css", BODY, SWARM_JS, faces, tokens)
+           "styles.css", BODY, GROUND_JS + SWARM_JS, faces, tokens, ground=True)
 
     render("concept.html",
            "Light on Light",
            "Thoughts arrive all day. You keep almost none of them.",
-           "concept.css", CONCEPT_BODY, CONCEPT_JS + SUBSTRATE_JS, faces, tokens)
+           "concept.css", CONCEPT_BODY, GROUND_JS + CONCEPT_JS + SUBSTRATE_JS, faces, tokens, ground=True)
 
     render("make.html",
            "Light on Light",

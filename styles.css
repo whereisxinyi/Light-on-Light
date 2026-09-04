@@ -331,7 +331,7 @@ h1, p { margin: 0; font-weight: 400; }
   inline-size: 100%;
   block-size: var(--rule-hair);
   background: var(--color-accent);
-  opacity: 0.22;
+  opacity: 0.45;
   transform: scaleX(0.42);
   transform-origin: 0 50%;
   transition:

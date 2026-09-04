@@ -6,6 +6,13 @@
 <title>Light on Light</title>
 <meta name="description" content="Light on Light.">
 <meta name="color-scheme" content="light">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Light on Light">
+<meta property="og:description" content="Light on Light.">
+<meta property="og:image" content="https://light-on-light.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <!-- The mark: the same semicolon whereisxinyi.github.io wears, verbatim, so the
      two sites share one icon. Inline SVG: still zero network requests. -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='1.5' y='1.5' width='61' height='61' rx='14' fill='%23ffffff' stroke='%23dcdad6' stroke-width='2'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='Fraunces,Georgia,serif' font-size='44' font-weight='600' fill='%23241f1c'%3E;%3C/text%3E%3C/svg%3E">
@@ -176,6 +183,110 @@
 @media (min-width: 1500px) { html { font-size: 17px; } }
 @media (min-width: 1700px) { html { font-size: 18px; } }
 @media (min-width: 2200px) { html { font-size: 20px; } }
+
+/* SOURCE FILE — the ground shared by layers 02 and 03; build.py prepends it to
+ * each page's own stylesheet.
+ *
+ * One paper, the whole way down. Everything on layers 02 and 03 happens on
+ * this: a bank of warm haze, the name in ghost letters far too large and far
+ * too faint to read, paper dust, and one warm point of light that wanders.
+ * The field never changes surface — no dark section, no cut — the moments
+ * of each layer dissolve in and out on top of it. This is layer 01's field,
+ * settled, so the three layers are one place.
+ */
+
+.ground {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: clip;
+}
+.ground__haze, .ground__glow {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+}
+.ground__haze { mix-blend-mode: multiply; }
+.ground__haze--a {
+  inset-block-start: 6%;   inset-inline-start: 22%;
+  inline-size: min(66vw, 54rem); aspect-ratio: 1.3;
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-paper-3) 60%, transparent), transparent 78%);
+  filter: blur(72px);
+  animation: ground-drift-a var(--dur-drift-a) var(--ease-in-out) infinite alternate;
+}
+.ground__haze--c {
+  inset-block-start: 30%;  inset-inline-start: 34%;
+  inline-size: min(46vw, 36rem); aspect-ratio: 2.1;
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-paper-3) 44%, transparent), transparent 76%);
+  filter: blur(58px);
+  animation: ground-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
+}
+.ground__glow {
+  inset-block-start: 22%;  inset-inline-start: 44%;
+  inline-size: min(26vw, 20rem); aspect-ratio: 1.15;
+  background: radial-gradient(closest-side, var(--color-glow), transparent 72%);
+  filter: blur(46px);
+  mix-blend-mode: screen;
+  animation: ground-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
+}
+@keyframes ground-drift-a { to { transform: translate3d(-5%, 4%, 0); } }
+@keyframes ground-drift-c { to { transform: translate3d(-4%, -6%, 0); } }
+
+/* The light. One warm point, soft-edged, that wanders the field on a path
+   long enough that it is never seen to repeat. */
+.ground__light {
+  position: absolute;
+  inset-block-start: 28%; inset-inline-start: 46%;
+  inline-size: 18px; block-size: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    color-mix(in oklch, var(--color-accent) 72%, white) 0,
+    color-mix(in oklch, var(--color-accent) 42%, transparent) 38%,
+    transparent 70%);
+  filter: blur(1.2px);
+  opacity: 0.85;
+  animation: ground-wander 53s var(--ease-in-out) infinite alternate;
+}
+@keyframes ground-wander {
+  0%   { transform: translate(0, 0); }
+  30%  { transform: translate(-30vw, 16vh); }
+  62%  { transform: translate(12vw, 34vh); }
+  100% { transform: translate(26vw, -4vh); }
+}
+
+/* Ghost letters and dust are dealt by the generator (see GROUND_JS). */
+.ground__ch {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  font-family: var(--font-wordmark);
+  font-size: var(--s);
+  line-height: 1;
+  color: var(--color-ink);
+  opacity: var(--o);
+  user-select: none;
+}
+.ground__dust {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  inline-size: var(--s);
+  block-size: var(--s);
+  border-radius: 50%;
+  background: var(--color-ink);
+  opacity: var(--o);
+}
+
+/* Everything that is not the ground sits on it. */
+.mast, main, .colophon, .substrate, .grain { position: relative; z-index: 1; }
+.grain { z-index: calc(var(--z-sticky) - 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ground__haze, .ground__glow, .ground__light { animation: none !important; }
+}
 
 /* SOURCE FILE — index.html is a single self-contained page and does not link
  * this stylesheet; it embeds a copy. Edit here, then run `python3 build.py`
@@ -510,7 +621,7 @@ h1, p { margin: 0; font-weight: 400; }
   inline-size: 100%;
   block-size: var(--rule-hair);
   background: var(--color-accent);
-  opacity: 0.22;
+  opacity: 0.45;
   transform: scaleX(0.42);
   transform-origin: 0 50%;
   transition:
@@ -625,6 +736,11 @@ h1, p { margin: 0; font-weight: 400; }
   </filter>
 </svg>
 
+<!-- The ground's settled parts — the name in ghost letters, and dust — so this
+     field is the same paper as the layers beneath it. Its haze and lights
+     are its own, alive. -->
+<div class="ground" aria-hidden="true"></div>
+
 <main class="field">
 
   <!-- The seam: LAYER 01's own progress. It grows, recedes, and never
@@ -653,6 +769,39 @@ h1, p { margin: 0; font-weight: 400; }
 </main>
 
 <script>
+/* ------------------------------------------------------------
+   The ground's loose parts: the name in ghost letters, and dust.
+   Dealt once at load, never animated — they are the paper, not weather.
+   ------------------------------------------------------------ */
+(function () {
+  var g = document.querySelector('.ground');
+  if (!g) return;
+  var R = function (a, b) { return a + Math.random() * (b - a); };
+  var frag = document.createDocumentFragment();
+  var letters = ['L', 'i', 'g', 'h', 't', 'o', 'n', 'g', 'h', 'i'];
+  for (var i = 0; i < letters.length; i++) {
+    var c = document.createElement('span');
+    c.className = 'ground__ch';
+    c.textContent = letters[i];
+    c.style.setProperty('--x', R(2, 90).toFixed(1) + '%');
+    c.style.setProperty('--y', R(4, 86).toFixed(1) + '%');
+    c.style.setProperty('--s', R(5, 10).toFixed(1) + 'vw');
+    c.style.setProperty('--o', R(0.022, 0.045).toFixed(3));
+    frag.appendChild(c);
+  }
+  var n = Math.round(Math.min(90, Math.max(30, window.innerWidth * window.innerHeight / 18000)));
+  for (var k = 0; k < n; k++) {
+    var d = document.createElement('span');
+    d.className = 'ground__dust';
+    d.style.setProperty('--x', R(0, 100).toFixed(2) + '%');
+    d.style.setProperty('--y', R(0, 100).toFixed(2) + '%');
+    d.style.setProperty('--s', R(1, 2.2).toFixed(2) + 'px');
+    d.style.setProperty('--o', R(0.12, 0.38).toFixed(2));
+    frag.appendChild(d);
+  }
+  g.appendChild(frag);
+})();
+
 /* ------------------------------------------------------------
    The swarm generator.
    Builds the field of pixel lights and loose letters, dealing every

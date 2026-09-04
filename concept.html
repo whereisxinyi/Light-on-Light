@@ -6,6 +6,13 @@
 <title>Light on Light</title>
 <meta name="description" content="Thoughts arrive all day. You keep almost none of them.">
 <meta name="color-scheme" content="light">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Light on Light">
+<meta property="og:description" content="Thoughts arrive all day. You keep almost none of them.">
+<meta property="og:image" content="https://light-on-light.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <!-- The mark: the same semicolon whereisxinyi.github.io wears, verbatim, so the
      two sites share one icon. Inline SVG: still zero network requests. -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='1.5' y='1.5' width='61' height='61' rx='14' fill='%23ffffff' stroke='%23dcdad6' stroke-width='2'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='Fraunces,Georgia,serif' font-size='44' font-weight='600' fill='%23241f1c'%3E;%3C/text%3E%3C/svg%3E">
@@ -176,6 +183,110 @@
 @media (min-width: 1500px) { html { font-size: 17px; } }
 @media (min-width: 1700px) { html { font-size: 18px; } }
 @media (min-width: 2200px) { html { font-size: 20px; } }
+
+/* SOURCE FILE — the ground shared by layers 02 and 03; build.py prepends it to
+ * each page's own stylesheet.
+ *
+ * One paper, the whole way down. Everything on layers 02 and 03 happens on
+ * this: a bank of warm haze, the name in ghost letters far too large and far
+ * too faint to read, paper dust, and one warm point of light that wanders.
+ * The field never changes surface — no dark section, no cut — the moments
+ * of each layer dissolve in and out on top of it. This is layer 01's field,
+ * settled, so the three layers are one place.
+ */
+
+.ground {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: clip;
+}
+.ground__haze, .ground__glow {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+}
+.ground__haze { mix-blend-mode: multiply; }
+.ground__haze--a {
+  inset-block-start: 6%;   inset-inline-start: 22%;
+  inline-size: min(66vw, 54rem); aspect-ratio: 1.3;
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-paper-3) 60%, transparent), transparent 78%);
+  filter: blur(72px);
+  animation: ground-drift-a var(--dur-drift-a) var(--ease-in-out) infinite alternate;
+}
+.ground__haze--c {
+  inset-block-start: 30%;  inset-inline-start: 34%;
+  inline-size: min(46vw, 36rem); aspect-ratio: 2.1;
+  background: radial-gradient(closest-side,
+    color-mix(in oklch, var(--color-paper-3) 44%, transparent), transparent 76%);
+  filter: blur(58px);
+  animation: ground-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
+}
+.ground__glow {
+  inset-block-start: 22%;  inset-inline-start: 44%;
+  inline-size: min(26vw, 20rem); aspect-ratio: 1.15;
+  background: radial-gradient(closest-side, var(--color-glow), transparent 72%);
+  filter: blur(46px);
+  mix-blend-mode: screen;
+  animation: ground-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
+}
+@keyframes ground-drift-a { to { transform: translate3d(-5%, 4%, 0); } }
+@keyframes ground-drift-c { to { transform: translate3d(-4%, -6%, 0); } }
+
+/* The light. One warm point, soft-edged, that wanders the field on a path
+   long enough that it is never seen to repeat. */
+.ground__light {
+  position: absolute;
+  inset-block-start: 28%; inset-inline-start: 46%;
+  inline-size: 18px; block-size: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    color-mix(in oklch, var(--color-accent) 72%, white) 0,
+    color-mix(in oklch, var(--color-accent) 42%, transparent) 38%,
+    transparent 70%);
+  filter: blur(1.2px);
+  opacity: 0.85;
+  animation: ground-wander 53s var(--ease-in-out) infinite alternate;
+}
+@keyframes ground-wander {
+  0%   { transform: translate(0, 0); }
+  30%  { transform: translate(-30vw, 16vh); }
+  62%  { transform: translate(12vw, 34vh); }
+  100% { transform: translate(26vw, -4vh); }
+}
+
+/* Ghost letters and dust are dealt by the generator (see GROUND_JS). */
+.ground__ch {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  font-family: var(--font-wordmark);
+  font-size: var(--s);
+  line-height: 1;
+  color: var(--color-ink);
+  opacity: var(--o);
+  user-select: none;
+}
+.ground__dust {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  inline-size: var(--s);
+  block-size: var(--s);
+  border-radius: 50%;
+  background: var(--color-ink);
+  opacity: var(--o);
+}
+
+/* Everything that is not the ground sits on it. */
+.mast, main, .colophon, .substrate, .grain { position: relative; z-index: 1; }
+.grain { z-index: calc(var(--z-sticky) - 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ground__haze, .ground__glow, .ground__light { animation: none !important; }
+}
 
 /* SOURCE FILE — concept.html is a single self-contained page and does not link
  * this stylesheet; it embeds a copy. Edit here, then run `python3 build.py`.
@@ -441,26 +552,6 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
    Beats · one fold each, hard surface changes between.
    ============================================================ */
 
-.beat {
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
-  display: grid;
-  align-content: center;
-  gap: var(--space-2xl);
-  padding-block: clamp(var(--space-3xl), 17vh, var(--space-4xl));
-  padding-inline: var(--page-gutter);
-  min-block-size: clamp(22rem, 56dvh, 36rem);
-}
-
-/* The copy must out-paint the fields behind it. Those are positioned with a
-   z-index, so static flow content would otherwise sit underneath them. */
-.beat > :not(.swarm-dark):not(.plates) {
-  position: relative;
-  z-index: var(--z-raised);
-}
-
-.beat--light { background: var(--color-paper); color: var(--color-ink); }
 
 /* ============================================================
    Night · dusk, two moments, dawn — one section.
@@ -519,14 +610,6 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   min-inline-size: 0;
 }
 
-.beat__ask {
-  max-inline-size: 20ch;
-  font-size: var(--text-turn);
-  line-height: 1.14;
-  letter-spacing: -0.012em;
-  overflow-wrap: anywhere;
-  min-inline-size: 0;
-}
 
 /* ============================================================
    Emphasis — accent + a drawn underline. Never italic (gate 38a),
@@ -622,47 +705,23 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 
 .give {
   position: relative;
-  isolation: isolate;
-  overflow: clip;
-  min-block-size: clamp(14rem, 30dvh, 22rem);
+  min-block-size: clamp(18rem, 44dvh, 28rem);
+  display: grid;
+  place-items: center;
+  padding-inline: var(--page-gutter);
+}
+/* The invitation, in the voice of the thoughts. The pill docks under it. */
+.invite {
+  max-inline-size: 30ch;
+  text-align: center;
+  text-wrap: balance;
+  font-family: var(--font-voice);
+  font-style: italic;
+  font-size: var(--text-display-s);
+  line-height: 1.3;
+  color: var(--color-ink);
 }
 
-/* Layer 01's haze, at about half its amplitude. The container is masked at
-   both edges: a blob larger than the fold fades out before the fold ends, so
-   the clip never leaves a straight edge. */
-.haze {
-  position: absolute; inset: 0; z-index: var(--z-base); pointer-events: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
-          mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
-}
-.haze__l, .haze__glow { position: absolute; display: block; border-radius: 50%; }
-.haze__l { mix-blend-mode: multiply; }
-.haze__l--a {
-  inset-block-start: -30%; inset-inline-start: 12%;
-  inline-size: min(62vw, 50rem); aspect-ratio: 1.7;
-  background: radial-gradient(closest-side,
-    color-mix(in oklch, var(--color-paper-3) 62%, transparent), transparent 78%);
-  filter: blur(40px);
-  animation: give-drift-a var(--dur-drift-a) var(--ease-in-out) infinite alternate;
-}
-.haze__l--c {
-  inset-block-start: 18%; inset-inline-start: 40%;
-  inline-size: min(40vw, 32rem); aspect-ratio: 2.4;
-  background: radial-gradient(closest-side,
-    color-mix(in oklch, var(--color-paper-3) 46%, transparent), transparent 76%);
-  filter: blur(34px);
-  animation: give-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
-}
-.haze__glow {
-  inset-block-start: 8%; inset-inline-start: 48%;
-  inline-size: min(22vw, 17rem); aspect-ratio: 1.3;
-  background: radial-gradient(closest-side, var(--color-glow), transparent 72%);
-  filter: blur(30px);
-  mix-blend-mode: screen;
-  animation: give-drift-c var(--dur-drift-c) var(--ease-in-out) infinite alternate;
-}
-@keyframes give-drift-a { to { transform: translate3d(-3%, 2.5%, 0); } }
-@keyframes give-drift-c { to { transform: translate3d(-2.5%, -4%, 0); } }
 
 /* The dock is sticky against the viewport's bottom edge for as long as
    <main> is on screen, then sits in flow as main's last child. No fixed
@@ -736,7 +795,8 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   border-block-start: var(--rule-hair) solid var(--color-rule);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--color-muted);
 }
 .colophon a {
@@ -781,7 +841,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
            row-gap: clamp(12rem, 36vh, 20rem); }   /* room for the sunk field between the two moments */
   .night__pain, .night__turn { grid-column: 1; }
   .night__turn { grid-row: 2; }
-  .give  { min-block-size: clamp(10rem, 24dvh, 14rem); }
+  .give  { min-block-size: clamp(14rem, 34dvh, 20rem); }
   .pop   { max-inline-size: 74vw; }
 
   /* A fixed CTA on a full-width column will sit over body copy — that is the
@@ -801,7 +861,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .pop, .pop__t, .pop__t .ch, .sunk__t, .plate, .haze__l, .haze__glow, .dock {
+  .pop, .pop__t, .pop__t .ch, .sunk__t, .plate, .dock {
     animation: none !important;
     transform: none !important;
   }
@@ -826,6 +886,15 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 </svg>
 <div class="grain" aria-hidden="true"></div>
 
+<!-- The ground: one paper the whole way down. Haze, ghost letters, dust, and
+     one wandering point of light. Layer 01's field, settled. -->
+<div class="ground" aria-hidden="true">
+  <span class="ground__haze ground__haze--a"></span>
+  <span class="ground__haze ground__haze--c"></span>
+  <span class="ground__glow"></span>
+  <span class="ground__light"></span>
+</div>
+
 <header class="mast">
   <h1 class="mast__h"><a href="./index.html">Light on Light</a></h1>
   <p class="mast__layer">LAYER 02 &mdash; WHY THIS PROJECT</p>
@@ -849,26 +918,15 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   <section class="night">
     <div class="swarm-dark" aria-hidden="true"></div>
     <div class="plates" aria-hidden="true"></div>
-    <p class="beat__lede night__pain">Thoughts arrive in the shower, on the platform, halfway
-      through someone else&rsquo;s sentence. Then the feed arrives, and by lunch
-      there is nothing left to remember.</p>
+    <p class="beat__lede night__pain">A thought you never answer is a thought you lose.</p>
     <h2 class="beat__turn night__turn">What if an image could <span class="lit">respond</span>
       to a thought?</h2>
   </section>
 
-  <!-- The idea. Paper, fully back. -->
-  <section class="beat beat--light">
-    <h2 class="beat__ask">How can fleeting thoughts become meaningful memories?</h2>
-  </section>
-
-  <!-- The last fold. Layer 01's haze comes back here, quieter, so the page
-       ends on the paper it began on. -->
+  <!-- The last fold. Paper, fully back; one line, and the invitation docks
+       beneath it. -->
   <section class="give" id="invite">
-    <div class="haze" aria-hidden="true">
-      <span class="haze__l haze__l--a"></span>
-      <span class="haze__l haze__l--c"></span>
-      <span class="haze__glow"></span>
-    </div>
+    <p class="invite">Give it one sentence, and let it answer back.</p>
   </section>
 
   <!-- The invitation. Sticky, not fixed: it rides the bottom edge of the
@@ -892,6 +950,39 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 </aside>
 
 <script>
+/* ------------------------------------------------------------
+   The ground's loose parts: the name in ghost letters, and dust.
+   Dealt once at load, never animated — they are the paper, not weather.
+   ------------------------------------------------------------ */
+(function () {
+  var g = document.querySelector('.ground');
+  if (!g) return;
+  var R = function (a, b) { return a + Math.random() * (b - a); };
+  var frag = document.createDocumentFragment();
+  var letters = ['L', 'i', 'g', 'h', 't', 'o', 'n', 'g', 'h', 'i'];
+  for (var i = 0; i < letters.length; i++) {
+    var c = document.createElement('span');
+    c.className = 'ground__ch';
+    c.textContent = letters[i];
+    c.style.setProperty('--x', R(2, 90).toFixed(1) + '%');
+    c.style.setProperty('--y', R(4, 86).toFixed(1) + '%');
+    c.style.setProperty('--s', R(5, 10).toFixed(1) + 'vw');
+    c.style.setProperty('--o', R(0.022, 0.045).toFixed(3));
+    frag.appendChild(c);
+  }
+  var n = Math.round(Math.min(90, Math.max(30, window.innerWidth * window.innerHeight / 18000)));
+  for (var k = 0; k < n; k++) {
+    var d = document.createElement('span');
+    d.className = 'ground__dust';
+    d.style.setProperty('--x', R(0, 100).toFixed(2) + '%');
+    d.style.setProperty('--y', R(0, 100).toFixed(2) + '%');
+    d.style.setProperty('--s', R(1, 2.2).toFixed(2) + 'px');
+    d.style.setProperty('--o', R(0.12, 0.38).toFixed(2));
+    frag.appendChild(d);
+  }
+  g.appendChild(frag);
+})();
+
 /* ------------------------------------------------------------
    Layer 02's two fields.
 
