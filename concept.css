@@ -46,6 +46,11 @@
   animation-duration: 720ms;
   animation-timing-function: var(--ease-in-out);
 }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 640ms;
+  animation-timing-function: var(--ease-in-out);
+}
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
   ::view-transition-old(*),
@@ -459,6 +464,8 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   pointer-events: none;
 }
 .dock > * { pointer-events: auto; }
+.dock { animation: dock-emerge 900ms var(--ease-out) 400ms both; }
+@keyframes dock-emerge { from { opacity: 0; transform: translateY(6px); } }
 
 /* Glass pill: the same language as the pills on whereisxinyi.github.io —
    translucent ground, a hairline of ink, and one small lit point. The point
@@ -560,7 +567,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .pop, .pop__t, .sunk__t, .plate, .haze__l, .haze__glow {
+  .pop, .pop__t, .sunk__t, .plate, .haze__l, .haze__glow, .dock {
     animation: none !important;
     transform: none !important;
   }

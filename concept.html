@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Why this project — Light on Light</title>
+<title>Light on Light</title>
 <meta name="description" content="Thoughts arrive all day. You keep almost none of them.">
 <meta name="color-scheme" content="light">
 <!-- The mark: the same semicolon whereisxinyi.github.io wears, verbatim, so the
@@ -170,6 +170,13 @@
   --z-sticky: 200;
 }
 
+/* Everything is set in rem, so the 14" and 16" MacBooks (1512 and 1728 CSS px
+ * wide) get the whole scale — type, space, plate — stepped up together rather
+ * than 16px text sitting in ever more air. */
+@media (min-width: 1500px) { html { font-size: 17px; } }
+@media (min-width: 1700px) { html { font-size: 18px; } }
+@media (min-width: 2200px) { html { font-size: 20px; } }
+
 /* SOURCE FILE — concept.html is a single self-contained page and does not link
  * this stylesheet; it embeds a copy. Edit here, then run `python3 build.py`.
  *
@@ -216,6 +223,11 @@
 .mast__h a { view-transition-name: wordmark; }
 ::view-transition-group(wordmark) {
   animation-duration: 720ms;
+  animation-timing-function: var(--ease-in-out);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 640ms;
   animation-timing-function: var(--ease-in-out);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -631,6 +643,8 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   pointer-events: none;
 }
 .dock > * { pointer-events: auto; }
+.dock { animation: dock-emerge 900ms var(--ease-out) 400ms both; }
+@keyframes dock-emerge { from { opacity: 0; transform: translateY(6px); } }
 
 /* Glass pill: the same language as the pills on whereisxinyi.github.io —
    translucent ground, a hairline of ink, and one small lit point. The point
@@ -732,7 +746,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .pop, .pop__t, .sunk__t, .plate, .haze__l, .haze__glow {
+  .pop, .pop__t, .sunk__t, .plate, .haze__l, .haze__glow, .dock {
     animation: none !important;
     transform: none !important;
   }
@@ -900,9 +914,12 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
       /* A few sit further back — smaller and fainter. (Not blurred: see the
          note on .pop__t in concept.css.) */
       var near = chance(0.55);
-      set('--s',  (near ? R(1.15, 1.9) : R(0.95, 1.12)).toFixed(2) + 'rem');
-      set('--o',  (near ? R(0.72, 1) : R(0.3, 0.55)).toFixed(2));
-      set('--c',  chance(0.14) ? 'var(--color-accent)' : 'var(--color-ink)');
+      /* Capped under the note's size: a thought is texture behind the
+         narrator's line, never a second headline. And never amber — the
+         accent lands on the turn and the invitation, nowhere else. */
+      set('--s',  (near ? R(1.1, 1.5) : R(0.95, 1.1)).toFixed(2) + 'rem');
+      set('--o',  (near ? R(0.62, 0.9) : R(0.3, 0.5)).toFixed(2));
+      set('--c',  'var(--color-ink)');
 
       set('--t2', R(18, 34).toFixed(1)   + 's');
       set('--d2', (-R(0, 34)).toFixed(1) + 's');

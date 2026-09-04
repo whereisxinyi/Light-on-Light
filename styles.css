@@ -55,6 +55,11 @@
   animation-timing-function: var(--ease-in-out);
 }
 ::view-transition-old(haze) { animation-duration: 720ms; }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 640ms;
+  animation-timing-function: var(--ease-in-out);
+}
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
   ::view-transition-old(*),

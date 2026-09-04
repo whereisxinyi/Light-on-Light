@@ -115,6 +115,8 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   font-family: var(--font-mono); font-size: var(--text-xs);
   letter-spacing: 0.16em; color: var(--color-muted); white-space: nowrap;
 }
+/* While the sentence is being drawn the stamp reads GENERATING and breathes. */
+[data-state="forming"] .mast__layer { animation: note-breathe 2s var(--ease-in-out) infinite alternate; }
 
 /* ============================================================
    Stage — one surface, three moments
@@ -126,7 +128,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   overflow: clip;
   display: grid;
   align-content: end;
-  padding: var(--space-3xl) var(--page-gutter) clamp(var(--space-2xl), 10vh, var(--space-3xl));
+  padding: var(--space-3xl) var(--page-gutter) clamp(var(--space-2xl), 18vh, var(--space-4xl));
 }
 .stage > .panel { position: relative; z-index: var(--z-raised); }
 
@@ -167,10 +169,12 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 @keyframes haze-drift-c { to { transform: translate3d(-2.5%, -4%, 0); } }
 
 /* Only one panel is present at a time. `hidden` (not opacity) keeps the
-   inactive state out of the tab order and out of the screen reader. */
+   inactive state out of the tab order and out of the screen reader; the
+   incoming panel then fades up from where the last one stood. */
 [data-state="input"]   .panel--gift,
 [data-state="forming"] .panel--gift,
 [data-state="gift"]    .panel--ask { display: none; }
+[data-state="input"]   .panel--ask { animation: settle-in 900ms var(--ease-out) both; }
 
 /* ============================================================
    Input · the ruled line
@@ -267,7 +271,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 /* While the sentence gathers, the line it was written on empties. */
 .panel--ask { transition: opacity 600ms var(--ease-in-out); }
 [data-state="forming"] .panel--ask { opacity: 0; pointer-events: none; }
-[data-state="forming"] .mast__layer { animation: note-breathe 2s var(--ease-in-out) infinite alternate; }
+
 
 /* ============================================================
    Forming · dissolve → gather. No spinner, ever.
@@ -279,13 +283,22 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   position: absolute;
   inset: 0;
   z-index: var(--z-raised);
-  display: none;
+  display: grid;
   place-items: center;
   align-content: center;
   gap: var(--space-lg);
   pointer-events: none;
+  /* Fades in over the emptying line and out under the arriving gift, instead
+     of switching on and off. */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 700ms var(--ease-in-out), visibility 0s 700ms;
 }
-[data-state="forming"] .forming { display: grid; }
+[data-state="forming"] .forming {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 700ms var(--ease-in-out);
+}
 
 .forming__field { position: absolute; inset: 0; overflow: clip; }
 
@@ -329,10 +342,10 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 
 .gift {
   /* Bounded by viewport HEIGHT as well as width: a gift you have to scroll to
-     see whole is not a gift. 26rem is what the masthead, the stage's padding
-     and the footer take between them. The track is the plate's size, so the
-     plate can simply fill it. */
-  --plate: min(34rem, calc(100dvh - 26rem), 44vw);
+     see whole is not a gift. 29rem is what the masthead, the stage's padding
+     and the footer take between them at every root size. The track is the
+     plate's size, so the plate can simply fill it. */
+  --plate: min(34rem, calc(100dvh - 29rem), 44vw);
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--plate);
   grid-template-areas:
@@ -536,6 +549,9 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     transform: none !important;
   }
   .haze__l, .haze__glow { animation: none !important; }
-  .cta, .ask__field, .ask__go, .ask__go::after, .panel--ask { transition: none; }
+  .cta, .ask__field, .ask__go, .ask__go::after, .panel--ask, .forming { transition: none; }
+  .panel--ask { animation: none !important; }
+  .forming { visibility: visible; }
+  [data-state="input"] .forming, [data-state="gift"] .forming { visibility: hidden; }
   .cta::before { animation: none; opacity: 1; }
 }

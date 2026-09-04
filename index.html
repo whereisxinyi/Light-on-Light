@@ -170,6 +170,13 @@
   --z-sticky: 200;
 }
 
+/* Everything is set in rem, so the 14" and 16" MacBooks (1512 and 1728 CSS px
+ * wide) get the whole scale — type, space, plate — stepped up together rather
+ * than 16px text sitting in ever more air. */
+@media (min-width: 1500px) { html { font-size: 17px; } }
+@media (min-width: 1700px) { html { font-size: 18px; } }
+@media (min-width: 2200px) { html { font-size: 20px; } }
+
 /* SOURCE FILE — index.html is a single self-contained page and does not link
  * this stylesheet; it embeds a copy. Edit here, then run `python3 build.py`
  * to regenerate index.html. Editing index.html's <style> directly works too,
@@ -227,6 +234,11 @@
   animation-timing-function: var(--ease-in-out);
 }
 ::view-transition-old(haze) { animation-duration: 720ms; }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 640ms;
+  animation-timing-function: var(--ease-in-out);
+}
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
   ::view-transition-old(*),

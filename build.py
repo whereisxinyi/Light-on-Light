@@ -273,9 +273,12 @@ CONCEPT_JS = """
       /* A few sit further back — smaller and fainter. (Not blurred: see the
          note on .pop__t in concept.css.) */
       var near = chance(0.55);
-      set('--s',  (near ? R(1.15, 1.9) : R(0.95, 1.12)).toFixed(2) + 'rem');
-      set('--o',  (near ? R(0.72, 1) : R(0.3, 0.55)).toFixed(2));
-      set('--c',  chance(0.14) ? 'var(--color-accent)' : 'var(--color-ink)');
+      /* Capped under the note's size: a thought is texture behind the
+         narrator's line, never a second headline. And never amber — the
+         accent lands on the turn and the invitation, nowhere else. */
+      set('--s',  (near ? R(1.1, 1.5) : R(0.95, 1.1)).toFixed(2) + 'rem');
+      set('--o',  (near ? R(0.62, 0.9) : R(0.3, 0.5)).toFixed(2));
+      set('--c',  'var(--color-ink)');
 
       set('--t2', R(18, 34).toFixed(1)   + 's');
       set('--d2', (-R(0, 34)).toFixed(1) + 's');
@@ -539,6 +542,7 @@ MAKE_BODY = """
       <div class="gift__actions">
         <button class="cta" id="export" type="button">Export</button>
         <button class="gift__again" id="again" type="button">Write another</button>
+        <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
       </div>
     </figure>
   </section>
@@ -991,6 +995,7 @@ MAKE_JS = r"""
        plate.dataset.via (claude / gemini / local) for anyone who inspects. */
     $('giftVia').textContent = 'DRAWN BY \u201CLight on Light\u201D' +
       (art.via === 'local' ? ' \u00B7 OFFLINE' : '');   /* the built-in floor is not the product's ceiling; say so */
+    $('redraw').hidden = art.via !== 'local';            /* …and offer the studio again */
     setState('gift');
   }
 
@@ -1059,6 +1064,15 @@ MAKE_JS = r"""
     });
     var floor = new Promise(function (res) { setTimeout(res, 2600); });
     Promise.all([art, floor]).then(function (v) { present(text, v[0]); });
+  });
+
+  /* Same sentence, another knock on the studio's door. The free-tier cloud
+     fails in bursts, so a second try a minute later usually draws. */
+  $('redraw').addEventListener('click', function () {
+    field.value = current.text;
+    body.dataset.ready = 'yes';
+    go.disabled = false;
+    form.requestSubmit();
   });
 
   $('again').addEventListener('click', function () {
@@ -1519,12 +1533,12 @@ def main() -> None:
            "styles.css", BODY, SWARM_JS, faces, tokens)
 
     render("concept.html",
-           "Why this project — Light on Light",
+           "Light on Light",
            "Thoughts arrive all day. You keep almost none of them.",
            "concept.css", CONCEPT_BODY, CONCEPT_JS, faces, tokens)
 
     render("make.html",
-           "Create your visual gift — Light on Light",
+           "Light on Light",
            "What passed through your mind today?",
            "make.css", MAKE_BODY, MAKE_JS, faces, tokens)
 
