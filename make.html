@@ -525,7 +525,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 [data-state="forming"] .said,
 [data-state="wrapped"] .said,
 [data-state="gift"]    .said { display: block; }
-[data-state="gift"] .gift__actions { display: flex; animation: settle-in 900ms var(--ease-out) 1600ms both; }
+[data-state="gift"] .gift__actions { display: flex; animation: settle-in 900ms var(--ease-out) 2200ms both; }
 @keyframes settle-in { from { opacity: 0; transform: translateY(10px); } }
 
 /* ---------- right ---------- */
@@ -557,8 +557,34 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   visibility: visible;
   transition: opacity 700ms var(--ease-in-out);
 }
-[data-state="wrapped"] .card { animation: card-breathe 4s var(--ease-in-out) infinite alternate; }
-@keyframes card-breathe { to { transform: scale(1.01); } }
+/* Wrapped: the card is picked up. Open: it is set down again. */
+[data-state="wrapped"] .card { animation: card-lift 1.6s var(--ease-in-out) 300ms forwards; }
+@keyframes card-lift { to { transform: scale(1.03) translateY(-4px); } }
+[data-state="gift"] .card { animation: card-settle 1200ms var(--ease-out) 900ms both; }
+@keyframes card-settle { from { transform: scale(1.03) translateY(-4px); } to { transform: none; } }
+
+/* A light passes over the wrapped card once, just before it opens. */
+.card__glint {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: var(--radius-plate);
+  pointer-events: none;
+  opacity: 0;
+}
+.card__glint::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background: linear-gradient(115deg,
+    transparent 42%,
+    color-mix(in oklch, var(--color-glow) 80%, transparent) 50%,
+    transparent 58%);
+  transform: translateX(-130%);
+}
+[data-state="wrapped"] .card__glint { opacity: 1; }
+[data-state="wrapped"] .card__glint::before { animation: glint-pass 1.2s var(--ease-in-out) 900ms forwards; }
+@keyframes glint-pass { to { transform: translateX(130%); } }
 
 .card__edge {
   position: absolute;
@@ -612,9 +638,12 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   border-radius: var(--radius-plate);
   box-shadow: 0 1.6rem 3rem -2.2rem color-mix(in oklch, var(--color-ink) 45%, transparent);
   opacity: 0;
-  transition: opacity 600ms var(--ease-in-out) 500ms;
+  transition: opacity 600ms var(--ease-in-out) 400ms;
 }
 [data-state="gift"] .card__paper { opacity: 1; }
+.card__line, .card__meta { opacity: 0; }
+[data-state="gift"] .card__line { animation: settle-in 800ms var(--ease-out) 1100ms both; }
+[data-state="gift"] .card__meta { animation: settle-in 800ms var(--ease-out) 1900ms both; }
 .card__line {
   max-inline-size: var(--plate);
   font-family: var(--font-voice);
@@ -650,7 +679,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 
 /* The wrapping: paper over the whole card. Wrapped, it is simply there;
    opened, it parts in two leaves and the drawing assembles underneath. */
-.gift__wrap { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 900ms var(--ease-in-out); }
+.gift__wrap { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 900ms var(--ease-in-out); perspective: 1400px; }
 [data-state="wrapped"] .gift__wrap,
 [data-state="gift"]    .gift__wrap { opacity: 1; }
 .gift__wrap::before,
@@ -662,37 +691,38 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   border: var(--rule-hair) solid var(--color-rule);
   border-radius: var(--radius-plate);
 }
-.gift__wrap::before { clip-path: inset(0 50% 0 0); }
-.gift__wrap::after  { clip-path: inset(0 0 0 50%); }
-[data-state="gift"] .gift__wrap::before { animation: leaf-left  1100ms var(--ease-in-out) 200ms forwards; }
-[data-state="gift"] .gift__wrap::after  { animation: leaf-right 1100ms var(--ease-in-out) 200ms forwards; }
-@keyframes leaf-left  { to { transform: translateX(-104%); opacity: 0; } }
-@keyframes leaf-right { to { transform: translateX(104%);  opacity: 0; } }
+/* Two leaves, hinged at the outer edges, that swing open like doors. */
+.gift__wrap::before { clip-path: inset(0 50% 0 0); transform-origin: left center; }
+.gift__wrap::after  { clip-path: inset(0 0 0 50%); transform-origin: right center; }
+[data-state="gift"] .gift__wrap::before { animation: leaf-left  1400ms cubic-bezier(0.6, 0, 0.3, 1) 150ms forwards; }
+[data-state="gift"] .gift__wrap::after  { animation: leaf-right 1400ms cubic-bezier(0.6, 0, 0.3, 1) 150ms forwards; }
+@keyframes leaf-left  { 55% { opacity: 1; } to { transform: rotateY(-100deg) translateX(-4%); opacity: 0; } }
+@keyframes leaf-right { 55% { opacity: 1; } to { transform: rotateY(100deg)  translateX(4%);  opacity: 0; } }
+
+/* The light the sentence became, let out as the card opens. */
+.burst {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-raised);
+  pointer-events: none;
+  overflow: visible;
+}
+.spark--burst { animation: burst var(--t) var(--ease-out) var(--d) forwards; }
+@keyframes burst {
+  0%   { opacity: 0;        transform: none; }
+  12%  { opacity: var(--o); }
+  100% { opacity: 0;        transform: translate(var(--bx), var(--by)) scale(0.4); }
+}
 
 /* Strokes assemble centre-outward once the leaves have parted. */
 .gift__plate [data-i] {
   opacity: 0;
   animation: assemble 900ms var(--ease-out) both;
-  animation-delay: calc(1000ms + var(--i) * 110ms);
+  animation-delay: calc(1300ms + var(--i) * 110ms);
   transform-box: fill-box;
   transform-origin: center;
 }
 @keyframes assemble { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
-
-/* The one thing to do while it is wrapped. */
-.unwrap {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity var(--dur-long) var(--ease-out), visibility 0s var(--dur-long);
-}
-[data-state="wrapped"] .unwrap {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 700ms var(--ease-out) 700ms,
-              border-color var(--dur-short) var(--ease-out),
-              color        var(--dur-short) var(--ease-out);
-}
-.unwrap:disabled { pointer-events: none; }
 
 /* The motes. */
 .spark {
@@ -830,7 +860,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 .substrate {
   position: relative;
   isolation: isolate;
-  margin-inline: var(--page-gutter);
+  margin-inline: 0;            /* the name runs the full width of the page */
   padding-block: var(--space-md) 0;
   display: flow-root;          /* so the canvas's negative bottom margin shortens this box */
   overflow: clip;              /* and the lower half of the name hangs below it */
@@ -846,7 +876,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     color-mix(in oklch, var(--color-paper-3) 72%, transparent), transparent 72%);
   mix-blend-mode: multiply;
 }
-/* Gutter to gutter: the name is the width of the page here, and only its
+/* Edge to edge: the name is the width of the viewport here, and only its
    upper half shows; the generator sets the negative bottom margin. */
 .substrate__px { display: block; inline-size: 100%; }
 
@@ -877,14 +907,14 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 
 @media (prefers-reduced-motion: reduce) {
   .card, .card__edge rect, .gift__plate [data-i], .spark, .gift__actions, .mast__layer,
-  .gift__wrap::before, .gift__wrap::after {
+  .gift__wrap::before, .gift__wrap::after, .card__glint::before, .card__line, .card__meta {
     animation: none !important;
     transform: none !important;
   }
-  .gift__plate [data-i], .gift__actions { opacity: 1; }
+  .gift__plate [data-i], .gift__actions, .card__line, .card__meta { opacity: 1; }
   .card__edge rect { stroke-dashoffset: 0; }
-  [data-state="gift"] .gift__wrap { display: none; }
-  .card, .card__paper, .gift__wrap, .forming__echo, .unwrap, .ask__field, .ask__go, .cta, .forming__field { transition: none; }
+  [data-state="gift"] .gift__wrap, .card__glint, .burst { display: none; }
+  .card, .card__paper, .gift__wrap, .forming__echo, .ask__field, .ask__go, .cta, .forming__field { transition: none; }
   .cta::before { animation: none; opacity: 1; }
 }
 
@@ -951,6 +981,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
         <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
       </svg>
       <p class="forming__echo" id="echo" aria-hidden="true"></p>
+      <span class="card__glint" aria-hidden="true"></span>
       <div class="card__paper">
         <p class="card__line" id="giftLine"></p>
         <div class="gift__plate" id="plate" role="img" aria-label="A hand-drawn illustration made from your sentence"></div>
@@ -961,7 +992,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
       </div>
       <div class="gift__wrap" aria-hidden="true"></div>
     </figure>
-    <button class="cta unwrap" id="unwrap" type="button">Unwrap</button>
+    <div class="burst" id="burst" aria-hidden="true"></div>
   </section>
 
   <p class="stage__caption" aria-hidden="true">
@@ -1366,7 +1397,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
       s === 'forming' ? 'LAYER 03 \u2014 GENERATING\u2026' :
       s === 'wrapped' ? 'LAYER 03 \u2014 READY' : LAYER_STAMP;
     if (s === 'forming') { live.textContent = 'Translating your sentence.'; }
-    if (s === 'wrapped') { live.textContent = 'Your gift is wrapped. Press Unwrap to open it.'; }
+    if (s === 'wrapped') { live.textContent = 'Your gift is wrapped, and opening.'; }
     if (s === 'gift') { live.textContent = 'Your gift is open. Save as image downloads a JPG.'; }
   }
 
@@ -1462,15 +1493,34 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     $('giftVia').hidden = art.via !== 'local';
     $('redraw').hidden = art.via !== 'local';
     setState('gift');
+    burst();
   }
 
-  /* The drawing arrives wrapped. Nothing opens until the person opens it. */
-  var pending = null;
-  $('unwrap').addEventListener('click', function () {
-    if (!pending) return;
-    var p = pending; pending = null;
-    present(p.text, p.art);
-  });
+  /* The light the sentence became, let out of the card as it opens. */
+  function burst() {
+    var host = $('burst');
+    host.textContent = '';
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var box = host.getBoundingClientRect(), card = $('gift').getBoundingClientRect();
+    var cx = card.left + card.width / 2 - box.left, cy = card.top + card.height / 2 - box.top;
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < 28; i++) {
+      var s = document.createElement('span');
+      s.className = 'spark spark--burst';
+      var a = Math.random() * Math.PI * 2, dist = 90 + Math.random() * 200;
+      s.style.setProperty('--x', cx.toFixed(1) + 'px');
+      s.style.setProperty('--y', cy.toFixed(1) + 'px');
+      s.style.setProperty('--bx', (Math.cos(a) * dist).toFixed(1) + 'px');
+      s.style.setProperty('--by', (Math.sin(a) * dist * 0.8).toFixed(1) + 'px');
+      s.style.setProperty('--s', (1.6 + Math.random() * 3.2).toFixed(2) + 'px');
+      s.style.setProperty('--o', (0.3 + Math.random() * 0.55).toFixed(2));
+      s.style.setProperty('--c', Math.random() < 0.3 ? 'var(--color-accent)' : 'var(--color-ink-2)');
+      s.style.setProperty('--t', (1.1 + Math.random() * 0.9).toFixed(2) + 's');
+      s.style.setProperty('--d', (0.1 + Math.random() * 0.35).toFixed(2) + 's');
+      frag.appendChild(s);
+    }
+    host.appendChild(frag);
+  }
 
   /* The real skill, through the studio server (server.py → claude -p).
      The studio can live in two places, tried in order:
@@ -1542,9 +1592,11 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
       return { svg: local.svg, via: 'local', meta: local.meta };
     });
     var floor = new Promise(function (res) { setTimeout(res, 2600); });
+    /* Wrapped for a beat — the paper settles, the card lifts, a light passes
+       over it — and then it opens on its own. */
     Promise.all([art, floor]).then(function (v) {
-      pending = { text: text, art: v[0] };
       setState('wrapped');
+      setTimeout(function () { present(text, v[0]); }, 2100);
     });
   });
 
@@ -1558,6 +1610,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   });
 
   $('again').addEventListener('click', function () {
+    $('burst').textContent = '';
     field.value = '';
     body.dataset.ready = 'no';
     go.disabled = true;
@@ -1678,9 +1731,11 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   var canvas = document.getElementById('substrate');
   if (!canvas || !canvas.getContext) return;
   var ctx = canvas.getContext('2d');
-  /* Fewer, larger cells on a phone: a 3px cell is a texture, not a letter. */
-  var narrow = window.innerWidth < 640;
-  var COLS = narrow ? 72 : 160, ROWS = narrow ? 15 : 30, GAP = 0.26, TEXT = 'Light on Light';
+  /* Cells about 8px wide whatever the viewport, never fewer than 64 across.
+     The name is set to the full width; the row count follows from that. */
+  var wide = canvas.parentNode.clientWidth || window.innerWidth;
+  var COLS = Math.max(64, Math.min(256, Math.round(wide / 8))), ROWS = 16;
+  var GAP = 0.26, TEXT = 'Light on Light';
   var SHOW = 0.5;   /* the fraction of the bitmap's height left above the page's edge */
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var css = getComputedStyle(document.documentElement);
@@ -1694,14 +1749,19 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
      letters touch. Edge cells keep their partial coverage as a dimmer base,
      which is what makes it read as the serif face and not a blob. */
   function sample() {
+    var face = '"Instrument Serif", Georgia, serif';
+    /* Size the name to the full width — edge to edge — and let the height
+       follow: the rows are however tall those letters are. */
+    var probe = document.createElement('canvas').getContext('2d');
+    probe.font = '100px ' + face;
+    var unit = probe.measureText(TEXT).width / 100;
+    var size = (COLS - 2) / unit;
+    ROWS = Math.ceil(size * 1.15);
     var off = document.createElement('canvas');
     off.width = COLS; off.height = ROWS;
     var o = off.getContext('2d');
-    var size = ROWS * 0.86, face = '"Instrument Serif", Georgia, serif';
     o.font = size + 'px ' + face;
-    var w = o.measureText(TEXT).width, maxW = COLS - 2;   /* edge to edge of the footer */
-    if (w > maxW) { size *= maxW / w; o.font = size + 'px ' + face; w = o.measureText(TEXT).width; }
-    var x = Math.floor((COLS - w) / 2), y = Math.round(ROWS * 0.74);
+    var x = 1, y = Math.round(size * 0.82);
     o.fillStyle = '#fff';
     o.fillText(TEXT, x, y);
     var d = o.getImageData(0, 0, COLS, ROWS).data;
@@ -1776,7 +1836,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   function stop()  { running = false; cancelAnimationFrame(raf); }
 
   function boot() {
-    layout(); sample(); draw();
+    sample(); layout(); draw();
     if (reduce) return;
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (es) {

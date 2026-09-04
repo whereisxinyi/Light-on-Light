@@ -242,7 +242,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 [data-state="forming"] .said,
 [data-state="wrapped"] .said,
 [data-state="gift"]    .said { display: block; }
-[data-state="gift"] .gift__actions { display: flex; animation: settle-in 900ms var(--ease-out) 1600ms both; }
+[data-state="gift"] .gift__actions { display: flex; animation: settle-in 900ms var(--ease-out) 2200ms both; }
 @keyframes settle-in { from { opacity: 0; transform: translateY(10px); } }
 
 /* ---------- right ---------- */
@@ -274,8 +274,34 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   visibility: visible;
   transition: opacity 700ms var(--ease-in-out);
 }
-[data-state="wrapped"] .card { animation: card-breathe 4s var(--ease-in-out) infinite alternate; }
-@keyframes card-breathe { to { transform: scale(1.01); } }
+/* Wrapped: the card is picked up. Open: it is set down again. */
+[data-state="wrapped"] .card { animation: card-lift 1.6s var(--ease-in-out) 300ms forwards; }
+@keyframes card-lift { to { transform: scale(1.03) translateY(-4px); } }
+[data-state="gift"] .card { animation: card-settle 1200ms var(--ease-out) 900ms both; }
+@keyframes card-settle { from { transform: scale(1.03) translateY(-4px); } to { transform: none; } }
+
+/* A light passes over the wrapped card once, just before it opens. */
+.card__glint {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: var(--radius-plate);
+  pointer-events: none;
+  opacity: 0;
+}
+.card__glint::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background: linear-gradient(115deg,
+    transparent 42%,
+    color-mix(in oklch, var(--color-glow) 80%, transparent) 50%,
+    transparent 58%);
+  transform: translateX(-130%);
+}
+[data-state="wrapped"] .card__glint { opacity: 1; }
+[data-state="wrapped"] .card__glint::before { animation: glint-pass 1.2s var(--ease-in-out) 900ms forwards; }
+@keyframes glint-pass { to { transform: translateX(130%); } }
 
 .card__edge {
   position: absolute;
@@ -329,9 +355,12 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   border-radius: var(--radius-plate);
   box-shadow: 0 1.6rem 3rem -2.2rem color-mix(in oklch, var(--color-ink) 45%, transparent);
   opacity: 0;
-  transition: opacity 600ms var(--ease-in-out) 500ms;
+  transition: opacity 600ms var(--ease-in-out) 400ms;
 }
 [data-state="gift"] .card__paper { opacity: 1; }
+.card__line, .card__meta { opacity: 0; }
+[data-state="gift"] .card__line { animation: settle-in 800ms var(--ease-out) 1100ms both; }
+[data-state="gift"] .card__meta { animation: settle-in 800ms var(--ease-out) 1900ms both; }
 .card__line {
   max-inline-size: var(--plate);
   font-family: var(--font-voice);
@@ -367,7 +396,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 
 /* The wrapping: paper over the whole card. Wrapped, it is simply there;
    opened, it parts in two leaves and the drawing assembles underneath. */
-.gift__wrap { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 900ms var(--ease-in-out); }
+.gift__wrap { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 900ms var(--ease-in-out); perspective: 1400px; }
 [data-state="wrapped"] .gift__wrap,
 [data-state="gift"]    .gift__wrap { opacity: 1; }
 .gift__wrap::before,
@@ -379,37 +408,38 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   border: var(--rule-hair) solid var(--color-rule);
   border-radius: var(--radius-plate);
 }
-.gift__wrap::before { clip-path: inset(0 50% 0 0); }
-.gift__wrap::after  { clip-path: inset(0 0 0 50%); }
-[data-state="gift"] .gift__wrap::before { animation: leaf-left  1100ms var(--ease-in-out) 200ms forwards; }
-[data-state="gift"] .gift__wrap::after  { animation: leaf-right 1100ms var(--ease-in-out) 200ms forwards; }
-@keyframes leaf-left  { to { transform: translateX(-104%); opacity: 0; } }
-@keyframes leaf-right { to { transform: translateX(104%);  opacity: 0; } }
+/* Two leaves, hinged at the outer edges, that swing open like doors. */
+.gift__wrap::before { clip-path: inset(0 50% 0 0); transform-origin: left center; }
+.gift__wrap::after  { clip-path: inset(0 0 0 50%); transform-origin: right center; }
+[data-state="gift"] .gift__wrap::before { animation: leaf-left  1400ms cubic-bezier(0.6, 0, 0.3, 1) 150ms forwards; }
+[data-state="gift"] .gift__wrap::after  { animation: leaf-right 1400ms cubic-bezier(0.6, 0, 0.3, 1) 150ms forwards; }
+@keyframes leaf-left  { 55% { opacity: 1; } to { transform: rotateY(-100deg) translateX(-4%); opacity: 0; } }
+@keyframes leaf-right { 55% { opacity: 1; } to { transform: rotateY(100deg)  translateX(4%);  opacity: 0; } }
+
+/* The light the sentence became, let out as the card opens. */
+.burst {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-raised);
+  pointer-events: none;
+  overflow: visible;
+}
+.spark--burst { animation: burst var(--t) var(--ease-out) var(--d) forwards; }
+@keyframes burst {
+  0%   { opacity: 0;        transform: none; }
+  12%  { opacity: var(--o); }
+  100% { opacity: 0;        transform: translate(var(--bx), var(--by)) scale(0.4); }
+}
 
 /* Strokes assemble centre-outward once the leaves have parted. */
 .gift__plate [data-i] {
   opacity: 0;
   animation: assemble 900ms var(--ease-out) both;
-  animation-delay: calc(1000ms + var(--i) * 110ms);
+  animation-delay: calc(1300ms + var(--i) * 110ms);
   transform-box: fill-box;
   transform-origin: center;
 }
 @keyframes assemble { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
-
-/* The one thing to do while it is wrapped. */
-.unwrap {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity var(--dur-long) var(--ease-out), visibility 0s var(--dur-long);
-}
-[data-state="wrapped"] .unwrap {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 700ms var(--ease-out) 700ms,
-              border-color var(--dur-short) var(--ease-out),
-              color        var(--dur-short) var(--ease-out);
-}
-.unwrap:disabled { pointer-events: none; }
 
 /* The motes. */
 .spark {
@@ -547,7 +577,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 .substrate {
   position: relative;
   isolation: isolate;
-  margin-inline: var(--page-gutter);
+  margin-inline: 0;            /* the name runs the full width of the page */
   padding-block: var(--space-md) 0;
   display: flow-root;          /* so the canvas's negative bottom margin shortens this box */
   overflow: clip;              /* and the lower half of the name hangs below it */
@@ -563,7 +593,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     color-mix(in oklch, var(--color-paper-3) 72%, transparent), transparent 72%);
   mix-blend-mode: multiply;
 }
-/* Gutter to gutter: the name is the width of the page here, and only its
+/* Edge to edge: the name is the width of the viewport here, and only its
    upper half shows; the generator sets the negative bottom margin. */
 .substrate__px { display: block; inline-size: 100%; }
 
@@ -594,13 +624,13 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 
 @media (prefers-reduced-motion: reduce) {
   .card, .card__edge rect, .gift__plate [data-i], .spark, .gift__actions, .mast__layer,
-  .gift__wrap::before, .gift__wrap::after {
+  .gift__wrap::before, .gift__wrap::after, .card__glint::before, .card__line, .card__meta {
     animation: none !important;
     transform: none !important;
   }
-  .gift__plate [data-i], .gift__actions { opacity: 1; }
+  .gift__plate [data-i], .gift__actions, .card__line, .card__meta { opacity: 1; }
   .card__edge rect { stroke-dashoffset: 0; }
-  [data-state="gift"] .gift__wrap { display: none; }
-  .card, .card__paper, .gift__wrap, .forming__echo, .unwrap, .ask__field, .ask__go, .cta, .forming__field { transition: none; }
+  [data-state="gift"] .gift__wrap, .card__glint, .burst { display: none; }
+  .card, .card__paper, .gift__wrap, .forming__echo, .ask__field, .ask__go, .cta, .forming__field { transition: none; }
   .cta::before { animation: none; opacity: 1; }
 }
