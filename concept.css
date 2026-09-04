@@ -216,7 +216,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   transform: none;
 }
 [data-phase="lose"] .pop__t .ch {
-  animation: ch-fall 2.6s var(--ease-in) var(--cd) both;
+  animation: ch-fall 1.7s var(--ease-in) var(--cd) both;
 }
 @keyframes ch-fall {
   0%   { transform: none; opacity: 1; animation-timing-function: var(--ease-out); }

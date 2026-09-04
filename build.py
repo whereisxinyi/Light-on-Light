@@ -268,7 +268,7 @@ CONCEPT_JS = """
         ch.style.setProperty('--sr', R(-40, 40).toFixed(0) + 'deg');
         ch.style.setProperty('--fx', R(-8, 8).toFixed(1) + 'vw');
         ch.style.setProperty('--fr', R(-120, 120).toFixed(0) + 'deg');
-        ch.style.setProperty('--cd', R(0, 0.9).toFixed(2) + 's');
+        ch.style.setProperty('--cd', R(0, 0.5).toFixed(2) + 's');
         t.appendChild(ch);
       }
       p.appendChild(t);

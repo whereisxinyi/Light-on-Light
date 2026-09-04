@@ -506,7 +506,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   transform: none;
 }
 [data-phase="lose"] .pop__t .ch {
-  animation: ch-fall 2.6s var(--ease-in) var(--cd) both;
+  animation: ch-fall 1.7s var(--ease-in) var(--cd) both;
 }
 @keyframes ch-fall {
   0%   { transform: none; opacity: 1; animation-timing-function: var(--ease-out); }
@@ -1061,7 +1061,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
         ch.style.setProperty('--sr', R(-40, 40).toFixed(0) + 'deg');
         ch.style.setProperty('--fx', R(-8, 8).toFixed(1) + 'vw');
         ch.style.setProperty('--fr', R(-120, 120).toFixed(0) + 'deg');
-        ch.style.setProperty('--cd', R(0, 0.9).toFixed(2) + 's');
+        ch.style.setProperty('--cd', R(0, 0.5).toFixed(2) + 's');
         t.appendChild(ch);
       }
       p.appendChild(t);
