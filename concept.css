@@ -356,8 +356,8 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 @keyframes sink {
   0%   { opacity: 0;        transform: translateY(-2.5vh); }
   15%  { opacity: var(--o); transform: translateY(0); }
-  80%  { opacity: 0;        transform: translateY(6vh); }
-  100% { opacity: 0;        transform: translateY(6vh); }
+  80%  { opacity: 0;        transform: translateY(3vh); }
+  100% { opacity: 0;        transform: translateY(3vh); }
 }
 
 /* ============================================================

@@ -129,6 +129,10 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   /* The first screen is still mast + stage + colophon; the substrate lives
      below the fold. 12.5rem is what the masthead and colophon take. */
   min-block-size: calc(100dvh - 12.5rem);
+  /* The gift's size, shared by the parcel and the plate so one becomes the
+     other in place. Bounded by height: a gift you scroll to see whole is not
+     a gift. 29rem is what the masthead, padding and colophon take. */
+  --plate: min(34rem, calc(100dvh - 29rem), 80vw);
   display: grid;
   align-content: end;
   padding: var(--space-3xl) var(--page-gutter) clamp(var(--space-2xl), 18vh, var(--space-4xl));
@@ -176,8 +180,10 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
    incoming panel then fades up from where the last one stood. */
 [data-state="input"]   .panel--gift,
 [data-state="forming"] .panel--gift,
+[data-state="wrapped"] .panel--gift,
 [data-state="gift"]    .panel--ask { display: none; }
 [data-state="input"]   .panel--ask { animation: settle-in 900ms var(--ease-out) both; }
+[data-state="gift"]    .stage { align-content: start; }
 
 /* ============================================================
    Input · the ruled line
@@ -262,7 +268,8 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 
 /* While the sentence gathers, the line it was written on empties. */
 .panel--ask { transition: opacity 600ms var(--ease-in-out); }
-[data-state="forming"] .panel--ask { opacity: 0; pointer-events: none; }
+[data-state="forming"] .panel--ask,
+[data-state="wrapped"] .panel--ask { opacity: 0; pointer-events: none; }
 
 
 /* ============================================================
@@ -274,10 +281,15 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 .forming {
   position: absolute;
   inset: 0;
+  /* The stage's own padding, so this layer's centre is the stage's content
+     centre — the parcel and the plate must coincide to the pixel. */
+  padding: inherit;
   z-index: var(--z-raised);
   display: grid;
   place-items: center;
-  align-content: center;
+  /* Anchored to the top of the stage's content box, exactly as the gift is,
+     so the parcel and the plate share one position whatever sits below. */
+  align-content: start;
   gap: var(--space-lg);
   pointer-events: none;
   /* Fades in over the emptying line and out under the arriving gift, instead
@@ -286,10 +298,73 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   visibility: hidden;
   transition: opacity 700ms var(--ease-in-out), visibility 0s 700ms;
 }
-[data-state="forming"] .forming {
+[data-state="forming"] .forming,
+[data-state="wrapped"] .forming {
   opacity: 1;
   visibility: visible;
   transition: opacity 700ms var(--ease-in-out);
+}
+
+/* The parcel: the gift's exact footprint. While forming, a hairline draws
+   itself around the gathering motes; once the drawing is ready it becomes
+   paper — wrapped — and breathes, waiting to be opened. */
+.parcel {
+  position: relative;
+  inline-size: var(--plate);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  padding: var(--space-xl);
+  border-radius: var(--radius-plate);
+}
+.parcel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-paper-2);
+  opacity: 0;
+  transition: opacity 900ms var(--ease-in-out);
+}
+.parcel__edge {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+.parcel__edge rect {
+  fill: none;
+  stroke: var(--color-rule);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+[data-state="forming"] .parcel__edge rect { animation: parcel-draw 3.2s var(--ease-in-out) 300ms forwards; }
+[data-state="wrapped"] .parcel__edge rect { stroke-dashoffset: 0; }
+@keyframes parcel-draw { to { stroke-dashoffset: 0; } }
+[data-state="wrapped"] .parcel::before { opacity: 1; }
+[data-state="wrapped"] .parcel { animation: parcel-breathe 4s var(--ease-in-out) infinite alternate; }
+@keyframes parcel-breathe { to { transform: scale(1.012); } }
+[data-state="wrapped"] .forming__field,
+[data-state="wrapped"] .forming__echo { opacity: 0; transition: opacity 900ms var(--ease-in-out); }
+
+/* The one thing to do while it is wrapped. Sits just under the parcel; it is
+   the only part of this layer that takes the pointer. */
+.unwrap {
+  pointer-events: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-long) var(--ease-out), visibility 0s var(--dur-long);
+}
+.unwrap:disabled { pointer-events: none; }
+[data-state="wrapped"] .unwrap {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 700ms var(--ease-out) 700ms,
+              border-color var(--dur-short) var(--ease-out),
+              color        var(--dur-short) var(--ease-out);
 }
 
 .forming__field { position: absolute; inset: 0; overflow: clip; }
@@ -321,6 +396,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   line-height: 1.5;
   color: var(--color-muted);
   text-align: center;
+  overflow-wrap: anywhere;
   animation: echo-out 2.4s var(--ease-in-out) forwards;
 }
 @keyframes echo-out { to { opacity: 0.28; } }
@@ -328,44 +404,25 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 @keyframes note-breathe { to { opacity: 0.35; } }
 
 /* ============================================================
-   Gift · the mount. A print is mostly frame.
-   The screen layout below IS the export layout, at another scale.
+   Gift · a print, centred, where the parcel was. The wrapping is still on
+   it for the first moment; it parts, and the drawing assembles underneath.
+   The sentence is in the drawing and is not repeated beside it; the date
+   is the only caption. Two actions on one baseline below.
    ============================================================ */
 
 .gift {
-  /* Bounded by viewport HEIGHT as well as width: a gift you have to scroll to
-     see whole is not a gift. 29rem is what the masthead, the stage's padding
-     and the footer take between them at every root size. The track is the
-     plate's size, so the plate can simply fill it. */
-  --plate: min(34rem, calc(100dvh - 29rem), 44vw);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--plate);
-  grid-template-areas:
-    "line  plate"
-    "meta  plate"
-    "acts  plate";
-  align-content: end;
-  align-items: end;
-  column-gap: clamp(var(--space-xl), 6vw, var(--space-4xl));
-  row-gap: var(--space-lg);
+  justify-items: center;
+  gap: var(--space-lg);
   inline-size: 100%;
   margin: 0;
-  /* settle: the whole mount arrives once, slowly, and then stops */
-  animation: settle-in 1.1s var(--ease-out) both;
 }
 @keyframes settle-in { from { opacity: 0; transform: translateY(10px); } }
 
-.gift__line {
-  grid-area: line;
-  align-self: start;
-  font-family: var(--font-voice);
-  font-style: italic;            /* the thought, in the voice thoughts have everywhere on the site */
-  font-size: var(--text-quote);
-  line-height: 1.42;
-  color: var(--color-ink);
-  max-inline-size: 26ch;
-  overflow-wrap: anywhere;
-  min-inline-size: 0;
+.gift__mount {
+  position: relative;
+  inline-size: var(--plate);
+  aspect-ratio: 1;
 }
 
 /* The plate keeps the skill's own paper and ink, not the site's. That is
@@ -373,7 +430,6 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
    recognisable across a year of them, and the series' colours are its
    identity. The page is the room; the plate is the picture. */
 .gift__plate {
-  grid-area: plate;
   inline-size: 100%;
   aspect-ratio: 1;
   background: var(--color-plate-paper);
@@ -383,44 +439,51 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 }
 .gift__plate svg { display: block; inline-size: 100%; block-size: 100%; }
 
-/* Elements assemble centre-outward rather than all at once. */
+/* The wrapping: the same paper the parcel became, in two leaves that part.
+   It is drawn identically to the wrapped parcel, so the hand-over from the
+   forming layer to the gift is invisible. */
+.gift__wrap { position: absolute; inset: 0; pointer-events: none; }
+.gift__wrap::before,
+.gift__wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-paper-2);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-plate);
+}
+.gift__wrap::before { clip-path: inset(0 50% 0 0); animation: leaf-left  1100ms var(--ease-in-out) 500ms forwards; }
+.gift__wrap::after  { clip-path: inset(0 0 0 50%); animation: leaf-right 1100ms var(--ease-in-out) 500ms forwards; }
+@keyframes leaf-left  { to { transform: translateX(-104%); opacity: 0; } }
+@keyframes leaf-right { to { transform: translateX(104%);  opacity: 0; } }
+
+/* Strokes assemble centre-outward once the leaves have parted. */
 .gift__plate [data-i] {
   opacity: 0;
   animation: assemble 900ms var(--ease-out) both;
-  animation-delay: calc(240ms + var(--i) * 110ms);
+  animation-delay: calc(1100ms + var(--i) * 110ms);
   transform-box: fill-box;
   transform-origin: center;
 }
 @keyframes assemble { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
 
 .gift__meta {
-  grid-area: meta;
-  display: grid;
-  justify-items: start;
-  gap: var(--space-xs);
+  display: flex;
+  gap: var(--space-md);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.16em;
   color: var(--color-muted);
+  animation: settle-in 900ms var(--ease-out) 1500ms both;
 }
+.gift__via::before { content: "\00B7"; margin-inline-end: var(--space-md); color: var(--color-rule); }
 .gift__actions {
-  grid-area: acts;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: var(--space-lg);
-}
-.gift__rule {
-  inline-size: var(--space-xl);
-  block-size: var(--rule-hair);
-  background: var(--color-rule);
-  margin-block-end: var(--space-2xs);
-}
-
-/* Which hand drew it. Small, honest, always present. */
-.gift__via {
-  font-size: var(--text-xs);
-  letter-spacing: 0.18em;
-  color: var(--color-muted);
+  animation: settle-in 900ms var(--ease-out) 1700ms both;
 }
 
 /* The second action: a verb with a seam, the quieter sibling of the pill. */
@@ -547,13 +610,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   .ask__row { flex-wrap: wrap; row-gap: var(--space-md); }
   .ask__field { flex-basis: 100%; }
   .ask__row .ask__go { margin-inline-start: auto; }
-  /* One column: sentence, plate, date, actions. */
-  .gift {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "line" "plate" "meta" "acts";
-    row-gap: var(--space-md);
-  }
-  .gift__plate { inline-size: min(100%, calc(100dvh - 28rem)); min-inline-size: 60vw; }
+  .gift, .forming { gap: var(--space-md); }
   .cta {
     font-size: var(--text-base); min-block-size: 44px;
     padding: var(--space-sm) var(--space-lg) var(--space-sm) var(--space-md);
@@ -565,13 +622,16 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .gift, .gift__plate [data-i], .spark, .forming__echo, .mast__layer {
+  .gift, .gift__plate [data-i], .spark, .forming__echo, .mast__layer,
+  .gift__meta, .gift__actions, .parcel {
     animation: none !important;
     opacity: 1;
     transform: none !important;
   }
+  .gift__wrap { display: none; }                       /* the gift is simply open */
+  .parcel__edge rect { stroke-dashoffset: 0; animation: none !important; }
   .haze__l, .haze__glow { animation: none !important; }
-  .cta, .ask__field, .ask__go, .panel--ask, .forming { transition: none; }
+  .cta, .ask__field, .ask__go, .panel--ask, .forming, .unwrap, .parcel::before { transition: none; }
   .panel--ask { animation: none !important; }
   .forming { visibility: visible; }
   [data-state="input"] .forming, [data-state="gift"] .forming { visibility: hidden; }

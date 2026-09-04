@@ -296,21 +296,23 @@ CONCEPT_JS = """
   var dark = document.querySelector('.swarm-dark');
   if (dark) {
     var pool2  = shuffled();
-    var many   = narrow ? 6 : pool2.length;
+    var many   = narrow ? 6 : 10;
     /* Desktop: the upper 56% of the night — the lede is top-left, the turn
        bottom-right, so the field lives beside the lede and above the turn.
        Narrow: one column, so the field takes the gap between the two. */
-    var sband  = (narrow ? 24 : 52) / many;
-    var sfrom  = narrow ? 36 : 4;
+    /* Desktop: the top-right quarter only — beside the lede, and a clear
+       band above the turn, which owns the lower right. */
+    var sband  = (narrow ? 24 : 34) / many;
+    var sfrom  = narrow ? 36 : 6;
     var frag2  = document.createDocumentFragment();
     for (var k = 0; k < many; k++) {
       var s = document.createElement('span');
       s.className = 'sunk__t';
       s.textContent = pool2[k];
-      s.style.setProperty('--x',  (narrow ? R(6, 40) : R(38, 80)).toFixed(2) + '%');
+      s.style.setProperty('--x',  (narrow ? R(6, 40) : R(52, 88)).toFixed(2) + '%');
       s.style.setProperty('--y',  (sfrom + k * sband + R(0.1, 0.5) * sband).toFixed(2) + '%');
-      s.style.setProperty('--s',  R(0.95, 1.45).toFixed(2) + 'rem');
-      s.style.setProperty('--o',  (narrow ? R(0.12, 0.24) : R(0.24, 0.5)).toFixed(2));
+      s.style.setProperty('--s',  R(0.9, 1.15).toFixed(2) + 'rem');   /* texture, never a second headline */
+      s.style.setProperty('--o',  (narrow ? R(0.12, 0.24) : R(0.18, 0.36)).toFixed(2));
       s.style.setProperty('--t1', R(9, 16).toFixed(1)    + 's');
       s.style.setProperty('--d1', (-R(0, 16)).toFixed(1) + 's');
       frag2.appendChild(s);
@@ -347,8 +349,8 @@ CONCEPT_JS = """
     ];
     var RATIOS = ['4 / 3', '3 / 4', '1 / 1', '16 / 10', '5 / 4'];
 
-    var pcount = narrow ? 3 : 5;
-    var pband  = 66 / pcount;   /* from 24% down: the plates belong to the turn */
+    var pcount = narrow ? 3 : 4;
+    var pband  = 50 / pcount;   /* from 42% down: the plates belong to the turn */
     var frag3  = document.createDocumentFragment();
     for (var n = 0; n < pcount; n++) {
       var pl = document.createElement('span');
@@ -357,10 +359,10 @@ CONCEPT_JS = """
       ps('--img', FIELDS[n % FIELDS.length]);
       ps('--ar',  RATIOS[Math.floor(Math.random() * RATIOS.length)]);
       ps('--x',   R(-6, 74).toFixed(2) + '%');
-      ps('--y',   (24 + n * pband + R(0.05, 0.4) * pband).toFixed(2) + '%');
+      ps('--y',   (42 + n * pband + R(0.05, 0.4) * pband).toFixed(2) + '%');
       ps('--w',   (narrow ? R(46, 78) : R(20, 40)).toFixed(1) + 'vw');
-      ps('--bl',  R(20, 30).toFixed(1) + 'px');   /* soft enough to read as light, not shape; scale is gone so this is cheap */
-      ps('--o',   R(0.16, 0.28).toFixed(2));
+      ps('--bl',  R(34, 48).toFixed(1) + 'px');   /* light, not shape; scale is gone so this is cheap */
+      ps('--o',   R(0.12, 0.22).toFixed(2));
       ps('--dx',  R(-4, 4).toFixed(2) + 'vw');
       ps('--dy',  R(-3, 3).toFixed(2) + 'vh');
       ps('--t',   R(26, 46).toFixed(1)   + 's');
@@ -524,26 +526,34 @@ MAKE_BODY = """
     </form>
   </section>
 
-  <!-- FORMING — no spinner. The sentence comes apart and gathers; the
-       stamp in the masthead says what is happening. -->
-  <div class="forming" aria-hidden="true">
-    <div class="forming__field" id="sparks"></div>
-    <p class="forming__echo" id="echo"></p>
+  <!-- FORMING → WRAPPED. No spinner. The sentence comes apart into motes
+       that gather where the gift will be, and a parcel draws itself around
+       them. When the drawing is ready the parcel is paper, and waits. -->
+  <div class="forming">
+    <div class="forming__field" id="sparks" aria-hidden="true"></div>
+    <div class="parcel" aria-hidden="true">
+      <svg class="parcel__edge" viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
+        <rect x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+      </svg>
+      <p class="forming__echo" id="echo"></p>
+    </div>
+    <button class="cta unwrap" id="unwrap" type="button">Unwrap</button>
   </div>
 
-  <!-- GIFT · the mount. Sentence, date and the two actions on one side,
-       the plate on the other; the whole thing sized to sit inside one screen. -->
+  <!-- GIFT · the print, centred, with the wrapping still on it for the first
+       second. The sentence is in the drawing; it is not repeated beside it. -->
   <section class="panel panel--gift">
     <figure class="gift" id="gift">
-      <figcaption class="gift__line" id="giftLine"></figcaption>
-      <div class="gift__plate" id="plate" role="img" aria-label="A hand-drawn illustration made from your sentence"></div>
-      <div class="gift__meta">
-        <span class="gift__rule" aria-hidden="true"></span>
-        <span id="giftDate"></span>
-        <span class="gift__via" id="giftVia"></span>
+      <div class="gift__mount">
+        <div class="gift__plate" id="plate" role="img" aria-label="A hand-drawn illustration made from your sentence"></div>
+        <div class="gift__wrap" aria-hidden="true"></div>
       </div>
+      <figcaption class="gift__meta">
+        <span id="giftDate"></span>
+        <span class="gift__via" id="giftVia" hidden></span>
+      </figcaption>
       <div class="gift__actions">
-        <button class="cta" id="export" type="button">Export</button>
+        <button class="cta" id="export" type="button">Save as image</button>
         <button class="gift__again" id="again" type="button">Write another</button>
         <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
       </div>
@@ -1036,9 +1046,12 @@ MAKE_JS = r"""
   var layerStamp = $('stamp'), LAYER_STAMP = layerStamp.textContent;
   function setState(s) {
     body.dataset.state = s;
-    layerStamp.textContent = s === 'forming' ? 'LAYER 03 \u2014 GENERATING\u2026' : LAYER_STAMP;
+    layerStamp.textContent =
+      s === 'forming' ? 'LAYER 03 \u2014 GENERATING\u2026' :
+      s === 'wrapped' ? 'LAYER 03 \u2014 READY' : LAYER_STAMP;
     if (s === 'forming') { live.textContent = 'Translating your sentence.'; }
-    if (s === 'gift') { live.textContent = 'Your gift is ready. Export saves it as a JPG.'; }
+    if (s === 'wrapped') { live.textContent = 'Your gift is wrapped. Press Unwrap to open it.'; }
+    if (s === 'gift') { live.textContent = 'Your gift is open. Save as image downloads a JPG.'; }
   }
 
   field.addEventListener('input', function () {
@@ -1096,7 +1109,6 @@ MAKE_JS = r"""
     var d = new Date();
     current.text = text;
     current.date = stamp(d);
-    $('giftLine').textContent = text;          /* textContent, never innerHTML */
     var plate = $('plate');
     plate.innerHTML = art.svg;
     /* Assemble centre-outward whoever drew it: deal data-i to the top-level
@@ -1120,14 +1132,24 @@ MAKE_JS = r"""
       plate.dataset.shape = art.meta.shape;
     }
     $('giftDate').textContent = current.date;
-    /* One universal stamp — the gift is signed by the project, not the
-       engine. Which hand actually drew it stays recorded on
-       plate.dataset.via (claude / gemini / local) for anyone who inspects. */
-    $('giftVia').textContent = 'DRAWN BY \u201CLight on Light\u201D' +
-      (art.via === 'local' ? ' \u00B7 OFFLINE' : '');   /* the built-in floor is not the product's ceiling; say so */
-    $('redraw').hidden = art.via !== 'local';            /* …and offer the studio again */
+    /* The signature — DRAWN BY “Light on Light” — lives on the export, where
+       it means something; on screen the wordmark is already the signature.
+       Only an offline draw is called out, because it is not the product's
+       ceiling, and the studio is offered again. */
+    var via = $('giftVia');
+    via.hidden = art.via !== 'local';
+    via.textContent = 'DRAWN OFFLINE';
+    $('redraw').hidden = art.via !== 'local';
     setState('gift');
   }
+
+  /* The drawing arrives wrapped. Nothing opens until the person opens it. */
+  var pending = null;
+  $('unwrap').addEventListener('click', function () {
+    if (!pending) return;
+    var p = pending; pending = null;
+    present(p.text, p.art);
+  });
 
   /* The real skill, through the studio server (server.py → claude -p).
      The studio can live in two places, tried in order:
@@ -1193,7 +1215,10 @@ MAKE_JS = r"""
       return { svg: local.svg, via: 'local', meta: local.meta };
     });
     var floor = new Promise(function (res) { setTimeout(res, 2600); });
-    Promise.all([art, floor]).then(function (v) { present(text, v[0]); });
+    Promise.all([art, floor]).then(function (v) {
+      pending = { text: text, art: v[0] };
+      setState('wrapped');
+    });
   });
 
   /* Same sentence, another knock on the studio's door. The free-tier cloud

@@ -535,8 +535,8 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 @keyframes sink {
   0%   { opacity: 0;        transform: translateY(-2.5vh); }
   15%  { opacity: var(--o); transform: translateY(0); }
-  80%  { opacity: 0;        transform: translateY(6vh); }
-  100% { opacity: 0;        transform: translateY(6vh); }
+  80%  { opacity: 0;        transform: translateY(3vh); }
+  100% { opacity: 0;        transform: translateY(3vh); }
 }
 
 /* ============================================================
@@ -969,21 +969,23 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   var dark = document.querySelector('.swarm-dark');
   if (dark) {
     var pool2  = shuffled();
-    var many   = narrow ? 6 : pool2.length;
+    var many   = narrow ? 6 : 10;
     /* Desktop: the upper 56% of the night — the lede is top-left, the turn
        bottom-right, so the field lives beside the lede and above the turn.
        Narrow: one column, so the field takes the gap between the two. */
-    var sband  = (narrow ? 24 : 52) / many;
-    var sfrom  = narrow ? 36 : 4;
+    /* Desktop: the top-right quarter only — beside the lede, and a clear
+       band above the turn, which owns the lower right. */
+    var sband  = (narrow ? 24 : 34) / many;
+    var sfrom  = narrow ? 36 : 6;
     var frag2  = document.createDocumentFragment();
     for (var k = 0; k < many; k++) {
       var s = document.createElement('span');
       s.className = 'sunk__t';
       s.textContent = pool2[k];
-      s.style.setProperty('--x',  (narrow ? R(6, 40) : R(38, 80)).toFixed(2) + '%');
+      s.style.setProperty('--x',  (narrow ? R(6, 40) : R(52, 88)).toFixed(2) + '%');
       s.style.setProperty('--y',  (sfrom + k * sband + R(0.1, 0.5) * sband).toFixed(2) + '%');
-      s.style.setProperty('--s',  R(0.95, 1.45).toFixed(2) + 'rem');
-      s.style.setProperty('--o',  (narrow ? R(0.12, 0.24) : R(0.24, 0.5)).toFixed(2));
+      s.style.setProperty('--s',  R(0.9, 1.15).toFixed(2) + 'rem');   /* texture, never a second headline */
+      s.style.setProperty('--o',  (narrow ? R(0.12, 0.24) : R(0.18, 0.36)).toFixed(2));
       s.style.setProperty('--t1', R(9, 16).toFixed(1)    + 's');
       s.style.setProperty('--d1', (-R(0, 16)).toFixed(1) + 's');
       frag2.appendChild(s);
@@ -1020,8 +1022,8 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
     ];
     var RATIOS = ['4 / 3', '3 / 4', '1 / 1', '16 / 10', '5 / 4'];
 
-    var pcount = narrow ? 3 : 5;
-    var pband  = 66 / pcount;   /* from 24% down: the plates belong to the turn */
+    var pcount = narrow ? 3 : 4;
+    var pband  = 50 / pcount;   /* from 42% down: the plates belong to the turn */
     var frag3  = document.createDocumentFragment();
     for (var n = 0; n < pcount; n++) {
       var pl = document.createElement('span');
@@ -1030,10 +1032,10 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
       ps('--img', FIELDS[n % FIELDS.length]);
       ps('--ar',  RATIOS[Math.floor(Math.random() * RATIOS.length)]);
       ps('--x',   R(-6, 74).toFixed(2) + '%');
-      ps('--y',   (24 + n * pband + R(0.05, 0.4) * pband).toFixed(2) + '%');
+      ps('--y',   (42 + n * pband + R(0.05, 0.4) * pband).toFixed(2) + '%');
       ps('--w',   (narrow ? R(46, 78) : R(20, 40)).toFixed(1) + 'vw');
-      ps('--bl',  R(20, 30).toFixed(1) + 'px');   /* soft enough to read as light, not shape; scale is gone so this is cheap */
-      ps('--o',   R(0.16, 0.28).toFixed(2));
+      ps('--bl',  R(34, 48).toFixed(1) + 'px');   /* light, not shape; scale is gone so this is cheap */
+      ps('--o',   R(0.12, 0.22).toFixed(2));
       ps('--dx',  R(-4, 4).toFixed(2) + 'vw');
       ps('--dy',  R(-3, 3).toFixed(2) + 'vh');
       ps('--t',   R(26, 46).toFixed(1)   + 's');
