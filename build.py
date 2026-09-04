@@ -1394,7 +1394,7 @@ MAKE_JS = r"""
      as it takes; there is no spinner to lie with, only the gathering. */
   function callStudio(url, text) {
     var ctrl = new AbortController();
-    var kill = setTimeout(function () { ctrl.abort(); }, 160000);
+    var kill = setTimeout(function () { ctrl.abort(); }, 45000);   /* the bank is waiting behind this */
     return fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
