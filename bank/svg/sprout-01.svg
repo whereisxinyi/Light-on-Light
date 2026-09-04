@@ -1,0 +1,57 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    <!-- Root system -->
+    <path d="M 340 600 Q 330 580 320 560 Q 315 550 310 540" 
+          stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M 340 600 Q 350 580 360 560 Q 365 550 370 540" 
+          stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M 340 600 Q 340 590 340 570" 
+          stroke="#1a1a1a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    
+    <!-- Main stem -->
+    <path d="M 340 570 Q 338 520 336 460 Q 335 400 334 340 Q 333 280 335 220 Q 337 160 340 120" 
+          stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="3,2"/>
+    
+    <!-- Left branch 1 -->
+    <path d="M 337 450 Q 310 440 290 430" 
+          stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="270" cy="420" rx="15" ry="22" fill="none" stroke="#1a1a1a" stroke-width="1.5" 
+             transform="rotate(-30 270 420)" stroke-dasharray="2,1"/>
+    <ellipse cx="285" cy="410" rx="12" ry="18" fill="none" stroke="#1a1a1a" stroke-width="1.5" 
+             transform="rotate(-45 285 410)" stroke-dasharray="2,1"/>
+    
+    <!-- Right branch 1 -->
+    <path d="M 343 450 Q 370 440 390 430" 
+          stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="410" cy="420" rx="15" ry="22" fill="none" stroke="#1a1a1a" stroke-width="1.5" 
+             transform="rotate(30 410 420)" stroke-dasharray="2,1"/>
+    <ellipse cx="395" cy="410" rx="12" ry="18" fill="none" stroke="#1a1a1a" stroke-width="1.5" 
+             transform="rotate(45 395 410)" stroke-dasharray="2,1"/>
+    
+    <!-- Left branch 2 -->
+    <path d="M 336 340 Q 310 330 285 325" 
+          stroke="#1a1a1a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <ellipse cx="265" cy="320" rx="14" ry="20" fill="none" stroke="#1a1a1a" stroke-width="1.5" 
+             transform="rotate(-35 265 320)" stroke-dasharray="2,1"/>
+    <ellipse cx="280" cy="310" rx="11" ry="16" fill="none" stroke="#1a1a1a" stroke-width="1.5" 
+             transform="rotate(-50 280 310)" stroke-dasharray="2,1"/>
+    
+    <!-- Right branch 2 -->
+    <path d="M 344 340 Q 370 330 395 325" 
+          stroke="#1a1a1a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <ellipse cx="415" cy="320" rx="14" ry="20" fill="none" stroke="#1a1a1a" stroke-width="1.5" 
+             transform="rotate(35 415 320)" stroke-dasharray="2,1"/>
+    <ellipse cx="400" cy="310" rx="11" ry="16" fill="none" stroke="#1a1a1a" stroke-width="1.5" 
+             transform="rotate(50 400 310)" stroke-dasharray="2,1"/>
+    
+    <!-- Top leaves -->
+    <ellipse cx="320" cy="180" rx="13" ry="25" fill="none" stroke="#1a1a1a" stroke-width="1.5" 
+             transform="rotate(-40 320 180)" stroke-dasharray="2,1"/>
+    <ellipse cx="360" cy="180" rx="13" ry="25" fill="none" stroke="#1a1a1a" stroke-width="1.5" 
+             transform="rotate(40 360 180)" stroke-dasharray="2,1"/>
+    <ellipse cx="340" cy="140" rx="12" ry="24" fill="none" stroke="#1a1a1a" stroke-width="1.5" 
+             transform="rotate(0 340 140)" stroke-dasharray="2,1"/>
+  </g>
+</svg>

@@ -1,0 +1,38 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    <!-- 上半部分：密集的圆点，象征负重（carry） -->
+    <circle cx="320" cy="120" r="8" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="360" cy="110" r="7" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="340" cy="95" r="6" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,1"/>
+    <circle cx="280" cy="135" r="7" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="400" cy="125" r="8" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,1"/>
+    
+    <circle cx="330" cy="160" r="7" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="350" cy="150" r="6" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,1"/>
+    <circle cx="310" cy="175" r="6" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="370" cy="170" r="7" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="290" cy="190" r="5" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="410" cy="160" r="6" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,1"/>
+    
+    <circle cx="340" cy="205" r="8" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="320" cy="220" r="6" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,1"/>
+    <circle cx="360" cy="215" r="7" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="380" cy="200" r="5" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,1"/>
+    
+    <!-- 中间过渡区域 -->
+    <circle cx="340" cy="270" r="5" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <circle cx="320" cy="290" r="4" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <circle cx="360" cy="295" r="4" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,2"/>
+    
+    <!-- 下半部分：非常稀疏（put down） -->
+    <circle cx="330" cy="360" r="3" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,2"/>
+    <circle cx="350" cy="380" r="3" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,2"/>
+    <circle cx="310" cy="420" r="2" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="2,2"/>
+    
+    <!-- 主要流动线：象征负担从多到少 -->
+    <path d="M 340 80 Q 335 150 338 230 Q 340 310 342 450" 
+          stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-dasharray="5,3" stroke-linecap="round"/>
+  </g>
+</svg>

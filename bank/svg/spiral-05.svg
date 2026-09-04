@@ -1,0 +1,21 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="translate(340, 340) rotate(1.8) translate(-340, -340)">
+    
+    <!-- 外圈：走出去的轨迹 -->
+    <path d="M 130 340 Q 340 100 550 340 Q 340 580 130 340" 
+          stroke="#1a1a1a" stroke-width="2" fill="none" 
+          stroke-dasharray="8,4" stroke-linecap="round"/>
+    
+    <!-- 中圈：循环回归 -->
+    <path d="M 210 340 Q 340 190 470 340 Q 340 490 210 340" 
+          stroke="#1a1a1a" stroke-width="2" fill="none" 
+          stroke-dasharray="6,3" stroke-linecap="round"/>
+    
+    <!-- 起点：回到的地方 -->
+    <circle cx="340" cy="340" r="3" fill="#1a1a1a"/>
+    <circle cx="340" cy="340" r="7" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+    
+  </g>
+</svg>

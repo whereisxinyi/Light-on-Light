@@ -1,0 +1,20 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    <!-- Morning sun - vivid, present -->
+    <circle cx="160" cy="340" r="68" fill="none" stroke="#1a1a1a" stroke-width="4" stroke-dasharray="14,9"/>
+    
+    <!-- Morning rays -->
+    <line x1="160" y1="258" x2="160" y2="172" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="6,4"/>
+    <line x1="242" y1="258" x2="298" y2="202" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="6,4"/>
+    <line x1="242" y1="422" x2="298" y2="478" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="6,4"/>
+    <line x1="160" y1="422" x2="160" y2="508" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="6,4"/>
+    
+    <!-- Arc of time's passage -->
+    <path d="M 160 340 Q 340 175 520 340" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="5,5" opacity="0.4"/>
+    
+    <!-- Evening sun - faint, nearly gone -->
+    <circle cx="520" cy="340" r="52" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,4" opacity="0.25"/>
+  </g>
+</svg>

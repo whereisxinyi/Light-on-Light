@@ -1,0 +1,25 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.4 340 340)">
+    
+    <!-- 污渍的外轮廓 -->
+    <path d="M 280 340 Q 260 330 260 360 Q 270 395 305 410 Q 340 420 365 405 Q 390 385 390 360 Q 385 330 360 325 Q 330 320 280 340 Z" 
+          fill="none" stroke="#1a1a1a" stroke-width="2" opacity="0.45" stroke-dasharray="6,4"/>
+    
+    <!-- 污渍的中层 -->
+    <path d="M 295 350 Q 285 345 288 365 Q 300 390 330 400 Q 360 398 375 380 Q 380 360 370 345 Q 345 335 295 350 Z" 
+          fill="none" stroke="#1a1a1a" stroke-width="1.8" opacity="0.35" stroke-dasharray="5,3"/>
+    
+    <!-- 污渍的核心 -->
+    <ellipse cx="335" cy="365" rx="35" ry="40" fill="#1a1a1a" opacity="0.1"/>
+    
+    <!-- 手指 -->
+    <path d="M 340 100 Q 340 180 340 325" 
+          fill="none" stroke="#1a1a1a" stroke-width="2.8" stroke-linecap="round" opacity="0.85"/>
+    
+    <!-- 手指尖端 -->
+    <circle cx="340" cy="330" r="8" fill="none" stroke="#1a1a1a" stroke-width="2.2" opacity="0.7"/>
+    
+  </g>
+</svg>

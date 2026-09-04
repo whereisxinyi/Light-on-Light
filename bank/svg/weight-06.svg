@@ -1,0 +1,28 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    <!-- 张开的手 -->
+    <g>
+      <!-- 五条手指 -->
+      <line x1="300" y1="280" x2="270" y2="180" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="300" y1="280" x2="310" y2="160" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="300" y1="280" x2="350" y2="150" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="300" y1="280" x2="390" y2="190" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="300" y1="280" x2="380" y2="260" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+      
+      <!-- 手掌连接弧 -->
+      <path d="M 270 180 Q 300 240 380 260" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="6,4"/>
+    </g>
+    
+    <!-- 下落-上升的轨迹 -->
+    <g>
+      <!-- 虚线循环轨迹 -->
+      <path d="M 300 300 Q 260 400 300 500 Q 340 400 360 300" 
+            stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="8,5" stroke-linecap="round"/>
+      
+      <!-- 最低点的小点 -->
+      <circle cx="300" cy="500" r="4" fill="#1a1a1a" opacity="0.65"/>
+    </g>
+  </g>
+</svg>

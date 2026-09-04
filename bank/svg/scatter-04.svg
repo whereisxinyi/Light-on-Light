@@ -1,0 +1,21 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.6 340 340)">
+    <!-- Eye (looking) -->
+    <circle cx="340" cy="170" r="50" fill="none" stroke="#1a1a1a" stroke-width="3.5"/>
+    <circle cx="340" cy="170" r="22" fill="#1a1a1a"/>
+    
+    <!-- Gaze line - trying to track -->
+    <path d="M 340 220 L 340 340" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="7,5" stroke-linecap="round"/>
+    
+    <!-- Spiraling descent (slipped away) -->
+    <path d="M 340 340 Q 395 365, 375 430 Q 340 490, 380 540 Q 410 575, 370 610" 
+          fill="none" stroke="#1a1a1a" stroke-width="3" stroke-dasharray="9,6" stroke-linecap="round"/>
+    
+    <!-- Fading traces of disappearance -->
+    <circle cx="375" cy="430" r="6" fill="#1a1a1a" opacity="0.85"/>
+    <circle cx="380" cy="510" r="4.5" fill="#1a1a1a" opacity="0.55"/>
+    <circle cx="368" cy="580" r="3" fill="#1a1a1a" opacity="0.25"/>
+  </g>
+</svg>

@@ -1,0 +1,35 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    
+    <!-- 主要的墨迹形状：溅出的液体 -->
+    <path d="M 330 165
+             Q 365 150 395 172
+             Q 413 190 415 215
+             Q 405 242 382 254
+             Q 348 267 315 264
+             Q 285 261 272 240
+             Q 270 210 285 180
+             Q 305 166 330 165 Z"
+          fill="none" 
+          stroke="#1a1a1a" 
+          stroke-width="2"
+          stroke-dasharray="6,2"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    
+    <!-- 中心的实心墨块 -->
+    <circle cx="345" cy="212" r="19" fill="#1a1a1a" opacity="0.8"/>
+    
+    <!-- 向下流淌的线 -->
+    <path d="M 340 268 Q 337 330 340 385"
+          stroke="#1a1a1a" 
+          stroke-width="1.1" 
+          fill="none"
+          stroke-dasharray="2,2"
+          opacity="0.55"
+          stroke-linecap="round"/>
+    
+  </g>
+</svg>

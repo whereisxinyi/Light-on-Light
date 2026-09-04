@@ -1,0 +1,16 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg" style="transform-origin: center; transform: rotate(1.5deg);">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <!-- 向上散开（想走） -->
+  <path d="M 320 360 Q 295 310 270 260" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+  <path d="M 340 360 Q 338 305 335 250" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+  <path d="M 360 360 Q 385 310 410 260" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+  
+  <!-- 向下汇聚（想留） -->
+  <path d="M 320 340 Q 300 385 280 430" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+  <path d="M 340 340 Q 340 385 340 430" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+  <path d="M 360 340 Q 380 385 400 430" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+  
+  <!-- 中心的摇晃点 -->
+  <circle cx="340" cy="350" r="6" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="3,2"/>
+</svg>

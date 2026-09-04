@@ -1,0 +1,27 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(2 340 340)">
+    <!-- Central solid core -->
+    <circle cx="340" cy="340" r="18" fill="#1a1a1a"/>
+    
+    <!-- Outward radiating dashed rings -->
+    <circle cx="340" cy="340" r="50" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="6,4"/>
+    
+    <circle cx="340" cy="340" r="90" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="8,6"/>
+    
+    <circle cx="340" cy="340" r="130" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="10,10"/>
+    
+    <!-- Dispersal lines in cardinal directions -->
+    <line x1="340" y1="200" x2="340" y2="150" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <line x1="480" y1="340" x2="540" y2="340" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <line x1="340" y1="480" x2="340" y2="540" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <line x1="200" y1="340" x2="140" y2="340" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,3"/>
+    
+    <!-- Diagonal dispersal lines -->
+    <line x1="425" y1="255" x2="485" y2="195" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,4"/>
+    <line x1="425" y1="425" x2="485" y2="485" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,4"/>
+    <line x1="255" y1="425" x2="195" y2="485" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,4"/>
+    <line x1="255" y1="255" x2="195" y2="195" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,4"/>
+  </g>
+</svg>

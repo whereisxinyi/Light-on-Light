@@ -1,0 +1,30 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.8 340 340)">
+    <!-- center door -->
+    <g transform="translate(340, 360)">
+      <rect x="-40" y="-60" width="80" height="130" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linejoin="miter"/>
+      <circle cx="15" cy="-5" r="6" stroke="#1a1a1a" stroke-width="2" fill="none"/>
+    </g>
+    
+    <!-- return paths from four directions -->
+    <g opacity="0.65">
+      <!-- from above -->
+      <circle cx="340" cy="130" r="5" fill="#1a1a1a"/>
+      <path d="M 340 150 Q 345 200 340 280" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="8,6" fill="none"/>
+      
+      <!-- from right -->
+      <circle cx="550" cy="360" r="5" fill="#1a1a1a"/>
+      <path d="M 530 360 Q 460 365 380 360" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="8,6" fill="none"/>
+      
+      <!-- from below -->
+      <circle cx="340" cy="570" r="5" fill="#1a1a1a"/>
+      <path d="M 340 555 Q 345 480 340 420" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="8,6" fill="none"/>
+      
+      <!-- from left -->
+      <circle cx="130" cy="360" r="5" fill="#1a1a1a"/>
+      <path d="M 150 360 Q 220 355 300 360" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="8,6" fill="none"/>
+    </g>
+  </g>
+</svg>

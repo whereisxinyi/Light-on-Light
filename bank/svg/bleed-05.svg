@@ -1,0 +1,16 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    <circle cx="340" cy="340" r="5" fill="#1a1a1a"/>
+    
+    <path d="M 340 270 Q 375 255 395 275 Q 410 300 398 330 Q 365 355 340 358 Q 318 352 308 330 Q 298 300 315 275 Q 330 255 340 270" 
+          stroke="#1a1a1a" stroke-width="2.3" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8,4"/>
+    
+    <path d="M 340 205 Q 405 170 450 205 Q 495 255 482 315 Q 420 385 340 408 Q 260 385 248 315 Q 235 255 280 205 Q 315 170 340 205" 
+          stroke="#1a1a1a" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7,5" opacity="0.7"/>
+    
+    <path d="M 340 130 Q 440 75 535 160 Q 605 250 575 355 Q 460 455 340 478 Q 215 455 205 355 Q 170 250 265 160 Q 360 75 340 130" 
+          stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6,6" opacity="0.5"/>
+  </g>
+</svg>

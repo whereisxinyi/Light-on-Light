@@ -1,0 +1,33 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  <g transform="rotate(1.2 340 340)">
+    
+    <!-- 人形轮廓 -->
+    <circle cx="340" cy="220" r="35" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <path d="M 340 255 L 340 390" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 340 285 L 270 330" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 340 285 L 410 330" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+    
+    <!-- 芽 1：从头顶 -->
+    <path d="M 358 188 Q 368 150 365 105" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="5,3"/>
+    <path d="M 365 105 Q 378 75 382 50" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <ellipse cx="378" cy="38" rx="8" ry="12" fill="none" stroke="#1a1a1a" stroke-width="1.5" transform="rotate(-28 378 38)"/>
+    <circle cx="388" cy="48" r="2" fill="#1a1a1a"/>
+    
+    <!-- 芽 2：从左侧头部 -->
+    <path d="M 318 205 Q 285 175 265 125" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4,4"/>
+    <circle cx="255" cy="110" r="4" fill="#1a1a1a"/>
+    <circle cx="273" cy="132" r="2.5" fill="#1a1a1a"/>
+    
+    <!-- 芽 3：从心脏 -->
+    <path d="M 340 315 Q 345 275 348 245" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-dasharray="3,5"/>
+    <circle cx="350" cy="228" r="3" fill="#1a1a1a"/>
+    <circle cx="346" cy="210" r="2" fill="#1a1a1a"/>
+    <circle cx="343" cy="190" r="1.5" fill="#1a1a1a"/>
+    
+    <!-- 芽 4：从右侧 -->
+    <path d="M 362 295 Q 420 255 450 210" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-dasharray="5,3"/>
+    <ellipse cx="462" cy="193" rx="7" ry="10" fill="none" stroke="#1a1a1a" stroke-width="1.5" transform="rotate(-32 462 193)"/>
+    
+  </g>
+</svg>

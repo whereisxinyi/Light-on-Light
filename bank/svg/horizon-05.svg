@@ -1,0 +1,17 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.3 340 340)">
+    <!-- 空间的边界：虚线圆 -->
+    <circle cx="340" cy="340" r="160" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="12,10"/>
+    
+    <!-- 中心的"一点"：散落的微小标记 -->
+    <circle cx="330" cy="330" r="2" fill="#1a1a1a"/>
+    <circle cx="350" cy="335" r="1.5" fill="#1a1a1a"/>
+    <circle cx="340" cy="355" r="1.5" fill="#1a1a1a"/>
+    <circle cx="325" cy="350" r="1" fill="#1a1a1a"/>
+    
+    <!-- 内层虚线：空间的深度 -->
+    <circle cx="340" cy="340" r="100" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="4,6" opacity="0.5"/>
+  </g>
+</svg>

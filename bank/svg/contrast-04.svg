@@ -1,0 +1,29 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    <!-- Left side: scattered/different -->
+    <circle cx="140" cy="200" r="14" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="5,3"/>
+    <circle cx="100" cy="300" r="9" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <circle cx="170" cy="420" r="11" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="6,2"/>
+    <circle cx="70" cy="480" r="7" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    
+    <path d="M 130 250 L 50 220" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="5,4"/>
+    <path d="M 150 350 L 100 430" stroke="#1a1a1a" stroke-width="2" fill="none"/>
+    <path d="M 160 200 L 220 140" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+    <path d="M 110 500 L 50 520" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+    
+    <!-- Center division -->
+    <path d="M 340 100 L 340 580" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="3,2"/>
+    
+    <!-- Right side: converging/same -->
+    <circle cx="550" cy="340" r="28" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="8,4"/>
+    <circle cx="550" cy="340" r="55" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="10,5"/>
+    <circle cx="550" cy="340" r="78" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="12,6"/>
+    
+    <path d="M 480 310 Q 515 325 550 340" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+    <path d="M 620 360 Q 585 350 550 340" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+    <path d="M 550 260 L 550 305" stroke="#1a1a1a" stroke-width="2" fill="none"/>
+    <path d="M 550 430 L 550 500" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+  </g>
+</svg>

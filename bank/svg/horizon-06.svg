@@ -1,0 +1,33 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.3 340 340)">
+    <!-- 左侧：远方（朦胧） -->
+    <!-- 远方的地平线群 -->
+    <path d="M 50 260 Q 150 250 280 260" stroke="#1a1a1a" stroke-width="1" fill="none" opacity="0.6" stroke-dasharray="5,4"/>
+    <path d="M 50 300 Q 150 290 280 300" stroke="#1a1a1a" stroke-width="1.1" fill="none" opacity="0.7" stroke-dasharray="4,3"/>
+    <path d="M 50 340 Q 150 330 280 340" stroke="#1a1a1a" stroke-width="1.3" fill="none"/>
+    
+    <!-- 远方的太阳 -->
+    <circle cx="120" cy="180" r="22" stroke="#1a1a1a" stroke-width="1" fill="none" opacity="0.6"/>
+    <!-- 光线 -->
+    <path d="M 70 180 L 85 180 M 155 180 L 170 180 M 120 128 L 120 143 M 120 217 L 120 232" stroke="#1a1a1a" stroke-width="0.8" opacity="0.4"/>
+    
+    <!-- 云 -->
+    <path d="M 200 140 Q 230 120 260 140 Q 275 130 290 145" stroke="#1a1a1a" stroke-width="1.2" fill="none" stroke-dasharray="3,2" opacity="0.7"/>
+    
+    <!-- 中间分割线（竖） -->
+    <path d="M 340 60 Q 345 340 340 620" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+    
+    <!-- 右侧：此地（清晰） -->
+    <!-- 位置标记 -->
+    <circle cx="500" cy="340" r="32" stroke="#1a1a1a" stroke-width="2.4" fill="none"/>
+    <circle cx="500" cy="340" r="20" stroke="#1a1a1a" stroke-width="1.4" fill="none" stroke-dasharray="3,2"/>
+    <circle cx="500" cy="340" r="8" fill="#1a1a1a"/>
+    
+    <!-- 脚下的地 -->
+    <path d="M 400 460 L 600 460" stroke="#1a1a1a" stroke-width="1.8"/>
+    <path d="M 390 500 L 610 500" stroke="#1a1a1a" stroke-width="1.3" stroke-dasharray="4,3" opacity="0.8"/>
+    <path d="M 420 540 L 580 540" stroke="#1a1a1a" stroke-width="1" opacity="0.7"/>
+  </g>
+</svg>

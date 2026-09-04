@@ -1,0 +1,44 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.5 340 340)">
+    
+    <!-- 主茎 -->
+    <path d="M 340 480 Q 338 380 342 280 Q 345 200 348 120" 
+          stroke="#1a1a1a" stroke-width="2.5" fill="none" 
+          stroke-linecap="round"/>
+    
+    <!-- 左边的展开叶 -->
+    <path d="M 342 240 Q 310 220 280 240" 
+          stroke="#1a1a1a" stroke-width="2" fill="none" 
+          stroke-linecap="round" stroke-dasharray="6 3"/>
+    
+    <!-- 右边的展开叶 -->
+    <path d="M 342 240 Q 370 220 400 240" 
+          stroke="#1a1a1a" stroke-width="2" fill="none" 
+          stroke-linecap="round" stroke-dasharray="6 3"/>
+    
+    <!-- 上层左叶 -->
+    <path d="M 345 160 Q 325 140 310 150" 
+          stroke="#1a1a1a" stroke-width="1.6" fill="none" 
+          stroke-dasharray="5 2" opacity="0.7"/>
+    
+    <!-- 上层右叶 -->
+    <path d="M 345 160 Q 365 140 380 150" 
+          stroke="#1a1a1a" stroke-width="1.6" fill="none" 
+          stroke-dasharray="5 2" opacity="0.7"/>
+    
+    <!-- 顶部卷须 -->
+    <path d="M 348 120 Q 345 80 350 50" 
+          stroke="#1a1a1a" stroke-width="1.2" fill="none" 
+          stroke-dasharray="4 2" opacity="0.6"/>
+    
+    <!-- 顶点 -->
+    <circle cx="350" cy="40" r="2" fill="#1a1a1a" opacity="0.8"/>
+    
+    <!-- 底部根点 -->
+    <circle cx="340" cy="490" r="2.5" fill="#1a1a1a"/>
+    
+  </g>
+  
+</svg>

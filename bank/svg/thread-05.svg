@@ -1,0 +1,24 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  <g transform="rotate(1.2 340 340)">
+    <!-- 前半段：连贯的线 -->
+    <path d="M 60 340 Q 150 320 240 335 Q 280 338 290 340" stroke="#1a1a1a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- 断裂处：散点表现丢失 -->
+    <circle cx="310" cy="342" r="2.5" fill="#1a1a1a" opacity="0.5"/>
+    <circle cx="330" cy="338" r="1.8" fill="#1a1a1a" opacity="0.4"/>
+    <circle cx="350" cy="345" r="2" fill="#1a1a1a" opacity="0.45"/>
+    <circle cx="368" cy="340" r="1.5" fill="#1a1a1a" opacity="0.35"/>
+    
+    <!-- 后半段：虚线继续前进 -->
+    <path d="M 385 343 Q 470 335 560 348 Q 600 352 620 350" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="10,7" stroke-linecap="round" opacity="0.75"/>
+    
+    <!-- 脚印：小点点表示"还在走" -->
+    <circle cx="120" cy="410" r="2" fill="#1a1a1a" opacity="0.4"/>
+    <circle cx="200" cy="415" r="1.8" fill="#1a1a1a" opacity="0.35"/>
+    <circle cx="280" cy="412" r="1.9" fill="#1a1a1a" opacity="0.38"/>
+    <circle cx="360" cy="418" r="2" fill="#1a1a1a" opacity="0.4"/>
+    <circle cx="440" cy="414" r="1.8" fill="#1a1a1a" opacity="0.35"/>
+    <circle cx="520" cy="420" r="1.9" fill="#1a1a1a" opacity="0.38"/>
+  </g>
+</svg>

@@ -1,0 +1,24 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  <g transform="rotate(1.5 340 340)">
+    <!-- Central ink drop -->
+    <circle cx="340" cy="320" r="32" fill="#1a1a1a" opacity="0.9"/>
+    
+    <!-- Dispersing ink tendrils -->
+    <path d="M 340 288 Q 360 260 355 220" stroke="#1a1a1a" stroke-width="4" fill="none" stroke-dasharray="8,4"/>
+    <path d="M 360 315 Q 395 310 435 305" stroke="#1a1a1a" stroke-width="3.5" fill="none" stroke-dasharray="6,3"/>
+    <path d="M 340 352 Q 330 385 325 430" stroke="#1a1a1a" stroke-width="4" fill="none" stroke-dasharray="7,5"/>
+    <path d="M 310 320 Q 270 325 230 340" stroke="#1a1a1a" stroke-width="3.5" fill="none" stroke-dasharray="6,3"/>
+    
+    <!-- Secondary dispersing wisps -->
+    <path d="M 355 300 Q 375 275 385 240" stroke="#1a1a1a" stroke-width="2" fill="none" opacity="0.7" stroke-dasharray="5,4"/>
+    <path d="M 325 335 Q 305 360 295 395" stroke="#1a1a1a" stroke-width="2" fill="none" opacity="0.7" stroke-dasharray="5,4"/>
+    <path d="M 350 308 Q 385 290 415 265" stroke="#1a1a1a" stroke-width="2.5" fill="none" opacity="0.8" stroke-dasharray="6,4"/>
+    
+    <!-- Organic floating dots/micro dispersal -->
+    <circle cx="360" cy="245" r="3" fill="#1a1a1a" opacity="0.6"/>
+    <circle cx="410" cy="310" r="2.5" fill="#1a1a1a" opacity="0.5"/>
+    <circle cx="315" cy="380" r="2.5" fill="#1a1a1a" opacity="0.5"/>
+    <circle cx="265" cy="335" r="3" fill="#1a1a1a" opacity="0.6"/>
+  </g>
+</svg>

@@ -1,0 +1,38 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  <g transform="rotate(1.5 340 340)">
+    <!-- 中心点 -->
+    <circle cx="340" cy="340" r="9" fill="#1a1a1a"/>
+    
+    <!-- 向四周散开的点，渐小 -->
+    <circle cx="280" cy="240" r="5.5" fill="#1a1a1a"/>
+    <circle cx="420" cy="200" r="4" fill="#1a1a1a"/>
+    <circle cx="500" cy="300" r="4.5" fill="#1a1a1a"/>
+    <circle cx="480" cy="420" r="4" fill="#1a1a1a"/>
+    <circle cx="320" cy="520" r="4.5" fill="#1a1a1a"/>
+    <circle cx="180" cy="480" r="4" fill="#1a1a1a"/>
+    <circle cx="120" cy="340" r="4.5" fill="#1a1a1a"/>
+    <circle cx="180" cy="200" r="4" fill="#1a1a1a"/>
+    
+    <!-- 从中心向外的射线，虚线表现散开 -->
+    <path d="M 340 340 L 520 180" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="6,4"/>
+    <path d="M 340 340 L 540 340" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="5,4"/>
+    <path d="M 340 340 L 460 520" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="6,4"/>
+    <path d="M 340 340 L 140 480" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="5,4"/>
+    <path d="M 340 340 L 100 280" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="6,4"/>
+    
+    <!-- 额外的散开曲线，增强随意感 -->
+    <path d="M 350 320 Q 400 280 440 240" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+    <path d="M 330 350 Q 280 380 240 420" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+    <path d="M 340 355 Q 380 400 420 460" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="3,4"/>
+    
+    <!-- 边缘的微粒点，表现消散 -->
+    <circle cx="560" cy="160" r="2.5" fill="#1a1a1a"/>
+    <circle cx="580" cy="320" r="2" fill="#1a1a1a"/>
+    <circle cx="540" cy="560" r="2" fill="#1a1a1a"/>
+    <circle cx="120" cy="560" r="2.5" fill="#1a1a1a"/>
+    <circle cx="80" cy="200" r="2" fill="#1a1a1a"/>
+    <circle cx="140" cy="100" r="2" fill="#1a1a1a"/>
+    <circle cx="420" cy="80" r="2.5" fill="#1a1a1a"/>
+  </g>
+</svg>

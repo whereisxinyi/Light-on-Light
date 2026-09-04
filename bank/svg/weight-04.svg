@@ -1,0 +1,22 @@
+<svg viewBox="0 0 680 680">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  <g transform="rotate(1.5 340 340)">
+    <!-- Center point -->
+    <circle cx="340" cy="340" r="4" fill="#1a1a1a"/>
+    
+    <!-- First ring - dashed -->
+    <circle cx="340" cy="340" r="55" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="9,7"/>
+    
+    <!-- Second ring - dotted -->
+    <circle cx="340" cy="340" r="110" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="5,9"/>
+    
+    <!-- Downward trace of the gesture -->
+    <path d="M 340 410 Q 335 460 340 510" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="7,8"/>
+    
+    <!-- Accent dots -->
+    <circle cx="390" cy="310" r="1.5" fill="#1a1a1a" opacity="0.65"/>
+    <circle cx="290" cy="370" r="1.5" fill="#1a1a1a" opacity="0.65"/>
+    <circle cx="360" cy="430" r="1.5" fill="#1a1a1a" opacity="0.65"/>
+    <circle cx="310" cy="480" r="1" fill="#1a1a1a" opacity="0.5"/>
+  </g>
+</svg>

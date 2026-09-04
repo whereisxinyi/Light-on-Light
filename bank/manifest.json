@@ -71,6 +71,422 @@
    "engine": "claude",
    "keep": null,
    "bytes": 2790
+  },
+  {
+   "file": "rings-04.svg",
+   "anchor": "rings",
+   "sentence": "Hold still and the water clears.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1054
+  },
+  {
+   "file": "rings-05.svg",
+   "anchor": "rings",
+   "sentence": "专注是最稀有的温柔。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 656
+  },
+  {
+   "file": "rings-06.svg",
+   "anchor": "rings",
+   "sentence": "安静下来，世界才开始说话。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 797
+  },
+  {
+   "file": "bleed-01.svg",
+   "anchor": "bleed",
+   "sentence": "Writing bleeds into everything.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1096
+  },
+  {
+   "file": "bleed-02.svg",
+   "anchor": "bleed",
+   "sentence": "Some feelings spill before they are named.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1013
+  },
+  {
+   "file": "bleed-03.svg",
+   "anchor": "bleed",
+   "sentence": "The ink knows where to go before I do.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1516
+  },
+  {
+   "file": "bleed-04.svg",
+   "anchor": "bleed",
+   "sentence": "Everything I touch leaves a stain of me.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1098
+  },
+  {
+   "file": "bleed-05.svg",
+   "anchor": "bleed",
+   "sentence": "有些话说出来就晕开了。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1050
+  },
+  {
+   "file": "bleed-06.svg",
+   "anchor": "bleed",
+   "sentence": "墨比我先知道要去哪里。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1648
+  },
+  {
+   "file": "spiral-01.svg",
+   "anchor": "spiral",
+   "sentence": "Every year I return to the same door.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1347
+  },
+  {
+   "file": "spiral-02.svg",
+   "anchor": "spiral",
+   "sentence": "Memory turns, and turns again.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 525
+  },
+  {
+   "file": "spiral-03.svg",
+   "anchor": "spiral",
+   "sentence": "I keep beginning at the beginning.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 638
+  },
+  {
+   "file": "spiral-04.svg",
+   "anchor": "spiral",
+   "sentence": "The world goes round and I go with it.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 626
+  },
+  {
+   "file": "spiral-05.svg",
+   "anchor": "spiral",
+   "sentence": "我总是回到同一个开始。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 824
+  },
+  {
+   "file": "spiral-06.svg",
+   "anchor": "spiral",
+   "sentence": "记忆是一圈一圈的。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 647
+  },
+  {
+   "file": "sprout-01.svg",
+   "anchor": "sprout",
+   "sentence": "What if I grow as a plant?",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 3309
+  },
+  {
+   "file": "sprout-02.svg",
+   "anchor": "sprout",
+   "sentence": "Roots first, then whatever comes.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1529
+  },
+  {
+   "file": "sprout-03.svg",
+   "anchor": "sprout",
+   "sentence": "Something green is starting in me.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1466
+  },
+  {
+   "file": "sprout-04.svg",
+   "anchor": "sprout",
+   "sentence": "Let it grow crooked, it is still growing.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 5332
+  },
+  {
+   "file": "sprout-05.svg",
+   "anchor": "sprout",
+   "sentence": "先扎根，再说别的。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1162
+  },
+  {
+   "file": "sprout-06.svg",
+   "anchor": "sprout",
+   "sentence": "有什么在我身上发芽了。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1961
+  },
+  {
+   "file": "horizon-01.svg",
+   "anchor": "horizon",
+   "sentence": "I need some space.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 451
+  },
+  {
+   "file": "horizon-02.svg",
+   "anchor": "horizon",
+   "sentence": "The sea remembers every name it was given.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 2602
+  },
+  {
+   "file": "horizon-03.svg",
+   "anchor": "horizon",
+   "sentence": "There is more sky than I can use.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 892
+  },
+  {
+   "file": "horizon-04.svg",
+   "anchor": "horizon",
+   "sentence": "Far away is also a place.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 877
+  },
+  {
+   "file": "horizon-05.svg",
+   "anchor": "horizon",
+   "sentence": "我需要一点空间。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 769
+  },
+  {
+   "file": "horizon-06.svg",
+   "anchor": "horizon",
+   "sentence": "远方也是一个地方。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1806
+  },
+  {
+   "file": "thread-01.svg",
+   "anchor": "thread",
+   "sentence": "What if I'm a poem?",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 2217
+  },
+  {
+   "file": "thread-02.svg",
+   "anchor": "thread",
+   "sentence": "Every word is a step on a road I cannot see.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1124
+  },
+  {
+   "file": "thread-03.svg",
+   "anchor": "thread",
+   "sentence": "Follow the line and it becomes a story.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1728
+  },
+  {
+   "file": "thread-04.svg",
+   "anchor": "thread",
+   "sentence": "I lost the thread but kept walking.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1491
+  },
+  {
+   "file": "thread-05.svg",
+   "anchor": "thread",
+   "sentence": "我把线弄丢了，但还在走。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1370
+  },
+  {
+   "file": "thread-06.svg",
+   "anchor": "thread",
+   "sentence": "每个字都是一步。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1192
+  },
+  {
+   "file": "scatter-01.svg",
+   "anchor": "scatter",
+   "sentence": "I forgot what I was going to say.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1483
+  },
+  {
+   "file": "scatter-02.svg",
+   "anchor": "scatter",
+   "sentence": "Fleeting things are still things.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1587
+  },
+  {
+   "file": "scatter-03.svg",
+   "anchor": "scatter",
+   "sentence": "By evening the morning is gone.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1122
+  },
+  {
+   "file": "scatter-04.svg",
+   "anchor": "scatter",
+   "sentence": "It slipped away while I was looking.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 991
+  },
+  {
+   "file": "scatter-05.svg",
+   "anchor": "scatter",
+   "sentence": "刚想说什么，就忘了。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1399
+  },
+  {
+   "file": "scatter-06.svg",
+   "anchor": "scatter",
+   "sentence": "转眼就散了。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 2144
+  },
+  {
+   "file": "weight-01.svg",
+   "anchor": "weight",
+   "sentence": "Some days are heavier than they look.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1283
+  },
+  {
+   "file": "weight-02.svg",
+   "anchor": "weight",
+   "sentence": "I carry more than I put down.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 2859
+  },
+  {
+   "file": "weight-03.svg",
+   "anchor": "weight",
+   "sentence": "Gravity has opinions about me.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 728
+  },
+  {
+   "file": "weight-04.svg",
+   "anchor": "weight",
+   "sentence": "Put it down; it will still be there.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 972
+  },
+  {
+   "file": "weight-05.svg",
+   "anchor": "weight",
+   "sentence": "有些日子比看起来重。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 685
+  },
+  {
+   "file": "weight-06.svg",
+   "anchor": "weight",
+   "sentence": "先放下，它还会在。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1333
+  },
+  {
+   "file": "contrast-01.svg",
+   "anchor": "contrast",
+   "sentence": "I want to rest, but the list keeps growing.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1869
+  },
+  {
+   "file": "contrast-02.svg",
+   "anchor": "contrast",
+   "sentence": "Half of me leaves, half stays.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1190
+  },
+  {
+   "file": "contrast-03.svg",
+   "anchor": "contrast",
+   "sentence": "Loud outside, quiet inside.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 2083
+  },
+  {
+   "file": "contrast-04.svg",
+   "anchor": "contrast",
+   "sentence": "It is not the same, and yet it is.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1891
+  },
+  {
+   "file": "contrast-05.svg",
+   "anchor": "contrast",
+   "sentence": "想休息，可清单还在变长。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 751
+  },
+  {
+   "file": "contrast-06.svg",
+   "anchor": "contrast",
+   "sentence": "一半想走，一半想留。",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 1064
+  },
+  {
+   "file": "rain-01.svg",
+   "anchor": "rain",
+   "sentence": "It rained and I let it.",
+   "engine": "claude",
+   "keep": null,
+   "bytes": 2136
   }
  ]
 }

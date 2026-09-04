@@ -1,0 +1,40 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  <g transform="rotate(1.5 340 340)">
+    <!-- 中心墨源 -->
+    <circle cx="340" cy="200" r="10" fill="#1a1a1a"/>
+    
+    <!-- 主向下流 -->
+    <path d="M 340 210 Q 338 280 335 350 Q 330 450 328 520"
+          stroke="#1a1a1a" stroke-width="3" fill="none"
+          stroke-dasharray="5,2" stroke-linecap="round"/>
+    
+    <!-- 左分流 -->
+    <path d="M 330 280 Q 300 310 270 360 Q 250 400 240 450"
+          stroke="#1a1a1a" stroke-width="2.5" fill="none"
+          stroke-dasharray="5,3" stroke-linecap="round"/>
+    
+    <!-- 右分流 -->
+    <path d="M 350 280 Q 380 310 410 360 Q 430 400 440 450"
+          stroke="#1a1a1a" stroke-width="2.5" fill="none"
+          stroke-dasharray="5,3" stroke-linecap="round"/>
+    
+    <!-- 细微支流 1 -->
+    <path d="M 300 350 Q 280 390 275 430"
+          stroke="#1a1a1a" stroke-width="1.5" fill="none"
+          stroke-dasharray="4,2" stroke-linecap="round"/>
+    
+    <!-- 细微支流 2 -->
+    <path d="M 370 360 Q 390 400 405 440"
+          stroke="#1a1a1a" stroke-width="1.5" fill="none"
+          stroke-dasharray="4,2" stroke-linecap="round"/>
+    
+    <!-- 散落墨点 -->
+    <circle cx="310" cy="310" r="1.5" fill="#1a1a1a" opacity="0.7"/>
+    <circle cx="370" cy="320" r="1" fill="#1a1a1a" opacity="0.6"/>
+    <circle cx="260" cy="400" r="1" fill="#1a1a1a"/>
+    <circle cx="420" cy="410" r="1.5" fill="#1a1a1a"/>
+    <circle cx="330" cy="480" r="1" fill="#1a1a1a" opacity="0.8"/>
+    <circle cx="345" cy="500" r="1" fill="#1a1a1a" opacity="0.6"/>
+  </g>
+</svg>

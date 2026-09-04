@@ -115,3 +115,56 @@ engine: claude · anchors: 20
   ✗ farewell-06.svg: 
 done: 9 drawings in the bank
 (eval):1: command not found: setsid
+engine: claude · anchors: 20
+  ✓ rings-04.svg   1054 B  50.7s  Hold still and the water clears.
+  ✓ rings-05.svg    656 B  66.4s  专注是最稀有的温柔。
+  ✓ rings-06.svg    797 B  31.9s  安静下来，世界才开始说话。
+  ✓ bleed-01.svg   1096 B  37.8s  Writing bleeds into everything.
+  ✓ bleed-02.svg    961 B  77.6s  Some feelings spill before they are named.
+  ✓ bleed-03.svg   1516 B  21.6s  The ink knows where to go before I do.
+  ✓ bleed-04.svg   1054 B  82.6s  Everything I touch leaves a stain of me.
+  ✓ bleed-05.svg   1050 B  73.1s  有些话说出来就晕开了。
+  ✓ bleed-06.svg   1596 B  56.6s  墨比我先知道要去哪里。
+  ✓ spiral-01.svg   1347 B  57.4s  Every year I return to the same door.
+  ✓ spiral-02.svg    525 B  50.5s  Memory turns, and turns again.
+  ✓ spiral-03.svg    638 B  47.6s  I keep beginning at the beginning.
+  ✓ spiral-04.svg    626 B  41.5s  The world goes round and I go with it.
+  ✓ spiral-05.svg    776 B  44.6s  我总是回到同一个开始。
+  ✓ spiral-06.svg    647 B  27.0s  记忆是一圈一圈的。
+  ✓ sprout-01.svg   3309 B  46.3s  What if I grow as a plant?
+  ✓ sprout-02.svg   1529 B  47.9s  Roots first, then whatever comes.
+  ✓ sprout-03.svg   1402 B  42.5s  Something green is starting in me.
+  ✓ sprout-04.svg   5060 B  131.3s  Let it grow crooked, it is still growing.
+  ✓ sprout-05.svg   1162 B  40.9s  先扎根，再说别的。
+  ✓ sprout-06.svg   1909 B  41.6s  有什么在我身上发芽了。
+  ✓ horizon-01.svg    451 B  78.0s  I need some space.
+  ✓ horizon-02.svg   2538 B  67.7s  The sea remembers every name it was given.
+  ✓ horizon-03.svg    892 B  52.6s  There is more sky than I can use.
+  ✓ horizon-04.svg    877 B  37.7s  Far away is also a place.
+  ✓ horizon-05.svg    705 B  46.9s  我需要一点空间。
+  ✓ horizon-06.svg   1708 B  58.8s  远方也是一个地方。
+  ✓ thread-01.svg   2217 B  69.2s  What if I'm a poem?
+  ✓ thread-02.svg   1124 B  41.0s  Every word is a step on a road I cannot see.
+  ✓ thread-03.svg   1620 B  83.8s  Follow the line and it becomes a story.
+  ✓ thread-04.svg   1405 B  38.1s  I lost the thread but kept walking.
+  ✓ thread-05.svg   1292 B  36.5s  我把线弄丢了，但还在走。
+  ✓ thread-06.svg   1192 B  51.7s  每个字都是一步。
+  ✓ scatter-01.svg   1483 B  93.3s  I forgot what I was going to say.
+  ✓ scatter-02.svg   1587 B  60.1s  Fleeting things are still things.
+  ✓ scatter-03.svg   1122 B  48.6s  By evening the morning is gone.
+  ✓ scatter-04.svg    991 B  42.3s  It slipped away while I was looking.
+  ✓ scatter-05.svg   1329 B  52.2s  刚想说什么，就忘了。
+  ✓ scatter-06.svg   2040 B  32.0s  转眼就散了。
+  ✓ weight-01.svg   1177 B  61.4s  Some days are heavier than they look.
+  ✓ weight-02.svg   2763 B  79.3s  I carry more than I put down.
+  ✓ weight-03.svg    706 B  49.9s  Gravity has opinions about me.
+  ✓ weight-04.svg    972 B  47.6s  Put it down; it will still be there.
+  ✓ weight-05.svg    685 B  38.0s  有些日子比看起来重。
+  ✓ weight-06.svg   1269 B  76.8s  先放下，它还会在。
+  ✓ contrast-01.svg   1869 B  50.9s  I want to rest, but the list keeps growing.
+  ✓ contrast-02.svg   1190 B  35.9s  Half of me leaves, half stays.
+  ✓ contrast-03.svg   2083 B  47.0s  Loud outside, quiet inside.
+  ✓ contrast-04.svg   1891 B  36.3s  It is not the same, and yet it is.
+  ✓ contrast-05.svg    697 B  91.0s  想休息，可清单还在变长。
+  ✓ contrast-06.svg   1020 B  76.1s  一半想走，一半想留。
+  ✓ rain-01.svg   2136 B  75.5s  It rained and I let it.

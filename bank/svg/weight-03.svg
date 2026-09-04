@@ -1,0 +1,14 @@
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="680" fill="#fdfdfb"/>
+  
+  <g transform="rotate(1.2 340 340)">
+    <!-- 重力源头 -->
+    <circle cx="340" cy="340" r="5" fill="#1a1a1a"/>
+    
+    <!-- 意见的波纹传播 -->
+    <circle cx="340" cy="340" r="55" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-dasharray="5,8"/>
+    <circle cx="340" cy="340" r="95" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-dasharray="6,9"/>
+    <circle cx="340" cy="340" r="135" stroke="#1a1a1a" stroke-width="1.2" fill="none" stroke-dasharray="7,10"/>
+    <circle cx="340" cy="340" r="175" stroke="#1a1a1a" stroke-width="0.8" fill="none" stroke-dasharray="8,12"/>
+  </g>
+</svg>
