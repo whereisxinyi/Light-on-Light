@@ -716,7 +716,9 @@ main { timeline-scope: --give; }   /* the last fold's timeline, readable by the 
   display: grid;
   justify-items: center;
   align-content: center;
-  row-gap: var(--space-2xl);
+  /* the line and the pill's landing place, held well apart: about a line's
+     worth of air at the tightest, more on a tall screen */
+  row-gap: clamp(6rem, 14dvh, 9rem);
   padding-inline: var(--page-gutter);
   /* the foot's height, measured, less a little: the line sits just above centre */
   padding-block-end: calc(var(--foot-h, 22dvh) - 12dvh);
