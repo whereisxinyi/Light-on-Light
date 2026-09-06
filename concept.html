@@ -704,12 +704,40 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
    Give · mostly whitespace, and where the invitation comes to rest.
    ============================================================ */
 
+main { timeline-scope: --give; }   /* the last fold's timeline, readable by the dock after it */
+
+/* The last fold is one composed screen: the line a little above centre, the
+   pill's landing place under it, the colophon and the name along the bottom
+   edge. The page ends here — nothing to scroll past the composition. */
 .give {
   position: relative;
-  min-block-size: clamp(18rem, 44dvh, 28rem);
+  isolation: isolate;
+  min-block-size: 100dvh;
   display: grid;
-  place-items: center;
+  justify-items: center;
+  align-content: center;
+  row-gap: var(--space-2xl);
   padding-inline: var(--page-gutter);
+  /* the foot's height, measured, less a little: the line sits just above centre */
+  padding-block-end: calc(var(--foot-h, 22dvh) - 12dvh);
+  view-timeline-name: --give;
+}
+/* Where the pill lands: an empty slot its size, under the line. */
+.give__slot { display: block; block-size: 52px; inline-size: 1px; }
+/* The light gathers behind the line as the fold arrives — the paper's own glow,
+   warmed a touch, nothing new. */
+.give::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 38% 30% at 50% 40%,
+    color-mix(in oklch, var(--color-glow) 90%, var(--color-accent) 10%) 0%,
+    color-mix(in oklch, var(--color-glow) 60%, transparent) 38%,
+    transparent 72%);
+  opacity: 0;
+  scale: 0.85;
 }
 /* The invitation, in the voice of the thoughts. The pill docks under it. */
 .invite {
@@ -780,9 +808,48 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 .cta:focus-visible { border-color: var(--color-accent); color: var(--color-accent); }
 .cta:active { transform: translateY(1px); }
 
+/* Arrival. Driven by the scroll, not the clock: as the last fold comes up the
+   line rises and the light gathers; the pill that rode the bottom edge the
+   whole way slides along it toward the middle, then lifts into the slot under
+   the sentence — sideways first, up last, so it never crosses the words.
+   The distances are measured by the script (--settle-*); no magic numbers. */
+@supports (animation-timeline: view()) {
+  .give::before {
+    animation: give-gather linear both;
+    animation-timeline: --give;
+    animation-range: entry 30% entry 100%;
+  }
+  .invite {
+    animation: invite-rise linear both;
+    animation-timeline: --give;
+    animation-range: entry 25% entry 75%;
+  }
+  .dock {
+    animation: dock-emerge 900ms var(--ease-out) 400ms both,
+               dock-lift cubic-bezier(0.7, 0, 0.84, 0) both;
+    animation-timeline: auto, --give;
+    animation-range: normal, entry 40% entry calc(100% + var(--settle-tail, 0px));
+  }
+  .cta {
+    animation: cta-slide var(--ease-in-out) both;
+    animation-timeline: --give;
+    animation-range: entry 40% entry calc(100% + var(--settle-tail, 0px));
+  }
+}
+@keyframes give-gather { to { opacity: 1; scale: 1; } }
+@keyframes invite-rise { from { opacity: 0; translate: 0 14px; } }
+@keyframes dock-lift   { to { translate: 0 var(--settle-y, 0px); } }
+@keyframes cta-slide   { to { translate: var(--settle-x, 0px) 0; } }
+
 /* ============================================================
    Footer · Ft2. One line, a hairline above it, nothing else.
    ============================================================ */
+
+/* The foot rides the bottom edge of the last fold; the page ends with the fold.
+   The dock is pulled up by its own height (set by the script) so the fold is
+   the page's last pixel and its composition is what you stop on. */
+body { position: relative; }
+.foot { position: absolute; inset-inline: 0; inset-block-end: 0; z-index: 1; }
 
 .colophon {
   display: flex;
@@ -791,7 +858,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   gap: var(--space-sm) var(--space-lg);
   align-items: baseline;
   margin-inline: var(--page-gutter);
-  padding-block: var(--space-lg) var(--space-2xl);
+  padding-block: var(--space-lg);
   border-block-start: var(--rule-hair) solid var(--color-rule);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -841,7 +908,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
            row-gap: clamp(12rem, 36vh, 20rem); }   /* room for the sunk field between the two moments */
   .night__pain, .night__turn { grid-column: 1; }
   .night__turn { grid-row: 2; }
-  .give  { min-block-size: clamp(14rem, 34dvh, 20rem); }
+  .give__slot { block-size: 44px; }
   .pop   { max-inline-size: 74vw; }
 
   /* A fixed CTA on a full-width column will sit over body copy — that is the
@@ -869,6 +936,8 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   .sunk__t { opacity: var(--o); }
   .cta { transition: none; }
   .cta::before { animation: none; opacity: 1; }
+  .invite, .cta, .give::before { animation: none !important; }
+  .give::before { opacity: 1; scale: 1; }
 }
 
 </style>
@@ -927,6 +996,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
        beneath it. -->
   <section class="give" id="invite">
     <p class="invite">Give it one sentence, and let it answer back.</p>
+    <span class="give__slot" aria-hidden="true"></span>
   </section>
 
   <!-- The invitation. Sticky, not fixed: it rides the bottom edge of the
@@ -938,6 +1008,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 
 </main>
 
+<div class="foot">
 <footer class="colophon">
   <span>Light on Light</span>
   <a href="./index.html">Back to the beginning</a>
@@ -948,8 +1019,46 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 <aside class="substrate" aria-hidden="true">
   <canvas class="substrate__px" id="substrate"></canvas>
 </aside>
+</div>
 
 <script>
+/* ------------------------------------------------------------
+   The last fold's measurements. The foot's height, so the line sits above
+   it; and where the pill lands — how far left to the slot's centre, how far
+   up to the slot at the page's end, and how much scroll the page's end is
+   past the fold's full entry. Measured, never guessed; again on resize.
+   ------------------------------------------------------------ */
+(function () {
+  var give = document.querySelector('.give'), slot = document.querySelector('.give__slot'),
+      dock = document.querySelector('.dock'), cta = document.querySelector('.cta'),
+      foot = document.querySelector('.foot');
+  if (!give || !slot || !dock || !cta || !foot) return;
+  var settle = window.CSS && CSS.supports && CSS.supports('animation-timeline: view()');
+  function measure() {
+    give.style.setProperty('--foot-h', foot.offsetHeight + 'px');
+    dock.style.marginBlockStart = -dock.offsetHeight + 'px';                     /* the fold is the page's end */
+    if (!settle) return;
+    var g = give.getBoundingClientRect(), s = slot.getBoundingClientRect(), d = dock.getBoundingClientRect();
+    var giveTop = g.top + window.scrollY;
+    var extra = document.documentElement.scrollHeight - (giveTop + g.height);  /* anything still in flow after the fold */
+    if (extra < 12) extra = 0;                                                  /* sub-pixel rounding, not content */
+    var stuckTop = window.innerHeight - parseFloat(getComputedStyle(dock).bottom) - dock.offsetHeight;
+    var ctaCenter = d.left + cta.offsetLeft + cta.offsetWidth / 2;               /* untranslated */
+    dock.style.setProperty('--settle-x', (s.left + s.width / 2 - ctaCenter) + 'px');
+    dock.style.setProperty('--settle-y', ((s.top - g.top) - extra - stuckTop) + 'px');
+    dock.style.setProperty('--settle-tail', extra + 'px');
+  }
+  measure();
+  var rt;
+  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(measure, 120); });
+  window.addEventListener('load', measure);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+  if ('ResizeObserver' in window) {            /* the foot's bitmap sizes itself late; follow it */
+    var ro = new ResizeObserver(function () { clearTimeout(rt); rt = setTimeout(measure, 60); });
+    ro.observe(foot); ro.observe(give);
+  }
+})();
+
 /* ------------------------------------------------------------
    The ground's loose parts: the name in ghost letters, and dust.
    Dealt once at load, never animated — they are the paper, not weather.
