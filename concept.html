@@ -441,7 +441,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   position: relative;
   isolation: isolate;
   overflow: clip;
-  min-block-size: clamp(26rem, 60dvh, 40rem);
+  min-block-size: 100dvh;            /* one whole screen of weather before the night */
   display: grid;
   align-content: end;
   padding: var(--space-2xl) var(--page-gutter) var(--space-3xl);
@@ -507,12 +507,12 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
   transform: none;
 }
 [data-phase="lose"] .pop__t .ch {
-  animation: ch-fall 1.7s var(--ease-in) var(--cd) both;
+  animation: ch-fall 1s var(--ease-in) var(--cd) both;
 }
 @keyframes ch-fall {
   0%   { transform: none; opacity: 1; animation-timing-function: var(--ease-out); }
-  22%  { transform: translate(var(--sx), var(--sy)) rotate(var(--sr)); opacity: 0.95;
-         animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.6); }
+  18%  { transform: translate(var(--sx), var(--sy)) rotate(var(--sr)); opacity: 0.95;
+         animation-timing-function: cubic-bezier(0.55, 0, 0.95, 0.5); }
   100% { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)); opacity: 0.5; }
 }
 /* The note changes with the phase: what was arriving is now lost. */
@@ -902,7 +902,7 @@ body { position: relative; }
    ============================================================ */
 
 @media (max-width: 40rem) {
-  .storm { min-block-size: clamp(26rem, 62dvh, 38rem); }
+  .storm { min-block-size: 92dvh; }
   .beat  { min-block-size: auto; padding-block: var(--space-3xl); }
   .night { grid-template-columns: minmax(0, 1fr); min-block-size: auto;
            row-gap: clamp(12rem, 36vh, 20rem); }   /* room for the sunk field between the two moments */
@@ -1143,15 +1143,15 @@ body { position: relative; }
   var storm = document.querySelector('.storm__field');
   if (storm) {
     var pool  = shuffled();
-    var count = Math.min(pool.length, narrow ? 5 :
-                Math.max(7, Math.min(9, Math.round(window.innerWidth * window.innerHeight / 105000))));
+    var count = Math.min(pool.length, narrow ? 6 :
+                Math.max(9, Math.min(13, Math.round(window.innerWidth * window.innerHeight / 90000))));
     var frag  = document.createDocumentFragment();
 
     /* Each thought owns a horizontal band and jitters inside it. Fully random
        y collides constantly once the column is narrow — two thoughts lit in the
        same place is unreadable, and no amount of tuning opacity fixes it.
        Banding rules the collision out structurally. */
-    var band = 64 / count;
+    var band = 76 / count;      /* the bands fill the screen: 8% under the wordmark to 84% */
 
     for (var i = 0; i < count; i++) {
       var p = document.createElement('span');
@@ -1170,7 +1170,7 @@ body { position: relative; }
         ch.style.setProperty('--sr', R(-40, 40).toFixed(0) + 'deg');
         ch.style.setProperty('--fx', R(-8, 8).toFixed(1) + 'vw');
         ch.style.setProperty('--fr', R(-120, 120).toFixed(0) + 'deg');
-        ch.style.setProperty('--cd', R(0, 0.5).toFixed(2) + 's');
+        ch.style.setProperty('--cd', R(0, 0.28).toFixed(2) + 's');
         t.appendChild(ch);
       }
       p.appendChild(t);
@@ -1178,8 +1178,8 @@ body { position: relative; }
       var set = function (el) { return function (k, v) { el.style.setProperty(k, v); }; }(p);
 
       /* Kept clear of the bottom-left corner, where the note sits. */
-      set('--x', (narrow ? R(3, 22) : R(4, 70)).toFixed(2) + '%');
-      set('--y', (10 + i * band + R(0.1, 0.55) * band).toFixed(2) + '%');   /* 10%: air under the wordmark */
+      set('--x', (narrow ? R(3, 30) : R(4, 74)).toFixed(2) + '%');
+      set('--y', (8 + i * band + R(0.1, 0.55) * band).toFixed(2) + '%');    /* 8%: air under the wordmark */
       /* Drift stays under half a band so it can't wander into a neighbour. */
       set('--dx', R(-5, 5).toFixed(2) + 'vw');
       set('--dy', (narrow ? R(-1.4, 1.4) : R(-3, 3)).toFixed(2) + 'vh');
@@ -1219,7 +1219,7 @@ body { position: relative; }
     }
     function onScroll() {
       var top = stormEl.getBoundingClientRect().top;
-      var want = top < -window.innerHeight * 0.12 ? 'lose' : 'arrive';
+      var want = top < -window.innerHeight * 0.06 ? 'lose' : 'arrive';
       if (top > -8) want = 'arrive';
       if (want === phase) return;
       if (want === 'lose' && !measured) { measure(); measured = true; }
