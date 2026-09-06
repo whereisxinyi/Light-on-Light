@@ -930,6 +930,20 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     transparent 56%);
   transform: translateX(-130%);
 }
+/* Send: the same pill, with the one lit point instead of the little card. */
+.cta--send::before {
+  inline-size: 6px;
+  block-size: 6px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: cta-breathe 1.6s var(--ease-in-out) infinite alternate;
+}
+/* A gift that arrived by link waits wrapped until it is tapped. */
+.stage__caption--wrapped { display: none; }
+.is-received[data-state="wrapped"] .stage__caption--wrapped { display: inline; animation: settle-in 600ms var(--ease-out) 1200ms both; }
+.is-received[data-state="wrapped"] .card { cursor: pointer; }
+.is-received[data-state="wrapped"] .card:focus-visible { outline: var(--rule-hair) solid var(--color-accent); outline-offset: 6px; }
 .cta--export:hover,
 .cta--export:focus-visible {
   color: var(--color-ink);
@@ -1100,6 +1114,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
       <div class="gift__wrap" aria-hidden="true"></div>
     </figure>
     <div class="gift__actions">
+      <button class="cta cta--export cta--send" id="send" type="button">Send it</button>
       <button class="cta cta--export" id="export" type="button">Export</button>
       <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
     </div>
@@ -1109,6 +1124,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   <p class="stage__caption" aria-hidden="true">
     <span class="stage__caption--ready">Wrap it, or press Enter.</span>
     <span class="stage__caption--gift">It answers you in a picture.</span>
+    <span class="stage__caption--wrapped">Someone sent you this. Tap the card to open it.</span>
   </p>
 
 </main>
@@ -1602,10 +1618,12 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
       .replace(/javascript:/gi, '');
   }
 
-  function present(text, art) {
-    var d = new Date();
+  function present(text, art, when) {
+    var d = when || new Date();
     current.text = text;
     current.date = stamp(d);
+    current.day  = isoDay(d);
+    current.svg  = art.svg;
     $('giftLine').textContent = text;          /* the print's own caption — textContent, never innerHTML */
     var plate = $('plate');
     plate.innerHTML = art.svg;
@@ -1917,7 +1935,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
       ctx.fillText(spaced('LIGHT ON LIGHT'), CARD.w / 2, 1312);
 
       var a = document.createElement('a');
-      a.download = 'light-on-light-' + isoDay() + '.jpg';
+      a.download = 'light-on-light-' + current.day + '.jpg';
       a.href = c.toDataURL('image/jpeg', 0.92);
       a.click();
       URL.revokeObjectURL(blobUrl);
@@ -1935,14 +1953,118 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   });
 
   function spaced(s) { return s.split('').join(' '); }
-  function isoDay() {
-    var d = new Date();
+  function isoDay(d) {
+    d = d || new Date();
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
            '-' + String(d.getDate()).padStart(2, '0');
   }
 
+  /* ---------- the link ----------
+     The card IS the link: {v, t: sentence, d: day, s: drawing}, deflated
+     and base64url'd, with one flag letter in front ('z' deflated, 'r' raw).
+     /g/<that> on the site serves this page with the card's own unfurl. */
+  function b64url(bytes) {
+    var bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function unb64url(str) {
+    var bin = atob(str.replace(/-/g, '+').replace(/_/g, '/'));
+    var out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+  function encodeGift(gift) {
+    var json = new TextEncoder().encode(JSON.stringify(gift));
+    if (!window.CompressionStream) return Promise.resolve('r' + b64url(json));
+    return new Response(new Blob([json]).stream().pipeThrough(new CompressionStream('deflate-raw')))
+      .arrayBuffer().then(function (buf) { return 'z' + b64url(new Uint8Array(buf)); });
+  }
+  function decodeGift(p) {
+    var flag = p.charAt(0), bytes = unb64url(p.slice(1));
+    var text = flag === 'z'
+      ? (window.DecompressionStream
+          ? new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text()
+          : Promise.reject(new Error('no inflate')))
+      : Promise.resolve(new TextDecoder().decode(bytes));
+    return text.then(function (t) {
+      var j = JSON.parse(t);
+      if (j.v !== 1 || typeof j.t !== 'string' || typeof j.s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(j.d)) throw new Error('bad gift');
+      var sentence = j.t.replace(/\s+/g, ' ').trim();
+      var svg = sanitizeSVG(j.s.trim());
+      if (sentence.length < 2 || sentence.length > 200 || svg.indexOf('<svg') !== 0) throw new Error('bad gift');
+      return { text: sentence, day: j.d, svg: svg };
+    });
+  }
+  var SITE = /^https?:/.test(window.location.origin) ? window.location.origin : 'https://light-on-light.vercel.app';
+
+  $('send').addEventListener('click', function () {
+    var btn = this;
+    if (!current.svg) return;
+    btn.disabled = true;
+    encodeGift({ v: 1, t: current.text, d: current.day, s: current.svg }).then(function (p) {
+      var link = SITE + '/g/' + p;
+      btn.dataset.href = link;
+      var done = function (word) {
+        btn.firstChild.textContent = word;
+        live.textContent = word === 'Link copied' ? 'The link to this card is on your clipboard.' : word;
+        setTimeout(function () { btn.firstChild.textContent = 'Send it'; btn.disabled = false; }, 2200);
+      };
+      /* A phone offers its share sheet; a desk copies the link. */
+      if (navigator.share && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent)) {
+        navigator.share({ title: current.text, url: link }).then(function () { done('Sent'); })
+          ['catch'](function () { btn.disabled = false; });
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(function () { done('Link copied'); })
+          ['catch'](function () { window.prompt('Copy this link', link); done('Send it'); });
+      } else {
+        window.prompt('Copy this link', link); done('Send it');
+      }
+    });
+  });
+
+  /* ---------- a gift that arrived ----------
+     /g/<payload> (served by the site) or ?g=<payload> (any copy of this
+     file). The card waits wrapped, with the sender's sentence and day;
+     the reader opens it. */
+  function giftInURL() {
+    var m = window.location.pathname.match(/\/g\/([A-Za-z0-9_-]{4,})$/);
+    if (m) return m[1];
+    var q = new URLSearchParams(window.location.search).get('g');
+    return q && /^[A-Za-z0-9_-]{4,}$/.test(q) ? q : null;
+  }
+  function receive(gift) {
+    var when = new Date(gift.day + 'T12:00:00');
+    $('echo').textContent = gift.text;
+    $('said').textContent = gift.text;
+    $('giftLine').textContent = gift.text;
+    $('giftDate').textContent = stamp(when);
+    body.classList.add('is-received');
+    setState('wrapped');
+    live.textContent = 'A gift arrived, wrapped. Press Enter on the card to open it.';
+    var card = $('gift');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', 'A wrapped gift. Open it.');
+    var opened = false;
+    function open() {
+      if (opened) return;
+      opened = true;
+      card.removeAttribute('tabindex'); card.removeAttribute('role'); card.removeAttribute('aria-label');
+      present(gift.text, { svg: gift.svg, via: 'gift', meta: null }, when);
+      try { history.replaceState(null, '', '/make.html'); } catch (e) {}   /* opened; the link has done its work */
+    }
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    setTimeout(function () { card.focus({ preventScroll: true }); }, 1500);
+  }
+
   setState('input');
   body.dataset.ready = 'no';
+  var arriving = giftInURL();
+  if (arriving) decodeGift(arriving).then(receive)['catch'](function () { /* not a gift; the page as usual */ });
 })();
 
 /* ------------------------------------------------------------

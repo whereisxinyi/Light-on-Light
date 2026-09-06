@@ -1,7 +1,10 @@
 {
+  "rewrites": [
+    { "source": "/g/:p", "destination": "/api/gift?p=:p" }
+  ],
   "functions": {
-    "api/translate.js": {
-      "maxDuration": 300
-    }
+    "api/translate.js": { "maxDuration": 300 },
+    "api/gift.js":      { "includeFiles": "make.html" },
+    "api/card.js":      { "includeFiles": "api/_lib/fonts/*.ttf" }
   }
 }
