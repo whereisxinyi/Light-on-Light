@@ -724,6 +724,27 @@ main { timeline-scope: --give; }   /* the last fold's timeline, readable by the 
 }
 /* Where the pill lands: an empty slot its size, under the line. */
 .give__slot { display: block; block-size: 52px; inline-size: 1px; }
+.invite, .give__slot { position: relative; z-index: 1; }
+/* Embers. Now and then a cell leaves the name under the paper and rises,
+   slowly, toward the invitation, and goes out before it gets there. The
+   same pixel light as the name and as the burst on the gift. */
+.embers { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: clip; }
+.ember {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y0);
+  inline-size: var(--s);
+  block-size: var(--s);
+  background: var(--color-accent);
+  opacity: 0;
+  animation: ember var(--t) linear both;
+}
+@keyframes ember {
+  0%   { opacity: 0;                   transform: translate(0, 0); }
+  10%  { opacity: var(--o); }
+  55%  { opacity: calc(var(--o) * 0.8); }
+  100% { opacity: 0;                   transform: translate(var(--dx), calc(-1 * var(--rise))); }
+}
 /* The light gathers behind the line as the fold arrives — the paper's own glow,
    warmed a touch, nothing new. */
 .give::before {
@@ -732,10 +753,10 @@ main { timeline-scope: --give; }   /* the last fold's timeline, readable by the 
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(ellipse 38% 30% at 50% 40%,
+  background: radial-gradient(ellipse 40% 44% at 50% 50%,
     color-mix(in oklch, var(--color-glow) 90%, var(--color-accent) 10%) 0%,
-    color-mix(in oklch, var(--color-glow) 60%, transparent) 38%,
-    transparent 72%);
+    color-mix(in oklch, var(--color-glow) 60%, transparent) 40%,
+    transparent 74%);
   opacity: 0;
   scale: 0.85;
 }
@@ -858,8 +879,7 @@ body { position: relative; }
   gap: var(--space-sm) var(--space-lg);
   align-items: baseline;
   margin-inline: var(--page-gutter);
-  padding-block: var(--space-lg);
-  border-block-start: var(--rule-hair) solid var(--color-rule);
+  padding-block: 0 var(--space-xs);   /* no rule: the small type against the name is the seam */
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.1em;
@@ -937,6 +957,7 @@ body { position: relative; }
   .cta { transition: none; }
   .cta::before { animation: none; opacity: 1; }
   .invite, .cta, .give::before { animation: none !important; }
+  .embers { display: none; }
   .give::before { opacity: 1; scale: 1; }
 }
 
@@ -997,6 +1018,7 @@ body { position: relative; }
   <section class="give" id="invite">
     <p class="invite">Give it one sentence, and let it answer back.</p>
     <span class="give__slot" aria-hidden="true"></span>
+    <div class="embers" id="embers" aria-hidden="true"></div>
   </section>
 
   <!-- The invitation. Sticky, not fixed: it rides the bottom edge of the
@@ -1056,6 +1078,43 @@ body { position: relative; }
   if ('ResizeObserver' in window) {            /* the foot's bitmap sizes itself late; follow it */
     var ro = new ResizeObserver(function () { clearTimeout(rt); rt = setTimeout(measure, 60); });
     ro.observe(foot); ro.observe(give);
+  }
+
+  /* The embers: one at a time, a few seconds apart, only while the fold is
+     on screen. Each starts at the name's upper edge and rises to just short
+     of the pill. */
+  var host = document.getElementById('embers');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (host && !reduce && host.animate !== undefined) {
+    var R = function (a, b) { return a + Math.random() * (b - a); };
+    var timer = null, on = false;
+    function ember() {
+      if (!on || document.hidden) return;
+      var g = give.getBoundingClientRect(), s = slot.getBoundingClientRect();
+      var y0 = g.height - foot.offsetHeight + R(-6, 18);         /* the name's upper edge, in the fold's box */
+      var yEnd = (s.bottom - g.top) + R(28, 80);                 /* short of the pill */
+      var rise = y0 - yEnd;
+      if (rise > 40 && host.childElementCount < 7) {
+        var e = document.createElement('span');
+        e.className = 'ember';
+        e.style.setProperty('--x', R(6, 94).toFixed(1) + '%');
+        e.style.setProperty('--y0', y0.toFixed(0) + 'px');
+        e.style.setProperty('--s', (Math.random() < 0.3 ? 5 : 3.5) + 'px');
+        e.style.setProperty('--o', R(0.55, 0.95).toFixed(2));
+        e.style.setProperty('--dx', R(-24, 24).toFixed(0) + 'px');
+        e.style.setProperty('--rise', rise.toFixed(0) + 'px');
+        e.style.setProperty('--t', R(6, 10).toFixed(1) + 's');
+        e.addEventListener('animationend', function () { e.remove(); });
+        host.appendChild(e);
+      }
+      timer = setTimeout(ember, R(1400, 3200));
+    }
+    function start() { if (on) return; on = true; ember(); }
+    function stop()  { on = false; clearTimeout(timer); }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { threshold: 0.2 }).observe(give);
+    } else { start(); }
+    document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
   }
 })();
 
