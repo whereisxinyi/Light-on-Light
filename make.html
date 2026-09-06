@@ -794,6 +794,18 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 }
 @keyframes assemble { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
 
+/* Sketch, then ink. While the studio is still drawing, the card opens on a
+   pencil sketch from the bank — lighter, greyer, unmistakably provisional.
+   When the studio's drawing lands, the sketch fades and the ink assembles
+   in its place, quicker than the first time: the card is already open. */
+.gift__plate { transition: opacity 480ms var(--ease-in-out); }
+.gift__plate.is-sketch svg { opacity: 0.5; filter: contrast(0.62) brightness(1.18); }
+.gift__plate.is-inking { opacity: 0; }
+.gift__plate.is-inked [data-i] { animation-delay: calc(80ms + var(--i) * 70ms); }
+.stage__caption--inking { display: none; }
+.is-sketching[data-state="gift"] .stage__caption--gift { display: none; }
+.is-sketching[data-state="gift"] .stage__caption--inking { display: inline; animation: note-breathe 1.8s var(--ease-in-out) infinite alternate; }
+
 /* The motes. */
 .spark {
   position: absolute;
@@ -1125,6 +1137,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     <span class="stage__caption--ready">Wrap it, or press Enter.</span>
     <span class="stage__caption--gift">It answers you in a picture.</span>
     <span class="stage__caption--wrapped">Someone sent you this. Tap the card to open it.</span>
+    <span class="stage__caption--inking">A sketch, for now. The studio is still inking it.</span>
   </p>
 
 </main>
@@ -1548,6 +1561,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   /* ---------- state ---------- */
   var field = $('field'), go = $('go'), live = $('live'), form = $('ask');
   var current = { text: '', date: '' };
+  var runId = 0;                     /* which submission is current; late drawings for an older one are dropped */
 
   var layerStamp = $('stamp'), LAYER_STAMP = layerStamp.textContent;
   function setState(s) {
@@ -1618,14 +1632,10 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
       .replace(/javascript:/gi, '');
   }
 
-  function present(text, art, when) {
-    var d = when || new Date();
-    current.text = text;
-    current.date = stamp(d);
-    current.day  = isoDay(d);
-    current.svg  = art.svg;
-    $('giftLine').textContent = text;          /* the print's own caption — textContent, never innerHTML */
+  /* The drawing onto the plate: the SVG, the stagger, the provenance. */
+  function mount(art) {
     var plate = $('plate');
+    plate.className = 'gift__plate';
     plate.innerHTML = art.svg;
     /* Assemble centre-outward whoever drew it: deal data-i to the top-level
        strokes so the CSS stagger also applies to SVGs that arrive without it. */
@@ -1642,21 +1652,62 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     /* Left on the element on purpose: who drew it, and (for local draws)
        which anchor and mode fired. Inspectable rather than mysterious. */
     plate.dataset.via = art.via;
+    delete plate.dataset.anchor; delete plate.dataset.mode; delete plate.dataset.shape;
     if (art.meta) {
       plate.dataset.anchor = art.meta.anchor;
       plate.dataset.mode = String(art.meta.mode);
       plate.dataset.shape = art.meta.shape;
     }
+    current.svg = art.svg;
+    return plate;
+  }
+
+  function present(text, art, when, draft) {
+    var d = when || new Date();
+    current.text = text;
+    current.date = stamp(d);
+    current.day  = isoDay(d);
+    $('giftLine').textContent = text;          /* the print's own caption — textContent, never innerHTML */
+    var plate = mount(art);
+    if (draft) { plate.classList.add('is-sketch'); body.classList.add('is-sketching'); }
+    else { body.classList.remove('is-sketching'); }
     $('giftDate').textContent = current.date;
     /* The signature — DRAWN BY “Light on Light” — lives on the export, where
        it means something; on screen the wordmark is already the signature.
        Only an offline draw is called out, because it is not the product's
        ceiling, and the studio is offered again. */
-    $('giftVia').hidden = art.via !== 'local';
-    $('redraw').hidden = art.via !== 'local';
+    $('giftVia').hidden = draft || art.via !== 'local';
+    $('redraw').hidden = draft || art.via !== 'local';
     setState('gift');
+    if (draft) layerStamp.textContent = 'LAYER 03 \u2014 INKING\u2026';
     burst();
     setTimeout(sign, 1900);   /* once the leaves have opened */
+  }
+
+  /* The studio's drawing, arriving over the sketch. */
+  function reink(art) {
+    var plate = $('plate');
+    plate.classList.add('is-inking');
+    setTimeout(function () {
+      if (body.dataset.state !== 'gift') return;
+      mount(art).classList.add('is-inked');
+      body.classList.remove('is-sketching');
+      layerStamp.textContent = LAYER_STAMP;
+      $('giftVia').hidden = true;
+      $('redraw').hidden = true;
+      live.textContent = 'The studio finished the drawing.';
+      burst(true);
+      setTimeout(sign, 1200);
+    }, 500);
+  }
+  /* No studio after all: the sketch is the drawing. */
+  function settle(art) {
+    var plate = $('plate');
+    plate.classList.remove('is-sketch');
+    body.classList.remove('is-sketching');
+    layerStamp.textContent = LAYER_STAMP;
+    $('giftVia').hidden = art.via !== 'local';
+    $('redraw').hidden = art.via !== 'local';
   }
 
   /* The signature. When the gift is open, the light that wanders the field
@@ -1701,7 +1752,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   }
 
   /* The light the sentence became, let out of the card as it opens. */
-  function burst() {
+  function burst(small) {
     var host = $('burst');
     host.textContent = '';
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -1709,15 +1760,18 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     var cx = card.left + card.width / 2 - box.left, cy = card.top + card.height / 2 - box.top;
     var frag = document.createDocumentFragment();
     /* The bloom first, timed to the leaves parting. */
-    var bloom = document.createElement('span');
-    bloom.className = 'bloom';
-    bloom.style.setProperty('--x', cx.toFixed(1) + 'px');
-    bloom.style.setProperty('--y', cy.toFixed(1) + 'px');
-    bloom.style.animationDelay = '650ms';
-    frag.appendChild(bloom);
-    /* Then the light: seventy-two pieces, half of them amber, in two waves. */
-    var reach = Math.max(card.width, card.height);
-    for (var i = 0; i < 72; i++) {
+    if (!small) {
+      var bloom = document.createElement('span');
+      bloom.className = 'bloom';
+      bloom.style.setProperty('--x', cx.toFixed(1) + 'px');
+      bloom.style.setProperty('--y', cy.toFixed(1) + 'px');
+      bloom.style.animationDelay = '650ms';
+      frag.appendChild(bloom);
+    }
+    /* Then the light: seventy-two pieces, half of them amber, in two waves.
+       (A re-inking gets a smaller handful, and no bloom: the card is open.) */
+    var reach = Math.max(card.width, card.height) * (small ? 0.6 : 1);
+    for (var i = 0, N = small ? 22 : 72; i < N; i++) {
       var s = document.createElement('span');
       var px = Math.random() < 0.45;
       s.className = 'spark spark--burst ' + (px ? 'spark--px' : 'spark--dot');
@@ -1733,7 +1787,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
       s.style.setProperty('--o', (0.45 + Math.random() * 0.5).toFixed(2));
       s.style.setProperty('--c', Math.random() < 0.55 ? 'var(--color-accent)' : 'var(--color-ink-2)');
       s.style.setProperty('--t', (1.8 + Math.random() * 1.4).toFixed(2) + 's');
-      s.style.setProperty('--d', (0.7 + wave + Math.random() * 0.35).toFixed(2) + 's');
+      s.style.setProperty('--d', ((small ? 0.05 : 0.7) + wave + Math.random() * 0.35).toFixed(2) + 's');
       frag.appendChild(s);
     }
     host.appendChild(frag);
@@ -1830,22 +1884,43 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     setState('forming');       /* the sentence is kept on the left before the motes leave it */
     sow(text);
 
-    /* Claude first; the built-in generator only when the studio is
-       unreachable (double-clicked file, CLI missing, timeout). The gift
-       always says which hand drew it. */
-    /* Studio → bank → built-in generator. Only the last is called offline. */
-    var art = askClaude(text)['catch'](function () {
-      return bankDraw(text);
-    })['catch'](function () {
+    /* Two hands draw at once. The studio (Claude, or the cloud) is the
+       drawing; it can take up to 45 s. The bank answers in under a second
+       with a drawing the studio made earlier — or, offline, the built-in
+       generator does. Whichever is ready when the beat ends opens the card:
+       the studio's as the print, the bank's as a pencil sketch that the
+       studio then inks over when it arrives. Nobody waits on a blank card. */
+    var run = ++runId;
+    var studio = askClaude(text).then(
+      function (a) { return { ok: true, art: a }; },
+      function ()  { return { ok: false }; });
+    var sketch = bankDraw(text)['catch'](function () {
       var local = draw(text);
       return { svg: local.svg, via: 'local', meta: local.meta };
     });
     var floor = new Promise(function (res) { setTimeout(res, 2600); });
+    var first = Promise.race([
+      studio.then(function (r) {
+        return r.ok ? { art: r.art, draft: false }
+                    : sketch.then(function (a) { return { art: a, draft: false }; });
+      }),
+      sketch.then(function (a) { return { art: a, draft: true }; })
+    ]);
     /* Wrapped for a beat — the paper settles, the card lifts, a light passes
        over it — and then it opens on its own. */
-    Promise.all([art, floor]).then(function (v) {
+    Promise.all([first, floor]).then(function (v) {
+      if (run !== runId) return;
+      var got = v[0];
       setState('wrapped');
-      setTimeout(function () { present(text, v[0]); }, 2100);
+      setTimeout(function () {
+        if (run !== runId) return;
+        present(text, got.art, null, got.draft);
+        if (!got.draft) return;
+        studio.then(function (r) {
+          if (run !== runId || body.dataset.state !== 'gift') return;
+          if (r.ok) reink(r.art); else settle(got.art);
+        });
+      }, 2100);
     });
   });
 
@@ -1859,6 +1934,8 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   });
 
   $('again').addEventListener('click', function () {
+    runId++;
+    body.classList.remove('is-sketching');
     $('burst').textContent = '';
     body.classList.remove('is-signing');
     var stray = document.querySelector('.signlight'); if (stray) stray.remove();
