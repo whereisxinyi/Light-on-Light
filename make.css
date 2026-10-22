@@ -703,3 +703,8 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   .cta::before { animation: none; opacity: 1; }
   .cta--export::before, .cta--export::after { transition: none; animation: none !important; }
 }
+
+/* Generation stays visible until the cloud returns a new drawing. */
+.generation-status { margin-block: 1rem; color: var(--color-ink-2); }
+.left .generation-cancel[hidden], .generation-status[hidden] { display: none; }
+[data-state="forming"] .left .generation-cancel:not([hidden]) { display: inline-block; }

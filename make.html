@@ -419,7 +419,7 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 .stage {
   position: relative;
   isolation: isolate;
-  overflow: visible;   /* the burst leaves the card and must be free to; the page clips x at <html> */
+  overflow: clip;
   /* The first screen is mast + stage + colophon; 12.5rem is what the
      masthead and colophon take. */
   min-block-size: calc(100dvh - 12.5rem);
@@ -656,10 +656,8 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
 }
 [data-state="gift"] .card__paper { opacity: 1; }
 .card__line, .card__meta { opacity: 0; }
-[data-state="gift"] .card__line { animation: caption-in 800ms var(--ease-out) 1100ms both; }
-[data-state="gift"] .card__meta { animation: caption-in 800ms var(--ease-out) 1900ms both; }
-/* These two rest at opacity 0, so the end frame must be named, not inherited. */
-@keyframes caption-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+[data-state="gift"] .card__line { animation: settle-in 800ms var(--ease-out) 1100ms both; }
+[data-state="gift"] .card__meta { animation: settle-in 800ms var(--ease-out) 1900ms both; }
 .card__line {
   max-inline-size: var(--plate);
   font-family: var(--font-voice);
@@ -721,42 +719,11 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   pointer-events: none;
   overflow: visible;
 }
-/* Two kinds of light leave the card: round motes, and square pixel lights
-   like the ones in the name under the page. They fly out, then drift down
-   like petals; the amber ones turn as they fall. */
-/* .spark's own gather loop is declared later in the sheet; the burst has to outrank it. */
-.spark.spark--burst { animation: burst var(--t) cubic-bezier(0.2, 0.7, 0.3, 1) var(--d) forwards; }
-.spark--px { border-radius: 0; }
-.spark--dot { border-radius: 50%; }
+.spark--burst { animation: burst var(--t) var(--ease-out) var(--d) forwards; }
 @keyframes burst {
-  0%   { opacity: 0;        transform: translate(0, 0) scale(0.6) rotate(0deg); }
-  10%  { opacity: var(--o); transform: translate(calc(var(--bx) * 0.35), calc(var(--by) * 0.35)) scale(1.15) rotate(calc(var(--r) * 0.3)); }
-  60%  { opacity: var(--o); transform: translate(calc(var(--bx) * 0.9), calc(var(--by) * 0.9 + var(--fall) * 0.4)) scale(1) rotate(calc(var(--r) * 0.8)); }
-  100% { opacity: 0;        transform: translate(var(--bx), calc(var(--by) + var(--fall))) scale(0.5) rotate(var(--r)); }
-}
-/* And one bloom: the light behind the card swells once as the leaves part. */
-.bloom {
-  position: absolute;
-  inset-inline-start: var(--x);
-  inset-block-start: var(--y);
-  inline-size: 120vmin;
-  block-size: 120vmin;
-  translate: -50% -50%;
-  border-radius: 50%;
-  pointer-events: none;
-  background: radial-gradient(circle,
-    color-mix(in oklch, var(--color-glow) 70%, var(--color-accent) 30%) 0%,
-    color-mix(in oklch, var(--color-glow) 55%, transparent) 22%,
-    transparent 58%);
-  mix-blend-mode: multiply;
-  opacity: 0;
-  animation: bloom 2800ms var(--ease-in-out) forwards;
-}
-@keyframes bloom {
-  0%   { opacity: 0;    scale: 0.35; }
-  22%  { opacity: 0.6;  scale: 0.9; }
-  60%  { opacity: 0.32; scale: 1.2; }
-  100% { opacity: 0;    scale: 1.5; }
+  0%   { opacity: 0;        transform: none; }
+  12%  { opacity: var(--o); }
+  100% { opacity: 0;        transform: translate(var(--bx), var(--by)) scale(0.4); }
 }
 
 /* The signature: the light, crossing from the field to the plate. */
@@ -793,18 +760,6 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   transform-origin: center;
 }
 @keyframes assemble { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
-
-/* Sketch, then ink. While the studio is still drawing, the card opens on a
-   pencil sketch from the bank — lighter, greyer, unmistakably provisional.
-   When the studio's drawing lands, the sketch fades and the ink assembles
-   in its place, quicker than the first time: the card is already open. */
-.gift__plate { transition: opacity 480ms var(--ease-in-out); }
-.gift__plate.is-sketch svg { opacity: 0.5; filter: contrast(0.62) brightness(1.18); }
-.gift__plate.is-inking { opacity: 0; }
-.gift__plate.is-inked [data-i] { animation-delay: calc(80ms + var(--i) * 70ms); }
-.stage__caption--inking { display: none; }
-.is-sketching[data-state="gift"] .stage__caption--gift { display: none; }
-.is-sketching[data-state="gift"] .stage__caption--inking { display: inline; animation: note-breathe 1.8s var(--ease-in-out) infinite alternate; }
 
 /* The motes. */
 .spark {
@@ -942,20 +897,6 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     transparent 56%);
   transform: translateX(-130%);
 }
-/* Send: the same pill, with the one lit point instead of the little card. */
-.cta--send::before {
-  inline-size: 6px;
-  block-size: 6px;
-  border: 0;
-  border-radius: 50%;
-  background: var(--color-accent);
-  animation: cta-breathe 1.6s var(--ease-in-out) infinite alternate;
-}
-/* A gift that arrived by link waits wrapped until it is tapped. */
-.stage__caption--wrapped { display: none; }
-.is-received[data-state="wrapped"] .stage__caption--wrapped { display: inline; animation: settle-in 600ms var(--ease-out) 1200ms both; }
-.is-received[data-state="wrapped"] .card { cursor: pointer; }
-.is-received[data-state="wrapped"] .card:focus-visible { outline: var(--rule-hair) solid var(--color-accent); outline-offset: 6px; }
 .cta--export:hover,
 .cta--export:focus-visible {
   color: var(--color-ink);
@@ -1054,6 +995,11 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
   .cta--export::before, .cta--export::after { transition: none; animation: none !important; }
 }
 
+/* Generation stays visible until the cloud returns a new drawing. */
+.generation-status { margin-block: 1rem; color: var(--color-ink-2); }
+.left .generation-cancel[hidden], .generation-status[hidden] { display: none; }
+[data-state="forming"] .left .generation-cancel:not([hidden]) { display: inline-block; }
+
 </style>
 </head>
 <body>
@@ -1100,6 +1046,8 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
       <button class="cta ask__go" id="go" type="submit" disabled>Wrap it</button>
     </form>
     <p class="said" id="said"></p>
+    <p class="generation-status" id="generationStatus" role="status" aria-live="polite" hidden></p>
+    <button class="gift__again generation-cancel" id="cancel" type="button" hidden>Cancel</button>
     <!-- Writing again belongs to the sentence, so it sits under it. -->
     <button class="gift__again" id="again" type="button">Write another</button>
   </section>
@@ -1793,135 +1741,91 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     host.appendChild(frag);
   }
 
-  /* The real skill, through the studio server (server.py → claude -p).
-     The studio can live in two places, tried in order:
-       1. same origin — server.py locally, or a serverless deploy
-       2. the owner's own machine at http://localhost:4180 — browsers treat
-          localhost as a trustworthy origin, so even the HTTPS public page
-          may call it; server.py's CORS allowlist decides who is let in.
-     So the owner opens the public site with server.py running and gifts are
-     drawn by Claude on her own login; every other visitor quietly falls
-     through to the cloud studio or the built-in generator. The forming state holds as long
-     as it takes; there is no spinner to lie with, only the gathering. */
+  /* Public visitors use the cloud; local development uses its own studio.
+     Keep the timeout through response parsing, beyond the server's 120s budget. */
+  var activeStudio = null;
   function callStudio(url, text) {
     var ctrl = new AbortController();
-    var kill = setTimeout(function () { ctrl.abort(); }, 45000);   /* the bank is waiting behind this */
+    activeStudio = ctrl;
+    var kill = setTimeout(function () { ctrl.abort(); }, 165000);
     return fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: text }),
       signal: ctrl.signal
     }).then(function (r) {
-      clearTimeout(kill);
-      if (!r.ok) throw new Error('studio ' + r.status);
+      if (!r.ok) {
+        var err = new Error('studio ' + r.status);
+        err.status = r.status;
+        throw err;
+      }
       return r.json();
     }).then(function (j) {
-      if (!j.svg || j.svg.indexOf('<svg') !== 0) throw new Error('no svg');
-      return { svg: sanitizeSVG(j.svg), via: j.via || 'claude', meta: null };
+      if (typeof j.svg !== 'string' || !/^<svg[\s>]/i.test(j.svg)) throw new Error('no svg');
+      return { svg: sanitizeSVG(j.svg), via: j.via || 'gemini', meta: null };
+    }).finally(function () {
+      clearTimeout(kill);
+      if (activeStudio === ctrl) activeStudio = null;
     });
   }
 
-  /* Three studios, tried in order:
-       1. same origin            — server.py locally, or the Vercel site itself
-       2. the owner's machine    — localhost:4180 → her own Claude login
-       3. the cloud              — the Vercel function → Gemini Flash
-     So the owner's Claude wins when her server is up; everyone else still
-     gets an LLM-drawn gift from the cloud; and only if all three are down
-     does the built-in generator take over. */
   function askClaude(text) {
-    var home = 'http://localhost:4180';
-    var cloud = 'https://light-on-light.vercel.app';
-    return callStudio('/api/translate', text)['catch'](function (err) {
-      if (window.location.origin === home) throw err;   /* already tried it */
-      return callStudio(home + '/api/translate', text);
-    })['catch'](function (err) {
-      if (window.location.origin === cloud) throw err;  /* already tried it */
-      return callStudio(cloud + '/api/translate', text);
-    });
-  }
-
-  /* The bank: drawings the studio made earlier, kept on the site itself, so
-     a studio that is out of reach still answers in the same hand. Chosen by
-     anchor, then by the sentence's hash — the same sentence always finds
-     the same drawing. Once the bank is curated only kept drawings count. */
-  var bankIndex = null;
-  function bankDraw(text) {
-    var load = bankIndex ? Promise.resolve(bankIndex) :
-      fetch('./bank/manifest.json').then(function (r) {
-        if (!r.ok) throw new Error('no bank');
-        return r.json();
-      }).then(function (m) { bankIndex = m.items || []; return bankIndex; });
-    return load.then(function (items) {
-      var kept = items.filter(function (it) { return it.keep === true; });
-      var pool = kept.length ? kept : items.filter(function (it) { return it.keep !== false; });
-      if (!pool.length) throw new Error('empty bank');
-      var a = analyse(text);
-      var same = pool.filter(function (it) { return it.anchor === a.shape; });
-      var cands = same.length ? same : pool;
-      var pick = cands[hash(text) % cands.length];
-      return fetch('./bank/svg/' + pick.file).then(function (r) {
-        if (!r.ok) throw new Error('no drawing');
-        return r.text();
-      }).then(function (svg) {
-        return { svg: sanitizeSVG(svg), via: 'bank',
-                 meta: { anchor: a.anchor, mode: a.mode, shape: a.shape } };
-      });
-    });
+    var local = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname);
+    var url = local || window.location.origin === 'https://light-on-light.vercel.app'
+      ? '/api/translate' : 'https://light-on-light.vercel.app/api/translate';
+    return callStudio(url, text);
   }
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (body.dataset.state === 'forming' || body.dataset.state === 'wrapped') return;
     var text = field.value.trim().replace(/\s+/g, ' ');
     if (text.length < 2) return;
-
+    var run = ++runId;
+    var status = $('generationStatus');
+    status.hidden = false;
+    status.textContent = 'Drawing your sentence. This can take up to two minutes.';
+    $('cancel').hidden = false;
     $('echo').textContent = text;
     $('said').textContent = text;
-    /* The card's caption and date go in now, unseen, so the card has its
-       final size from the first frame of forming: the edge that draws, the
-       wrapping and the open print are one box. */
     $('giftLine').textContent = text;
     $('giftDate').textContent = stamp(new Date());
-    setState('forming');       /* the sentence is kept on the left before the motes leave it */
+    setState('forming');
     sow(text);
 
-    /* Two hands draw at once. The studio (Claude, or the cloud) is the
-       drawing; it can take up to 45 s. The bank answers in under a second
-       with a drawing the studio made earlier — or, offline, the built-in
-       generator does. Whichever is ready when the beat ends opens the card:
-       the studio's as the print, the bank's as a pencil sketch that the
-       studio then inks over when it arrives. Nobody waits on a blank card. */
-    var run = ++runId;
-    var studio = askClaude(text).then(
-      function (a) { return { ok: true, art: a }; },
-      function ()  { return { ok: false }; });
-    var sketch = bankDraw(text)['catch'](function () {
-      var local = draw(text);
-      return { svg: local.svg, via: 'local', meta: local.meta };
-    });
-    var floor = new Promise(function (res) { setTimeout(res, 2600); });
-    var first = Promise.race([
-      studio.then(function (r) {
-        return r.ok ? { art: r.art, draft: false }
-                    : sketch.then(function (a) { return { art: a, draft: false }; });
-      }),
-      sketch.then(function (a) { return { art: a, draft: true }; })
-    ]);
-    /* Wrapped for a beat — the paper settles, the card lifts, a light passes
-       over it — and then it opens on its own. */
-    Promise.all([first, floor]).then(function (v) {
+    askClaude(text).then(function (art) {
       if (run !== runId) return;
-      var got = v[0];
+      status.textContent = 'Your drawing is ready.';
+      $('cancel').hidden = true;
       setState('wrapped');
       setTimeout(function () {
         if (run !== runId) return;
-        present(text, got.art, null, got.draft);
-        if (!got.draft) return;
-        studio.then(function (r) {
-          if (run !== runId || body.dataset.state !== 'gift') return;
-          if (r.ok) reink(r.art); else settle(got.art);
-        });
+        status.hidden = true;
+        present(text, art, null, false);
       }, 2100);
+    }).catch(function (err) {
+      if (run !== runId) return;
+      setState('input');
+      $('cancel').hidden = true;
+      status.textContent = err.status === 429
+        ? 'Too many requests. Please wait a few minutes, then try again.'
+        : err.name === 'AbortError'
+          ? 'The drawing took too long. Please try again.'
+          : 'The studio could not finish your drawing. Please try again.';
+      live.textContent = status.textContent;
+      go.textContent = 'Try again';
+      go.disabled = false;
+      body.dataset.ready = 'yes';
     });
+  });
+
+  $('cancel').addEventListener('click', function () {
+    runId++;
+    if (activeStudio) activeStudio.abort();
+    $('cancel').hidden = true;
+    $('generationStatus').hidden = true;
+    setState('input');
+    field.focus();
   });
 
   /* Same sentence, another knock on the studio's door. The free-tier cloud
@@ -1940,6 +1844,8 @@ textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 
     body.classList.remove('is-signing');
     var stray = document.querySelector('.signlight'); if (stray) stray.remove();
     field.value = '';
+    go.textContent = 'Wrap it';
+    $('generationStatus').hidden = true;
     body.dataset.ready = 'no';
     go.disabled = true;
     setState('input');

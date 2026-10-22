@@ -6,8 +6,8 @@ A quiet three-layer site: an opening screen where the name drifts as light,
 a "why this project" concept page, and an instrument that translates one
 sentence into a hand-drawn visual gift.
 
-Every page is a single self-contained HTML file — fonts embedded, zero
-network requests. Open them from disk, from GitHub Pages, from anywhere.
+Pages embed their fonts and styles. Live drawing requires access to the
+cloud studio; sharing and exporting preserve the generated artwork.
 
 ## Layers
 
@@ -22,24 +22,22 @@ plus the cloud drawing endpoint.
 
 ## How the gift gets drawn
 
-[`make.html`](make.html) looks for its studio in this order:
+Visitors submit a sentence to `/api/translate` on Vercel. GitHub Pages and
+file previews call the same cloud endpoint directly; local development calls
+its own studio. Public visitors never probe their computer's localhost.
 
-1. **Same origin** — `/api/translate` (running [`server.py`](server.py)
-   locally, or the Vercel site itself)
-2. **The owner's machine** — `http://localhost:4180`. Run
-   [`server.py`](server.py) on your computer, open either live site, and
-   every gift is drawn by Claude (Haiku 4.5) through your own Claude Code
-   login — no API key. The CORS allowlist only admits this project's
-   origins, so other websites can't reach your machine.
-3. **The cloud** — the Vercel function
-   ([`api/translate.js`](api/translate.js)) drawing with **Gemini Flash**
-   on a free-tier `GEMINI_API_KEY`. This is what every other visitor gets.
-4. **Built-in generator** — if all three studios are unreachable, the
-   in-page port of the hand-drawn-quote-art method takes over.
+The page waits for a newly generated SVG before opening the gift. It shows a
+visible generation message and Cancel control while waiting. A failed or
+timed-out request keeps the sentence and offers Try again. Gallery and
+built-in drawings are never substituted for a live request.
 
-Every gift carries the same signature — `DRAWN BY “Light on Light”` —
-whichever studio drew it; the engine (claude / gemini / local) is recorded
-on the artwork element's `data-via` attribute for anyone who inspects.
+The cloud tries the configured Gemini model followed by its built-in model
+chain. Timeouts, unavailable models, and invalid SVG output advance to the
+next model within a 120-second server budget. The browser allows 165 seconds,
+including response parsing; the local Claude CLI has a 150-second limit.
+Provider access errors stop the chain and visitors see a retryable error.
+
+Generated SVG provenance remains inspectable on `#plate[data-via]`.
 
 ## Cloud setup (one env var)
 
@@ -72,3 +70,9 @@ python3 server.py    # http://localhost:4180 — pages + /api/translate bridge
 python3 build.py     # rebuild the HTML from tokens.css / styles.css /
                      # concept.css / make.css — edit sources, not the HTML
 ```
+
+Deployment files (`api/`, `package.json`, `vercel.json`, `README.md`) are
+maintained directly and preserved by `build.py`. The make page markup and
+script live in `MAKE_BODY` and `MAKE_JS` inside `build.py`.
+
+Run regression tests with `node --test tests/generation.test.js`.

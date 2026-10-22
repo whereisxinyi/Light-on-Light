@@ -110,6 +110,13 @@ export default async function handler(req, res) {
     return;
   }
 
+  res.setHeader("Cache-Control", "no-store");
+  const sentence = typeof req.body?.text === "string" ? req.body.text.trim() : "";
+  if (sentence.length < 2 || sentence.length > 180) {
+    res.status(400).json({ error: "Use a sentence between 2 and 180 characters." });
+    return;
+  }
+
   const key = process.env.GEMINI_API_KEY;
   if (!key) {
     res.status(502).json({ error: "GEMINI_API_KEY is not configured" });
@@ -128,18 +135,8 @@ export default async function handler(req, res) {
   recent.push(now);
   hits.set(ip, recent);
 
-  const sentence = String(req.body?.text ?? "").trim().slice(0, 180);
-  if (sentence.length < 2) {
-    res.status(400).json({ error: "empty sentence" });
-    return;
-  }
-
-  // Free-tier Gemini 503s ("high demand") come and go per model, so one
-  // model, one attempt means one bad minute drops every visitor to the
-  // page's fallbacks. Walk a chain instead — one try per model, each on a
-  // short leash — before giving up; the page's bank answers after that.
-  // Aliases first (they track whatever Google currently points them at),
-  // then pinned stable models. Retired ids 404 and the chain just moves on.
+  // One shared deadline bounds all model attempts, including response bodies.
+  const deadline = Date.now() + 120000;
   const MODELS = [...new Set([
     process.env.GEMINI_MODEL,
     "gemini-flash-latest",
@@ -148,8 +145,8 @@ export default async function handler(req, res) {
     "gemini-2.5-flash",
   ].filter(Boolean))];
 
-  const ask = (model) =>
-    fetch(
+  const ask = async (model) => {
+    const response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/" +
         model + ":generateContent",
       {
@@ -158,9 +155,8 @@ export default async function handler(req, res) {
           "Content-Type": "application/json",
           "x-goog-api-key": key,
         },
-        // A model that hangs is worse than one that fails: the page has a
-        // bank of drawings waiting behind this call.
-        signal: AbortSignal.timeout(22000),
+        // Bound each attempt so another model can finish within the shared deadline.
+        signal: AbortSignal.timeout(Math.max(1, Math.min(22000, deadline - Date.now()))),
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: SKILL + RULES }] },
           contents: [
@@ -181,54 +177,35 @@ export default async function handler(req, res) {
       },
     );
 
-  try {
-    let r = null;
-    const errs = [];
-    outer: for (const model of MODELS) {
-      for (let attempt = 0; attempt < 1; attempt++) {
-        let resp;
-        try {
-          resp = await ask(model);
-        } catch (e) {
-          errs.push(model + ": " + String(e?.message || e).slice(0, 80));
-          continue;
-        }
-        if (resp.ok) { r = resp; break outer; }
-        errs.push(model + " " + resp.status + ": " +
-          (await resp.text()).replace(/\s+/g, " ").slice(0, 80));
-        // 4xx other than 429 (retired model, bad request) won't heal on
-        // retry — move straight to the next model in the chain.
-        if (resp.status !== 429 && resp.status < 500) break;
-        await new Promise((t) => setTimeout(t, 1200));
-      }
+    if (!response.ok) {
+      // Do not expose provider response bodies or credentials to visitors.
+      const err = new Error("provider " + response.status);
+      err.status = response.status;
+      throw err;
     }
-
-    if (!r) {
-      // Every model's failure, so one look at this payload tells the whole
-      // story instead of only the last link in the chain.
-      res.status(502).json({ error: errs.join(" | ") || "gemini unavailable" });
-      return;
-    }
-
-    const data = await r.json();
-    const text = (data.candidates?.[0]?.content?.parts || [])
-      .map((p) => p.text || "")
-      .join("");
-    const match = text.match(/<svg[\s\S]*?<\/svg>/i);
-    if (!match) {
-      res.status(502).json({ error: "no svg in model output" });
-      return;
-    }
-
-    // Belt and braces before it reaches any browser.
-    const svg = match[0]
+    const data = await response.json();
+    const output = (data.candidates?.[0]?.content?.parts || [])
+      .filter((part) => !part.thought)
+      .map((part) => part.text || "").join("");
+    const match = output.match(/<svg[\s>][\s\S]*?<\/svg>/i);
+    if (!match) throw new Error("no svg in model output");
+    return match[0]
       .replace(/<script[\s\S]*?<\/script>/gi, "")
-      .replace(/\son\w+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/gi, "")
+      .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
       .replace(/javascript:/gi, "")
       .replace(/<image[\s\S]*?>/gi, "");
+  };
 
-    res.status(200).json({ svg, via: "gemini" });
-  } catch (err) {
-    res.status(502).json({ error: String(err?.message || err).slice(0, 200) });
+  for (const model of MODELS) {
+    if (Date.now() >= deadline) break;
+    try {
+      const svg = await ask(model);
+      res.status(200).json({ svg, via: "gemini" });
+      return;
+    } catch (err) {
+      console.warn("Drawing attempt failed", { model, status: err.status || "invalid_or_timeout" });
+      if (err.status === 401 || err.status === 403) break;
+    }
   }
+  res.status(503).json({ error: "The studio is temporarily unavailable. Please try again." });
 }
