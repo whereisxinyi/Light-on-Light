@@ -582,6 +582,8 @@ MAKE_BODY = """
       <button class="cta ask__go" id="go" type="submit" disabled>Wrap it</button>
     </form>
     <p class="said" id="said"></p>
+    <p class="generation-status" id="generationStatus" role="status" aria-live="polite" hidden></p>
+    <button class="gift__again generation-cancel" id="cancel" type="button" hidden>Cancel</button>
     <!-- Writing again belongs to the sentence, so it sits under it. -->
     <button class="gift__again" id="again" type="button">Write another</button>
   </section>
@@ -608,6 +610,7 @@ MAKE_BODY = """
       <div class="gift__wrap" aria-hidden="true"></div>
     </figure>
     <div class="gift__actions">
+      <button class="cta cta--export cta--send" id="send" type="button">Send it</button>
       <button class="cta cta--export" id="export" type="button">Export</button>
       <button class="gift__again" id="redraw" type="button" hidden>Try the studio again</button>
     </div>
@@ -617,6 +620,8 @@ MAKE_BODY = """
   <p class="stage__caption" aria-hidden="true">
     <span class="stage__caption--ready">Wrap it, or press Enter.</span>
     <span class="stage__caption--gift">It answers you in a picture.</span>
+    <span class="stage__caption--wrapped">Someone sent you this. Tap the card to open it.</span>
+    <span class="stage__caption--inking">A sketch, for now. The studio is still inking it.</span>
   </p>
 
 </main>
@@ -634,7 +639,6 @@ MAKE_BODY = """
   <canvas class="substrate__px" id="substrate"></canvas>
 </aside>
 """
-
 
 GROUND_JS = r"""
 /* ------------------------------------------------------------
@@ -1206,6 +1210,7 @@ MAKE_JS = r"""
   /* ---------- state ---------- */
   var field = $('field'), go = $('go'), live = $('live'), form = $('ask');
   var current = { text: '', date: '' };
+  var runId = 0;                     /* which submission is current; late drawings for an older one are dropped */
 
   var layerStamp = $('stamp'), LAYER_STAMP = layerStamp.textContent;
   function setState(s) {
@@ -1276,12 +1281,10 @@ MAKE_JS = r"""
       .replace(/javascript:/gi, '');
   }
 
-  function present(text, art) {
-    var d = new Date();
-    current.text = text;
-    current.date = stamp(d);
-    $('giftLine').textContent = text;          /* the print's own caption — textContent, never innerHTML */
+  /* The drawing onto the plate: the SVG, the stagger, the provenance. */
+  function mount(art) {
     var plate = $('plate');
+    plate.className = 'gift__plate';
     plate.innerHTML = art.svg;
     /* Assemble centre-outward whoever drew it: deal data-i to the top-level
        strokes so the CSS stagger also applies to SVGs that arrive without it. */
@@ -1298,21 +1301,62 @@ MAKE_JS = r"""
     /* Left on the element on purpose: who drew it, and (for local draws)
        which anchor and mode fired. Inspectable rather than mysterious. */
     plate.dataset.via = art.via;
+    delete plate.dataset.anchor; delete plate.dataset.mode; delete plate.dataset.shape;
     if (art.meta) {
       plate.dataset.anchor = art.meta.anchor;
       plate.dataset.mode = String(art.meta.mode);
       plate.dataset.shape = art.meta.shape;
     }
+    current.svg = art.svg;
+    return plate;
+  }
+
+  function present(text, art, when, draft) {
+    var d = when || new Date();
+    current.text = text;
+    current.date = stamp(d);
+    current.day  = isoDay(d);
+    $('giftLine').textContent = text;          /* the print's own caption — textContent, never innerHTML */
+    var plate = mount(art);
+    if (draft) { plate.classList.add('is-sketch'); body.classList.add('is-sketching'); }
+    else { body.classList.remove('is-sketching'); }
     $('giftDate').textContent = current.date;
     /* The signature — DRAWN BY “Light on Light” — lives on the export, where
        it means something; on screen the wordmark is already the signature.
        Only an offline draw is called out, because it is not the product's
        ceiling, and the studio is offered again. */
-    $('giftVia').hidden = art.via !== 'local';
-    $('redraw').hidden = art.via !== 'local';
+    $('giftVia').hidden = draft || art.via !== 'local';
+    $('redraw').hidden = draft || art.via !== 'local';
     setState('gift');
+    if (draft) layerStamp.textContent = 'LAYER 03 \u2014 INKING\u2026';
     burst();
     setTimeout(sign, 1900);   /* once the leaves have opened */
+  }
+
+  /* The studio's drawing, arriving over the sketch. */
+  function reink(art) {
+    var plate = $('plate');
+    plate.classList.add('is-inking');
+    setTimeout(function () {
+      if (body.dataset.state !== 'gift') return;
+      mount(art).classList.add('is-inked');
+      body.classList.remove('is-sketching');
+      layerStamp.textContent = LAYER_STAMP;
+      $('giftVia').hidden = true;
+      $('redraw').hidden = true;
+      live.textContent = 'The studio finished the drawing.';
+      burst(true);
+      setTimeout(sign, 1200);
+    }, 500);
+  }
+  /* No studio after all: the sketch is the drawing. */
+  function settle(art) {
+    var plate = $('plate');
+    plate.classList.remove('is-sketch');
+    body.classList.remove('is-sketching');
+    layerStamp.textContent = LAYER_STAMP;
+    $('giftVia').hidden = art.via !== 'local';
+    $('redraw').hidden = art.via !== 'local';
   }
 
   /* The signature. When the gift is open, the light that wanders the field
@@ -1357,139 +1401,132 @@ MAKE_JS = r"""
   }
 
   /* The light the sentence became, let out of the card as it opens. */
-  function burst() {
+  function burst(small) {
     var host = $('burst');
     host.textContent = '';
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var box = host.getBoundingClientRect(), card = $('gift').getBoundingClientRect();
     var cx = card.left + card.width / 2 - box.left, cy = card.top + card.height / 2 - box.top;
     var frag = document.createDocumentFragment();
-    for (var i = 0; i < 28; i++) {
+    /* The bloom first, timed to the leaves parting. */
+    if (!small) {
+      var bloom = document.createElement('span');
+      bloom.className = 'bloom';
+      bloom.style.setProperty('--x', cx.toFixed(1) + 'px');
+      bloom.style.setProperty('--y', cy.toFixed(1) + 'px');
+      bloom.style.animationDelay = '650ms';
+      frag.appendChild(bloom);
+    }
+    /* Then the light: seventy-two pieces, half of them amber, in two waves.
+       (A re-inking gets a smaller handful, and no bloom: the card is open.) */
+    var reach = Math.max(card.width, card.height) * (small ? 0.6 : 1);
+    for (var i = 0, N = small ? 22 : 72; i < N; i++) {
       var s = document.createElement('span');
-      s.className = 'spark spark--burst';
-      var a = Math.random() * Math.PI * 2, dist = 90 + Math.random() * 200;
+      var px = Math.random() < 0.45;
+      s.className = 'spark spark--burst ' + (px ? 'spark--px' : 'spark--dot');
+      var a = Math.random() * Math.PI * 2, dist = reach * (0.35 + Math.random() * 0.75);
+      var wave = i % 3 === 0 ? 0.42 : 0;                         /* a second, later wave */
       s.style.setProperty('--x', cx.toFixed(1) + 'px');
       s.style.setProperty('--y', cy.toFixed(1) + 'px');
       s.style.setProperty('--bx', (Math.cos(a) * dist).toFixed(1) + 'px');
       s.style.setProperty('--by', (Math.sin(a) * dist * 0.8).toFixed(1) + 'px');
-      s.style.setProperty('--s', (1.6 + Math.random() * 3.2).toFixed(2) + 'px');
-      s.style.setProperty('--o', (0.3 + Math.random() * 0.55).toFixed(2));
-      s.style.setProperty('--c', Math.random() < 0.3 ? 'var(--color-accent)' : 'var(--color-ink-2)');
-      s.style.setProperty('--t', (1.1 + Math.random() * 0.9).toFixed(2) + 's');
-      s.style.setProperty('--d', (0.1 + Math.random() * 0.35).toFixed(2) + 's');
+      s.style.setProperty('--fall', (40 + Math.random() * 120).toFixed(0) + 'px');
+      s.style.setProperty('--r', ((Math.random() - 0.5) * 540).toFixed(0) + 'deg');
+      s.style.setProperty('--s', (px ? 3 + Math.random() * 4 : 2 + Math.random() * 3.5).toFixed(2) + 'px');
+      s.style.setProperty('--o', (0.45 + Math.random() * 0.5).toFixed(2));
+      s.style.setProperty('--c', Math.random() < 0.55 ? 'var(--color-accent)' : 'var(--color-ink-2)');
+      s.style.setProperty('--t', (1.8 + Math.random() * 1.4).toFixed(2) + 's');
+      s.style.setProperty('--d', ((small ? 0.05 : 0.7) + wave + Math.random() * 0.35).toFixed(2) + 's');
       frag.appendChild(s);
     }
     host.appendChild(frag);
   }
 
-  /* The real skill, through the studio server (server.py → claude -p).
-     The studio can live in two places, tried in order:
-       1. same origin — server.py locally, or a serverless deploy
-       2. the owner's own machine at http://localhost:4180 — browsers treat
-          localhost as a trustworthy origin, so even the HTTPS public page
-          may call it; server.py's CORS allowlist decides who is let in.
-     So the owner opens the public site with server.py running and gifts are
-     drawn by Claude on her own login; every other visitor quietly falls
-     through to the cloud studio or the built-in generator. The forming state holds as long
-     as it takes; there is no spinner to lie with, only the gathering. */
+  /* Public visitors use the cloud; local development uses its own studio.
+     Keep the timeout through response parsing, beyond the server's 120s budget. */
+  var activeStudio = null;
   function callStudio(url, text) {
     var ctrl = new AbortController();
-    var kill = setTimeout(function () { ctrl.abort(); }, 45000);   /* the bank is waiting behind this */
+    activeStudio = ctrl;
+    var kill = setTimeout(function () { ctrl.abort(); }, 165000);
     return fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: text }),
       signal: ctrl.signal
     }).then(function (r) {
-      clearTimeout(kill);
-      if (!r.ok) throw new Error('studio ' + r.status);
+      if (!r.ok) {
+        var err = new Error('studio ' + r.status);
+        err.status = r.status;
+        throw err;
+      }
       return r.json();
     }).then(function (j) {
-      if (!j.svg || j.svg.indexOf('<svg') !== 0) throw new Error('no svg');
-      return { svg: sanitizeSVG(j.svg), via: j.via || 'claude', meta: null };
+      if (typeof j.svg !== 'string' || !/^<svg[\s>]/i.test(j.svg)) throw new Error('no svg');
+      return { svg: sanitizeSVG(j.svg), via: j.via || 'gemini', meta: null };
+    }).finally(function () {
+      clearTimeout(kill);
+      if (activeStudio === ctrl) activeStudio = null;
     });
   }
 
-  /* Three studios, tried in order:
-       1. same origin            — server.py locally, or the Vercel site itself
-       2. the owner's machine    — localhost:4180 → her own Claude login
-       3. the cloud              — the Vercel function → Gemini Flash
-     So the owner's Claude wins when her server is up; everyone else still
-     gets an LLM-drawn gift from the cloud; and only if all three are down
-     does the built-in generator take over. */
   function askClaude(text) {
-    var home = 'http://localhost:4180';
-    var cloud = 'https://light-on-light.vercel.app';
-    return callStudio('/api/translate', text)['catch'](function (err) {
-      if (window.location.origin === home) throw err;   /* already tried it */
-      return callStudio(home + '/api/translate', text);
-    })['catch'](function (err) {
-      if (window.location.origin === cloud) throw err;  /* already tried it */
-      return callStudio(cloud + '/api/translate', text);
-    });
-  }
-
-  /* The bank: drawings the studio made earlier, kept on the site itself, so
-     a studio that is out of reach still answers in the same hand. Chosen by
-     anchor, then by the sentence's hash — the same sentence always finds
-     the same drawing. Once the bank is curated only kept drawings count. */
-  var bankIndex = null;
-  function bankDraw(text) {
-    var load = bankIndex ? Promise.resolve(bankIndex) :
-      fetch('./bank/manifest.json').then(function (r) {
-        if (!r.ok) throw new Error('no bank');
-        return r.json();
-      }).then(function (m) { bankIndex = m.items || []; return bankIndex; });
-    return load.then(function (items) {
-      var kept = items.filter(function (it) { return it.keep === true; });
-      var pool = kept.length ? kept : items.filter(function (it) { return it.keep !== false; });
-      if (!pool.length) throw new Error('empty bank');
-      var a = analyse(text);
-      var same = pool.filter(function (it) { return it.anchor === a.shape; });
-      var cands = same.length ? same : pool;
-      var pick = cands[hash(text) % cands.length];
-      return fetch('./bank/svg/' + pick.file).then(function (r) {
-        if (!r.ok) throw new Error('no drawing');
-        return r.text();
-      }).then(function (svg) {
-        return { svg: sanitizeSVG(svg), via: 'bank',
-                 meta: { anchor: a.anchor, mode: a.mode, shape: a.shape } };
-      });
-    });
+    var local = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname);
+    var url = local || window.location.origin === 'https://light-on-light.vercel.app'
+      ? '/api/translate' : 'https://light-on-light.vercel.app/api/translate';
+    return callStudio(url, text);
   }
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (body.dataset.state === 'forming' || body.dataset.state === 'wrapped') return;
     var text = field.value.trim().replace(/\s+/g, ' ');
     if (text.length < 2) return;
-
+    var run = ++runId;
+    var status = $('generationStatus');
+    status.hidden = false;
+    status.textContent = 'Drawing your sentence. This can take up to two minutes.';
+    $('cancel').hidden = false;
     $('echo').textContent = text;
     $('said').textContent = text;
-    /* The card's caption and date go in now, unseen, so the card has its
-       final size from the first frame of forming: the edge that draws, the
-       wrapping and the open print are one box. */
     $('giftLine').textContent = text;
     $('giftDate').textContent = stamp(new Date());
-    setState('forming');       /* the sentence is kept on the left before the motes leave it */
+    setState('forming');
     sow(text);
 
-    /* Claude first; the built-in generator only when the studio is
-       unreachable (double-clicked file, CLI missing, timeout). The gift
-       always says which hand drew it. */
-    /* Studio → bank → built-in generator. Only the last is called offline. */
-    var art = askClaude(text)['catch'](function () {
-      return bankDraw(text);
-    })['catch'](function () {
-      var local = draw(text);
-      return { svg: local.svg, via: 'local', meta: local.meta };
-    });
-    var floor = new Promise(function (res) { setTimeout(res, 2600); });
-    /* Wrapped for a beat — the paper settles, the card lifts, a light passes
-       over it — and then it opens on its own. */
-    Promise.all([art, floor]).then(function (v) {
+    askClaude(text).then(function (art) {
+      if (run !== runId) return;
+      status.textContent = 'Your drawing is ready.';
+      $('cancel').hidden = true;
       setState('wrapped');
-      setTimeout(function () { present(text, v[0]); }, 2100);
+      setTimeout(function () {
+        if (run !== runId) return;
+        status.hidden = true;
+        present(text, art, null, false);
+      }, 2100);
+    }).catch(function (err) {
+      if (run !== runId) return;
+      setState('input');
+      $('cancel').hidden = true;
+      status.textContent = err.status === 429
+        ? 'Too many requests. Please wait a few minutes, then try again.'
+        : err.name === 'AbortError'
+          ? 'The drawing took too long. Please try again.'
+          : 'The studio could not finish your drawing. Please try again.';
+      live.textContent = status.textContent;
+      go.textContent = 'Try again';
+      go.disabled = false;
+      body.dataset.ready = 'yes';
     });
+  });
+
+  $('cancel').addEventListener('click', function () {
+    runId++;
+    if (activeStudio) activeStudio.abort();
+    $('cancel').hidden = true;
+    $('generationStatus').hidden = true;
+    setState('input');
+    field.focus();
   });
 
   /* Same sentence, another knock on the studio's door. The free-tier cloud
@@ -1502,10 +1539,14 @@ MAKE_JS = r"""
   });
 
   $('again').addEventListener('click', function () {
+    runId++;
+    body.classList.remove('is-sketching');
     $('burst').textContent = '';
     body.classList.remove('is-signing');
     var stray = document.querySelector('.signlight'); if (stray) stray.remove();
     field.value = '';
+    go.textContent = 'Wrap it';
+    $('generationStatus').hidden = true;
     body.dataset.ready = 'no';
     go.disabled = true;
     setState('input');
@@ -1578,7 +1619,7 @@ MAKE_JS = r"""
       ctx.fillText(spaced('LIGHT ON LIGHT'), CARD.w / 2, 1312);
 
       var a = document.createElement('a');
-      a.download = 'light-on-light-' + isoDay() + '.jpg';
+      a.download = 'light-on-light-' + current.day + '.jpg';
       a.href = c.toDataURL('image/jpeg', 0.92);
       a.click();
       URL.revokeObjectURL(blobUrl);
@@ -1596,14 +1637,118 @@ MAKE_JS = r"""
   });
 
   function spaced(s) { return s.split('').join(' '); }
-  function isoDay() {
-    var d = new Date();
+  function isoDay(d) {
+    d = d || new Date();
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
            '-' + String(d.getDate()).padStart(2, '0');
   }
 
+  /* ---------- the link ----------
+     The card IS the link: {v, t: sentence, d: day, s: drawing}, deflated
+     and base64url'd, with one flag letter in front ('z' deflated, 'r' raw).
+     /g/<that> on the site serves this page with the card's own unfurl. */
+  function b64url(bytes) {
+    var bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function unb64url(str) {
+    var bin = atob(str.replace(/-/g, '+').replace(/_/g, '/'));
+    var out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+  function encodeGift(gift) {
+    var json = new TextEncoder().encode(JSON.stringify(gift));
+    if (!window.CompressionStream) return Promise.resolve('r' + b64url(json));
+    return new Response(new Blob([json]).stream().pipeThrough(new CompressionStream('deflate-raw')))
+      .arrayBuffer().then(function (buf) { return 'z' + b64url(new Uint8Array(buf)); });
+  }
+  function decodeGift(p) {
+    var flag = p.charAt(0), bytes = unb64url(p.slice(1));
+    var text = flag === 'z'
+      ? (window.DecompressionStream
+          ? new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text()
+          : Promise.reject(new Error('no inflate')))
+      : Promise.resolve(new TextDecoder().decode(bytes));
+    return text.then(function (t) {
+      var j = JSON.parse(t);
+      if (j.v !== 1 || typeof j.t !== 'string' || typeof j.s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(j.d)) throw new Error('bad gift');
+      var sentence = j.t.replace(/\s+/g, ' ').trim();
+      var svg = sanitizeSVG(j.s.trim());
+      if (sentence.length < 2 || sentence.length > 200 || svg.indexOf('<svg') !== 0) throw new Error('bad gift');
+      return { text: sentence, day: j.d, svg: svg };
+    });
+  }
+  var SITE = /^https?:/.test(window.location.origin) ? window.location.origin : 'https://light-on-light.vercel.app';
+
+  $('send').addEventListener('click', function () {
+    var btn = this;
+    if (!current.svg) return;
+    btn.disabled = true;
+    encodeGift({ v: 1, t: current.text, d: current.day, s: current.svg }).then(function (p) {
+      var link = SITE + '/g/' + p;
+      btn.dataset.href = link;
+      var done = function (word) {
+        btn.firstChild.textContent = word;
+        live.textContent = word === 'Link copied' ? 'The link to this card is on your clipboard.' : word;
+        setTimeout(function () { btn.firstChild.textContent = 'Send it'; btn.disabled = false; }, 2200);
+      };
+      /* A phone offers its share sheet; a desk copies the link. */
+      if (navigator.share && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent)) {
+        navigator.share({ title: current.text, url: link }).then(function () { done('Sent'); })
+          ['catch'](function () { btn.disabled = false; });
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(function () { done('Link copied'); })
+          ['catch'](function () { window.prompt('Copy this link', link); done('Send it'); });
+      } else {
+        window.prompt('Copy this link', link); done('Send it');
+      }
+    });
+  });
+
+  /* ---------- a gift that arrived ----------
+     /g/<payload> (served by the site) or ?g=<payload> (any copy of this
+     file). The card waits wrapped, with the sender's sentence and day;
+     the reader opens it. */
+  function giftInURL() {
+    var m = window.location.pathname.match(/\/g\/([A-Za-z0-9_-]{4,})$/);
+    if (m) return m[1];
+    var q = new URLSearchParams(window.location.search).get('g');
+    return q && /^[A-Za-z0-9_-]{4,}$/.test(q) ? q : null;
+  }
+  function receive(gift) {
+    var when = new Date(gift.day + 'T12:00:00');
+    $('echo').textContent = gift.text;
+    $('said').textContent = gift.text;
+    $('giftLine').textContent = gift.text;
+    $('giftDate').textContent = stamp(when);
+    body.classList.add('is-received');
+    setState('wrapped');
+    live.textContent = 'A gift arrived, wrapped. Press Enter on the card to open it.';
+    var card = $('gift');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', 'A wrapped gift. Open it.');
+    var opened = false;
+    function open() {
+      if (opened) return;
+      opened = true;
+      card.removeAttribute('tabindex'); card.removeAttribute('role'); card.removeAttribute('aria-label');
+      present(gift.text, { svg: gift.svg, via: 'gift', meta: null }, when);
+      try { history.replaceState(null, '', '/make.html'); } catch (e) {}   /* opened; the link has done its work */
+    }
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    setTimeout(function () { card.focus({ preventScroll: true }); }, 1500);
+  }
+
   setState('input');
   body.dataset.ready = 'no';
+  var arriving = giftInURL();
+  if (arriving) decodeGift(arriving).then(receive)['catch'](function () { /* not a gift; the page as usual */ });
 })();
 """
 
@@ -1926,30 +2071,8 @@ python3 build.py     # rebuild the HTML from tokens.css / styles.css /
 
 
 def deploy() -> None:
-    """Write the deployable pieces at the repo root: api/, package.json,
-    vercel.json, README. GitHub Pages ignores them; Vercel picks them up."""
-    (HERE / "api").mkdir(exist_ok=True)
-
-    # Inline the skill text into the function as a JS template literal.
-    skill_js = (skill_text()
-                .replace("\\", "\\\\")
-                .replace("`", "\\`")
-                .replace("${", "\\${"))
-    (HERE / "api" / "translate.js").write_text(
-        DEPLOY_API_JS.replace("__SKILL__", skill_js), encoding="utf-8")
-
-    (HERE / "package.json").write_text(json.dumps({
-        "name": "light-on-light",
-        "private": True,
-        "type": "module",
-    }, indent=2) + "\n", encoding="utf-8")
-
-    (HERE / "vercel.json").write_text(json.dumps({
-        "functions": {"api/translate.js": {"maxDuration": 300}},
-    }, indent=2) + "\n", encoding="utf-8")
-
-    (HERE / "README.md").write_text(DEPLOY_README, encoding="utf-8")
-    print("wrote api/translate.js + package.json + vercel.json + README.md")
+    """Deployment sources are maintained directly; rebuilding pages preserves them."""
+    pass
 
 
 def skill_text() -> str:
